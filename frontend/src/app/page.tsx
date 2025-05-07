@@ -54,7 +54,11 @@ export default function Page() {
       <ul>
         {machines?.map((machine) =>
           machine.id ? (
-            <div>
+            <div
+              key={machine.id}
+              onClick={() => router.push(`/machines/${machine.id}`)}
+              style={{ cursor: "pointer" }}
+            >
               {machine.id} name: {machine.name}
               <button onClick={() => deleteMachine(machine.id!)}>
                 Löschen

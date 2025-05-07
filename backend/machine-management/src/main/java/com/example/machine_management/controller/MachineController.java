@@ -1,9 +1,12 @@
 package com.example.machine_management.controller;
 
+import com.example.machine_management.dto.MachineDto;
 import com.example.machine_management.models.Machine;
 import com.example.machine_management.repository.MachineRepository;
+import com.example.machine_management.mapper.MachineMapper;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +33,12 @@ public class MachineController {
     public ResponseEntity<?> getAllMachines() {
         try {
             List<Machine> machines = machineRepository.findAll();
-            return ResponseEntity.ok(machines);
+
+            List <MachineDto> machineDtos = machines.stream()
+                .map(MachineMapper::toDto)
+                .collect(Collectors.toList());
+
+            return ResponseEntity.ok(machineDtos);
         } catch (Exception e) {
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -38,11 +46,22 @@ public class MachineController {
         }
     }    
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getMachine(@PathVariable Integer id) {
+        return machineRepository.findById(id)
+            .<ResponseEntity<?>>map(machine -> ResponseEntity.ok(MachineMapper.toDto(machine)))
+            .orElseGet(() ->    
+                ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Maschine mit ID " + id + " nicht gefunden.")
+            );
+    }
+    
+
     @PostMapping
     public ResponseEntity<?> createMachine(@RequestBody Machine machine) {
         try {
             Machine saved = machineRepository.save(machine);
-            return ResponseEntity.ok(saved);
+            return ResponseEntity.ok(MachineMapper.toDto(saved));
         } catch (Exception e) {
             return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -59,7 +78,8 @@ public class MachineController {
                     return ResponseEntity.badRequest().body("Maschinenname darf nicht leer sein.");
                 }
                 machine.setName(newName);
-                return ResponseEntity.ok(machineRepository.save(machine));
+                Machine saved = machineRepository.save(machine);
+                return ResponseEntity.ok(MachineMapper.toDto(saved));
             })
             .orElseGet(() ->
                 ResponseEntity.status(HttpStatus.NOT_FOUND)

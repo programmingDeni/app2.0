@@ -1,9 +1,10 @@
 package com.example.machine_management.models;
 
+import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.*;
 
-import com.example.machine_management.models.MachineAttributes;
+//import com.example.machine_management.models.MachineAttributes;
 
 @Entity
 public class Machine {
@@ -13,6 +14,11 @@ public class Machine {
 
     @Column(unique = true)
     private String name;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "machine")
+    //@JoinColumn(name = "machine_id") // FK in MachineAttributes
+    private List<MachineAttributes> attributes = new ArrayList<>();
+
 
     //private List<MachineAttributes> attributes;
 
@@ -34,5 +40,13 @@ public class Machine {
     public void setName(String name) {
         this.name = name;
     }    
+
+    public List<MachineAttributes> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<MachineAttributes> attributes) {
+        this.attributes = attributes;
+    }
 
 }
