@@ -60,7 +60,12 @@ export default function Page() {
               style={{ cursor: "pointer" }}
             >
               {machine.id} name: {machine.name}
-              <button onClick={() => deleteMachine(machine.id!)}>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteMachine(machine.id!);
+                }}
+              >
                 Löschen
               </button>
             </div>
