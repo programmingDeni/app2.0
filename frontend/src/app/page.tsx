@@ -10,6 +10,7 @@ export default function Page() {
   }
 
   const [machines, setMachines] = useState<Machine[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -30,13 +31,35 @@ export default function Page() {
     router.push("/addMachine");
   };
 
+  const deleteMachine = async (id: number) => {
+    try {
+      const res = await axios.delete(
+        `http://localhost:8080/api/machines/${id}`
+      );
+      console.log("Gelöscht:", res.data);
+      setMachines((prev) => prev.filter((machine) => machine.id !== id));
+      // z. B. Maschinenliste neu laden oder Filter entfernen
+    } catch (error: any) {
+      console.error(
+        "Fehler beim Löschen:",
+        error.response?.data || error.message
+      );
+      setError(error.response?.data || "Fehler beim Löschen");
+    }
+  };
+
   return (
     <div>
       <h1>Maschinen Liste</h1>
       <ul>
         {machines?.map((machine) =>
           machine.id ? (
-            <div>{machine.id}</div>
+            <div>
+              {machine.id} name: {machine.name}
+              <button onClick={() => deleteMachine(machine.id!)}>
+                Löschen
+              </button>
+            </div>
           ) : // if yes render the comp
           // <li key={machine.id}>
           //     {machine.name}

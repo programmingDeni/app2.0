@@ -11,6 +11,7 @@ public class Machine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(unique = true)
     private String name;
 
     //private List<MachineAttributes> attributes;
@@ -22,6 +23,16 @@ public class Machine {
         this.name = name;
     }
 
-    
+    public Integer getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }    
 
 }
