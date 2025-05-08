@@ -73,6 +73,7 @@ public class MachineAttributeController {
             .<ResponseEntity<?>>map(attr -> {
                 attr.setAttributeName(request.attributeName);
                 attr.setType(AttributeType.valueOf(request.attributeType));
+                attr.setAttributeValue(request.attributeValue);
                 MachineAttributes saved = attributeRepository.save(attr);
                 return ResponseEntity.ok(MachineAttributeMapper.toDto(saved));
             })

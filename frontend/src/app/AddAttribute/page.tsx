@@ -1,7 +1,7 @@
 "use client";
 import MachineAttributeForm, {
   MachineAttributeFormDto,
-} from "@/components/MachineAttributeForm"; // Pfad anpassen
+} from "@/components/Attribute/MachineAttributeForm"; // Pfad anpassen
 import { useSearchParams } from "next/navigation";
 import axios from "axios";
 import React from "react";

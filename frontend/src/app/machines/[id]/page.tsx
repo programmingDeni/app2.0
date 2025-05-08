@@ -4,8 +4,8 @@ import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import MachineAttributeForm, {
   MachineAttributeFormDto,
-} from "@/components/MachineAttributeForm";
-import MachineAttributeList from "@/components/MachineAttributeList";
+} from "@/components/Attribute/MachineAttributeForm";
+import MachineAttributeList from "@/components/Attribute/MachineAttributeList";
 
 interface Machine {
   id?: number;

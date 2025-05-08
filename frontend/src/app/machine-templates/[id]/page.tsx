@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import AddAttribute from "@/app/AddAttribute/OLDpage";
-import MachineTemplateForm from "@/components/MachineTemplateForm";
-import AttributeTemplateForm from "@/components/AttributeTemplateForm";
+import MachineTemplateForm from "@/components/MachineTemplate/MachineTemplateForm";
+import AttributeTemplateForm from "@/components/AttributeInTempalte/AttributeTemplateForm";
 
 interface AttributeTemplate {
   id: number;

@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
-import MachineTemplateForm from "@/components/MachineTemplateForm";
-import MachineTemplateList from "@/components/MachineTemplateList";
+import MachineTemplateForm from "@/components/MachineTemplate/MachineTemplateForm";
+import MachineTemplateList from "@/components/MachineTemplate/MachineTemplateList";
 
 interface AttributeTemplate {
   id: number;
