@@ -69,25 +69,15 @@ export default function Page() {
                 Löschen
               </button>
             </div>
-          ) : // if yes render the comp
-          // <li key={machine.id}>
-          //     {machine.name}
-          //     {/** can be really sure about the existance of id here, is assigned by the backend  */}
-          //     <button onClick={() => copyMachine(machine.id!)}>
-          //     Duplizieren
-          //     </button>
-          //     <button onClick={() => editMachine(machine.id!)}>
-          //     Bearbeiten
-          //     </button>
-          //     <button onClick={() => deleteMachine(machine.id!)}>
-          //     Löschen
-          //     </button>
-          // </li>
-          // sonst null
-          null
+          ) : (
+            <div>Loading...</div>
+          )
         )}
       </ul>
       <button onClick={() => addMachine()}>Add Machine</button>
+      <button onClick={() => router.push("/machine-templates")}>
+        Templates
+      </button>
     </div>
   );
 }

@@ -12,6 +12,7 @@ public class MachineAttributeMapper {
             attr.getId(),
             attr.getAttributeName(),
             attr.getType().toString(),
+            attr.getAttributeValue(),
             attr.getMachine().getId()
         );
     }
@@ -21,6 +22,7 @@ public class MachineAttributeMapper {
         //attr.setId(dto.id);
         attr.setAttributeName(dto.attributeName);
         attr.setType(AttributeType.valueOf(dto.attributeType)); // <-- hier Umwandlung String → Enum
+        attr.setAttributeValue(dto.attributeValue);
         attr.setMachine(machine);
         return attr;
     }

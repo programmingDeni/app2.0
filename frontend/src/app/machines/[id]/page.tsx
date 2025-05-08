@@ -2,6 +2,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
+import MachineAttributeForm, {
+  MachineAttributeFormDto,
+} from "@/components/MachineAttributeForm";
+import MachineAttributeList from "@/components/MachineAttributeList";
 
 interface Machine {
   id?: number;
@@ -71,51 +75,6 @@ export default function MachineDetails() {
     }
   };
 
-  const deleteAttribute = async (attrId: number) => {
-    try {
-      await axios.delete(`http://localhost:8080/api/attributes/${attrId}`);
-      setMachine((prev) =>
-        prev
-          ? {
-              ...prev,
-              attributes: prev.attributes.filter((a) => a.id !== attrId),
-            }
-          : prev
-      );
-    } catch (err) {
-      console.error("Fehler beim Löschen des Attributs:", err);
-    }
-  };
-
-  const saveAttribute = async (attrId: number) => {
-    try {
-      const newName = attributeNameEdit[attrId];
-      const response = await axios.put(
-        `http://localhost:8080/api/attributes/${attrId}`,
-        {
-          attributeName: newName,
-          id: attrId,
-          attributeType: typeEdits[attrId],
-          machineId: params.id,
-        }
-      );
-
-      setMachine((prev) =>
-        prev
-          ? {
-              ...prev,
-              attributes: prev.attributes.map((a) =>
-                a.id === attrId ? response.data : a
-              ),
-            }
-          : prev
-      );
-      setEditingAttr(null);
-    } catch (err) {
-      console.error("Fehler beim Speichern des Attributs:", err);
-    }
-  };
-
   if (!machine) {
     return <div>Loading...</div>;
   }
@@ -135,59 +94,16 @@ export default function MachineDetails() {
       ) : (
         <>
           <h2>Name: {machine.name}</h2>
-          <button onClick={() => setIsEditing(true)}>✏️ Name bearbeiten</button>
+          <button onClick={() => setIsEditing(true)}>Name bearbeiten</button>
         </>
       )}
-      <h2>Attribute</h2> {/**Anzeigen der Attribute und bearbeitung */}
-      {machine.attributes.length === 0 ? (
-        <p>Keine Attribute vorhanden.</p>
-      ) : (
-        <ul>
-          {machine.attributes.map((attr) => (
-            <li key={attr.id}>
-              {editingAttr === attr.id ? ( //Attribute bearbeiten
-                <>
-                  <input
-                    value={attributeNameEdit[attr.id] ?? attr.attributeName}
-                    onChange={(e) =>
-                      setattributeNameEdit((prev) => ({
-                        ...prev,
-                        [attr.id]: e.target.value,
-                      }))
-                    }
-                  />
-                  <select
-                    value={typeEdits[attr.id] ?? attr.attributeType}
-                    onChange={(e) =>
-                      setTypeEdits((prev) => ({
-                        ...prev,
-                        [attr.id]: e.target.value,
-                      }))
-                    }
-                  >
-                    {attributeTypes.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
-
-                  <button onClick={() => saveAttribute(attr.id)}>Save</button>
-                  <button onClick={() => setEditingAttr(null)}>
-                    Abbrechen
-                  </button>
-                </>
-              ) : (
-                <>
-                  {attr.attributeName}
-                  <button onClick={() => setEditingAttr(attr.id)}>✏️</button>
-                  <button onClick={() => deleteAttribute(attr.id)}>🗑️</button>
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
+      <MachineAttributeList
+        attributes={machine.attributes}
+        machineId={machine.id!}
+        onAttributesUpdated={(updated) =>
+          setMachine((prev) => (prev ? { ...prev, attributes: updated } : prev))
+        }
+      />
       <button onClick={() => addAttributes()}> Attribute hinzufügen </button>
     </div>
   );

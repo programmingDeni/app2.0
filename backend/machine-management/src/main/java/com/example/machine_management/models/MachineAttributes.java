@@ -14,6 +14,8 @@ public class MachineAttributes {
     @Enumerated(EnumType.STRING)
     private AttributeType type;
 
+    private String attributeValue;
+
     @ManyToOne
     @JoinColumn(name = "machine_id", nullable = false)
     private Machine machine;
@@ -46,6 +48,14 @@ public class MachineAttributes {
     
     public void setType(AttributeType type) {
         this.type = type;
+    }
+
+    public String getAttributeValue() {
+        return attributeValue;
+    }
+
+    public void setAttributeValue(String attributeValue) {
+        this.attributeValue = attributeValue;
     }
     
 }

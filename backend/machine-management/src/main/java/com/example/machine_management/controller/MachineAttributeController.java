@@ -51,12 +51,13 @@ public class MachineAttributeController {
     @PostMapping
     public ResponseEntity<?> addAttribute(@RequestBody MachineAttributeDto request) {
         System.out.println("Request erhalten: " + request.attributeName + ", " + request.machineId + ", " + request.attributeType);
-        return machineRepository.findById(request.machineId)
+        return machineRepository.findById(request.machineId)    //finde machine deren attribute gepostet werden soll
             .<ResponseEntity<?>>map(machine -> {
-                MachineAttributes attr = new MachineAttributes();
+                MachineAttributes attr = new MachineAttributes();       //erstelle die neuen attribute
                 attr.setAttributeName(request.attributeName);
                 attr.setMachine(machine);
                 attr.setType(AttributeType.valueOf(request.attributeType));
+                attr.setAttributeValue(request.attributeValue);
                 MachineAttributes saved = attributeRepository.save(attr);
                 return ResponseEntity.ok(MachineAttributeMapper.toDto(saved));
             })

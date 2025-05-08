@@ -1,0 +1,386 @@
+openapi: 3.0.1
+info:
+  title: Machine Management API
+  version: 1.0.0
+
+tags:
+  - name: MachineTemplate
+    description: Maschinen-Templates verwalten
+
+  - name: AttributeTemplate
+    description: Vorlagen für Maschinenattribute
+
+  - name: Machine
+    description: Einzelne Maschinen verwalten
+
+  - name: MachineAttribute
+    description: Attribute einzelner Maschinen
+
+paths:
+  /machine-templates:
+    get:
+      tags:
+        - MachineTemplate
+      summary: Alle MachineTemplates abrufen
+      responses:
+        "200":
+          description: Liste der Templates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MachineTemplateDto"
+    post:
+      tags:
+        - MachineTemplate
+      summary: Neues MachineTemplate erstellen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MachineTemplateDto"
+      responses:
+        "200":
+          description: Erstellt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MachineTemplateDto"
+
+  /machine-templates/{id}:
+    get:
+      summary: Einzelnes MachineTemplate abrufen
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Einzelnes Template
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MachineTemplateDto"
+    put:
+      summary: Template aktualisieren
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MachineTemplateDto"
+      responses:
+        "200":
+          description: Aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MachineTemplateDto"
+    delete:
+      summary: Template löschen
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Gelöscht
+
+  /attribute-templates:
+    get:
+      summary: Alle AttributeTemplates abrufen
+      responses:
+        "200":
+          description: Liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AttributeTemplateDto"
+    post:
+      summary: Neues AttributeTemplate erstellen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttributeTemplateDto"
+      responses:
+        "200":
+          description: Erstellt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AttributeTemplateDto"
+
+  /attribute-templates/{id}:
+    get:
+      summary: Einzelnes AttributeTemplate abrufen
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Einzelnes Attribut
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AttributeTemplateDto"
+    put:
+      summary: Attribut aktualisieren
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttributeTemplateDto"
+      responses:
+        "200":
+          description: Aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AttributeTemplateDto"
+    delete:
+      summary: Attribut löschen
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Gelöscht
+
+  /machines:
+    get:
+      summary: Alle Maschinen abrufen
+      responses:
+        "200":
+          description: Liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MachineDto"
+    post:
+      summary: Neue Maschine erstellen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MachineDto"
+      responses:
+        "200":
+          description: Erstellt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MachineDto"
+
+  /machines/{id}:
+    get:
+      summary: Einzelne Maschine abrufen
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Maschine
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MachineDto"
+    put:
+      summary: Maschine aktualisieren
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MachineDto"
+      responses:
+        "200":
+          description: Aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MachineDto"
+    delete:
+      summary: Maschine löschen
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Gelöscht
+
+  /machine-attributes:
+    get:
+      summary: Alle Maschinen-Attribute abrufen
+      responses:
+        "200":
+          description: Liste
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MachineAttributeDto"
+    post:
+      summary: Neues Maschinen-Attribut erstellen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MachineAttributeDto"
+      responses:
+        "200":
+          description: Erstellt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MachineAttributeDto"
+
+  /machine-attributes/{id}:
+    get:
+      summary: Einzelnes Maschinen-Attribut abrufen
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Maschinen-Attribut
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MachineAttributeDto"
+    put:
+      summary: Maschinen-Attribut aktualisieren
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MachineAttributeDto"
+      responses:
+        "200":
+          description: Aktualisiert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MachineAttributeDto"
+    delete:
+      summary: Maschinen-Attribut löschen
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Gelöscht
+
+components:
+  schemas:
+    AttributeTemplateDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        attributeInTemplateName:
+          type: string
+        attributeInTemplateType:
+          type: string
+          enum: [STRING, INTEGER, FLOAT, BOOLEAN]
+      required: [attributeInTemplateName, attributeInTemplateType]
+
+    MachineTemplateDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        templateName:
+          type: string
+        attributeTemplates:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttributeTemplateDto"
+      required: [templateName, attributeTemplates]
+
+    MachineDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        attributes:
+          type: array
+          items:
+            $ref: "#/components/schemas/MachineAttributeDto"
+      required: [name, attributes]
+
+    MachineAttributeDto:
+      type: object
+      properties:
+        id:
+          type: integer
+        attributeName:
+          type: string
+        attributeType:
+          type: string
+          enum: [STRING, INTEGER, FLOAT, BOOLEAN]
+        attributeValue:
+          type: string
+        machineId:
+          type: integer
+      required: [attributeName, attributeType, attributeValue, machineId]
