@@ -1,40 +1,16 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
+import { MachineTemplate } from "@/types/machineTemplate";
 
-interface AttributeTemplate {
-  attributeInTemplateName: string;
-  attributeInTemplateType: "STRING" | "INTEGER" | "FLOAT" | "BOOLEAN";
+interface Props {
+  onTemplateCreated: () => void;
 }
 
-export default function MachineTemplateForm() {
+export default function MachineTemplateForm({ onTemplateCreated }: Props) {
   const [name, setName] = useState("");
-  const [attributes, setAttributes] = useState<AttributeTemplate[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-
-  const handleAddAttribute = () => {
-    setAttributes([
-      ...attributes,
-      { attributeInTemplateName: "", attributeInTemplateType: "STRING" },
-    ]);
-  };
-
-  const handleRemoveAttribute = (index: number) => {
-    const updated = [...attributes];
-    updated.splice(index, 1);
-    setAttributes(updated);
-  };
-
-  const handleAttributeChange = (
-    index: number,
-    key: keyof AttributeTemplate,
-    value: string
-  ) => {
-    const updated = [...attributes];
-    updated[index][key] = value as any;
-    setAttributes(updated);
-  };
 
   const handleSubmit = async () => {
     if (!name.trim()) {
@@ -43,16 +19,12 @@ export default function MachineTemplateForm() {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/api/machine-templates",
-        {
-          templateName: name,
-          attributeTemplates: attributes,
-        }
-      );
-      setSuccess(`Template '${response.data.name}' wurde erstellt!`);
+      await axios.post("http://localhost:8080/api/machine-templates", {
+        templateName: name,
+      });
+      onTemplateCreated();
+      setSuccess(`Template '${name}' wurde erstellt!`);
       setName("");
-      setAttributes([]);
       setError(null);
     } catch (err: any) {
       setError(err.response?.data || "Fehler beim Erstellen des Templates.");
@@ -61,55 +33,28 @@ export default function MachineTemplateForm() {
   };
 
   return (
-    <div>
-      <h2>Neues Maschinen-Template</h2>
-      <input
-        type="text"
-        placeholder="Template Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <h3>Attribut-Templates</h3>
-      {attributes.map((attr, index) => (
-        <div key={index} style={{ marginBottom: "10px" }}>
-          <input
-            type="text"
-            placeholder="Attributname"
-            value={attr.attributeInTemplateName}
-            onChange={(e) =>
-              handleAttributeChange(
-                index,
-                "attributeInTemplateName",
-                e.target.value
-              )
-            }
-          />
-          <select
-            value={attr.attributeInTemplateType}
-            onChange={(e) =>
-              handleAttributeChange(
-                index,
-                "attributeInTemplateType",
-                e.target.value
-              )
-            }
-          >
-            <option value="STRING">STRING</option>
-            <option value="INTEGER">INTEGER</option>
-            <option value="FLOAT">FLOAT</option>
-            <option value="BOOLEAN">BOOLEAN</option>
-          </select>
-          <button onClick={() => handleRemoveAttribute(index)}>
-            Entfernen
-          </button>
-        </div>
-      ))}
-      <button onClick={handleAddAttribute}>+ Attribut hinzufügen</button>
-      <br />
-      <button onClick={handleSubmit}>Template speichern</button>
+    <div className="space-y-4">
+      <h2 className="text-xl font-bold">Neues Maschinen-Template</h2>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {success && <p style={{ color: "green" }}>{success}</p>}
+      <div className="space-y-2">
+        <input
+          type="text"
+          placeholder="Template Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          className="p-2 border rounded"
+        />
+
+        <button
+          onClick={handleSubmit}
+          className="px-4 py-2 bg-blue-500 text-white rounded"
+        >
+          Template speichern
+        </button>
+      </div>
+
+      {error && <p className="text-red-500">{error}</p>}
+      {success && <p className="text-green-500">{success}</p>}
     </div>
   );
 }

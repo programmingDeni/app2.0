@@ -1,0 +1,68 @@
+package com.example.machine_management.unit.service;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.example.machine_management.models.Machine;
+import com.example.machine_management.models.MachineAttribute;
+import com.example.machine_management.models.AttributeType;
+import com.example.machine_management.repository.MachineAttributeRepository;
+import com.example.machine_management.repository.MachineRepository;
+import com.example.machine_management.services.MachineAttributeService;
+
+@ExtendWith(MockitoExtension.class)
+class MachineAttributeServiceTest {
+
+    @Mock
+    private MachineAttributeRepository attributeRepository;
+
+    @Mock
+    private MachineRepository machineRepository;
+
+    private MachineAttributeService attributeService;
+
+    @BeforeEach
+    void setUp() {
+        attributeService = new MachineAttributeService(attributeRepository, machineRepository);
+    }
+
+    @Test
+    void whenCreateAttribute_thenReturnSavedAttribute() {
+        // given
+        Machine machine = new Machine("TestMachine");
+        MachineAttribute attribute = new MachineAttribute(machine, "TestAttr");
+        attribute.setType(AttributeType.STRING);
+
+        when(machineRepository.findById(any())).thenReturn(Optional.of(machine));
+        when(attributeRepository.save(any(MachineAttribute.class))).thenReturn(attribute);
+
+        // when
+        Optional<MachineAttribute> created = attributeService.createAttribute(1, "TestAttr", AttributeType.STRING);
+
+        // then
+        assertTrue(created.isPresent());
+        assertEquals("TestAttr", created.get().getAttributeName());
+        assertEquals(AttributeType.STRING, created.get().getType());
+    }
+
+    @Test
+    void whenCreateAttributeForNonExistingMachine_thenReturnEmpty() {
+        // given
+        when(machineRepository.findById(any())).thenReturn(Optional.empty());
+
+        // when
+        Optional<MachineAttribute> created = attributeService.createAttribute(1, "TestAttr", AttributeType.STRING);
+
+        // then
+        assertTrue(created.isEmpty());
+    }
+}

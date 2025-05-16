@@ -17,8 +17,16 @@ public class AttributeInTemplate {
     private AttributeType type;
 
     @ManyToOne
-    @JoinColumn(name = "template_id", nullable = false)
+    @JoinColumn(name = "machine_template_id", nullable = false)
     private MachineTemplate machineTemplate;
+
+    protected AttributeInTemplate() {}
+
+    public AttributeInTemplate(String name, AttributeType type, MachineTemplate template) {
+        setAttributeInTemplateName(name);
+        setType(type);
+        setMachineTemplate(template);
+    }
 
     // Getter & Setter
     public int getId() {
@@ -29,8 +37,11 @@ public class AttributeInTemplate {
         return attributeInTemplateName;
     }
 
-    public void setAttributeInTemplateName(String attributeInTemplate) {
-        this.attributeInTemplateName = attributeInTemplate;
+    public void setAttributeInTemplateName(String attributeInTemplateName) {
+        if (attributeInTemplateName == null || attributeInTemplateName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Attributname darf nicht leer sein");
+        }
+        this.attributeInTemplateName = attributeInTemplateName.trim();
     }
 
     public AttributeType getType() {
@@ -38,6 +49,9 @@ public class AttributeInTemplate {
     }
 
     public void setType(AttributeType type) {
+        if (type == null) {
+            throw new IllegalArgumentException("AttributeType darf nicht null sein");
+        }
         this.type = type;
     }
 
@@ -45,8 +59,21 @@ public class AttributeInTemplate {
         return machineTemplate;
     }
 
-    public void setMachineTemplate(MachineTemplate machineTemplate) {
-        this.machineTemplate = machineTemplate;
+    public void setMachineTemplate(MachineTemplate template) {
+        if (template == null) {
+            throw new IllegalArgumentException("Template darf nicht null sein");
+        }
+        
+        // Alte Referenz entfernen
+        if (this.machineTemplate != null) {
+            this.machineTemplate.getAttributeTemplates().remove(this);
+        }
+        
+        // Neue Referenz setzen
+        this.machineTemplate = template;
+        if (!template.getAttributeTemplates().contains(this)) {
+            template.getAttributeTemplates().add(this);
+        }
     }
 
 }

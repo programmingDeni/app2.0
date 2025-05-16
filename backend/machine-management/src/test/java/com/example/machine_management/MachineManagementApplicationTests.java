@@ -8,6 +8,7 @@ class MachineManagementApplicationTests {
 
 	@Test
 	void contextLoads() {
+		
 	}
 
 }

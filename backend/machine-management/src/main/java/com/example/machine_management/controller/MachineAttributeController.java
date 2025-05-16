@@ -2,8 +2,7 @@ package com.example.machine_management.controller;
 
 import com.example.machine_management.dto.MachineAttributeDto;
 import com.example.machine_management.mapper.MachineAttributeMapper;
-import com.example.machine_management.models.Machine;
-import com.example.machine_management.models.MachineAttributes;
+import com.example.machine_management.models.MachineAttribute;
 import com.example.machine_management.repository.MachineAttributeRepository;
 import com.example.machine_management.repository.MachineRepository;
 import com.example.machine_management.models.AttributeType;
@@ -30,7 +29,7 @@ public class MachineAttributeController {
 
     @GetMapping
     public ResponseEntity<?> getAllAttributes() {
-        List<MachineAttributes> attributes = attributeRepository.findAll();
+        List<MachineAttribute> attributes = attributeRepository.findAll();
         List<MachineAttributeDto> dtoList = attributes.stream()
             .map(MachineAttributeMapper::toDto)
             .collect(Collectors.toList());
@@ -39,7 +38,7 @@ public class MachineAttributeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getAttributeById(@PathVariable Integer id) {
-        Optional<MachineAttributes> attribute = attributeRepository.findById(id);
+        Optional<MachineAttribute> attribute = attributeRepository.findById(id);
         return attribute
             .<ResponseEntity<?>>map(attr -> ResponseEntity.ok(MachineAttributeMapper.toDto(attr)))
             .orElseGet(() ->
@@ -53,12 +52,10 @@ public class MachineAttributeController {
         System.out.println("Request erhalten: " + request.attributeName + ", " + request.machineId + ", " + request.attributeType);
         return machineRepository.findById(request.machineId)    //finde machine deren attribute gepostet werden soll
             .<ResponseEntity<?>>map(machine -> {
-                MachineAttributes attr = new MachineAttributes();       //erstelle die neuen attribute
-                attr.setAttributeName(request.attributeName);
-                attr.setMachine(machine);
+                MachineAttribute attr = new MachineAttribute(machine,request.attributeName);       //erstelle die neuen attribute
                 attr.setType(AttributeType.valueOf(request.attributeType));
                 attr.setAttributeValue(request.attributeValue);
-                MachineAttributes saved = attributeRepository.save(attr);
+                MachineAttribute saved = attributeRepository.save(attr);
                 return ResponseEntity.ok(MachineAttributeMapper.toDto(saved));
             })
             .orElseGet(() ->
@@ -74,7 +71,7 @@ public class MachineAttributeController {
                 attr.setAttributeName(request.attributeName);
                 attr.setType(AttributeType.valueOf(request.attributeType));
                 attr.setAttributeValue(request.attributeValue);
-                MachineAttributes saved = attributeRepository.save(attr);
+                MachineAttribute saved = attributeRepository.save(attr);
                 return ResponseEntity.ok(MachineAttributeMapper.toDto(saved));
             })
             .orElseGet(() ->

@@ -6,6 +6,8 @@ import com.example.machine_management.models.AttributeInTemplate;
 import com.example.machine_management.models.AttributeType;
 import com.example.machine_management.repository.AttributeTemplateRepository;
 import com.example.machine_management.repository.MachineTemplateRepository;
+import com.example.machine_management.services.AttributeTemplateService;
+import com.fasterxml.jackson.databind.annotation.JsonAppend.Attr;
 import com.example.machine_management.models.MachineTemplate;
 
 
@@ -21,79 +23,40 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/attribute-templates")
 @CrossOrigin(origins = "http://localhost:3000")
 public class AttributeInTemplateController {
-    //hier geht es jetzt nur um das NACHTRÄGLICHE hinzufügen von attributen über die frontend seite 
-    //machien template bearbeiten 
-    //es ist nicht möglich die attributeInTemplates anderweitig zu erstellen
 
     @Autowired
-    private AttributeTemplateRepository attributeTemplateRepository;
+    private AttributeTemplateService attributeTemplateService;
 
-    @Autowired
-    private MachineTemplateRepository machineTemplateRepository;
-
-    //das bedeutet dass wir hier das neue attributInTempalte direkt in das template schreiben 
     @PostMapping
-    public ResponseEntity<?> createAttributeTemplate(@RequestBody AttributeTemplateDto dto) {
-        System.out.println("in poszt controller "+ dto.id+ " " + dto.attributeInTemplateName+ " " + dto.attributeInTemplateName);
-        return machineTemplateRepository.findById(dto.id)   //template finden 
-            .<ResponseEntity<?>>map(machineTemplate -> {    //durch das template iterieren
-                // das neue attributeInTemplate erstellen
-                AttributeInTemplate attributeInTemplate = new AttributeInTemplate();
-                attributeInTemplate.setAttributeInTemplateName(dto.attributeInTemplateName);
-                attributeInTemplate.setType(AttributeType.valueOf(dto.attributeInTemplateType));
-                attributeInTemplate.setMachineTemplate(machineTemplate);    //hier das existierende template 
-
-
-                AttributeInTemplate saved = attributeTemplateRepository.save(attributeInTemplate); //versuchen es zu persistieren, speichern
-                return ResponseEntity.ok(AttributeTemplateMapper.toDto(saved));
-            })
-            .orElseGet(() ->    //hier wurde kein template gefunden
-                ResponseEntity.status(HttpStatus.NOT_FOUND)     
-                    .body("Maschinen-Template mit ID " + dto.id + " nicht gefunden.")
-            );
+    public ResponseEntity<AttributeTemplateDto> createAttributeTemplate(@RequestBody AttributeTemplateDto dto) {
+        return ResponseEntity.ok(attributeTemplateService.createOneForTemplate(dto));
     }
 
     @GetMapping
     public ResponseEntity<List<AttributeTemplateDto>> getAllAttributeTemplates() {
-        List<AttributeTemplateDto> result = attributeTemplateRepository.findAll()
-            .stream()
-            .map(AttributeTemplateMapper::toDto)
-            .collect(Collectors.toList());
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(attributeTemplateService.getAllAttributeTemplates());
+    }
+
+    @GetMapping("/by-template/{templateId}")
+    public ResponseEntity<List<AttributeTemplateDto>> getByMachineTemplateId(@PathVariable Integer templateId) {
+        return ResponseEntity.ok(attributeTemplateService.getByMachineTemplateId(templateId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Integer id) {
-        return attributeTemplateRepository.findById(id)
-            .<ResponseEntity<?>>map(template -> ResponseEntity.ok(AttributeTemplateMapper.toDto(template)))
-            .orElseGet(() ->
-                ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Attribute-Template mit ID " + id + " nicht gefunden.")
-            );
+    public ResponseEntity<AttributeTemplateDto> getById(@PathVariable Integer id) {
+        return ResponseEntity.ok(attributeTemplateService.getById(id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAttributeTemplate(@PathVariable Integer id) {
-        if (!attributeTemplateRepository.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Attribute-Template mit ID " + id + " nicht gefunden.");
-        }
-        attributeTemplateRepository.deleteById(id);
-        return ResponseEntity.ok("Template gelöscht.");
+    public ResponseEntity<Void> deleteAttributeTemplate(@PathVariable Integer id) {
+        attributeTemplateService.deleteAttributeTemplate(id);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateAttributeTemplate(@PathVariable Integer id, @RequestBody AttributeTemplateDto dto) {
-        return attributeTemplateRepository.findById(id)
-            .<ResponseEntity<?>>map(template -> {
-                template.setAttributeInTemplateName(dto.attributeInTemplateName);
-                template.setType(AttributeType.valueOf(dto.attributeInTemplateType));
-                AttributeInTemplate updated = attributeTemplateRepository.save(template);
-                return ResponseEntity.ok(AttributeTemplateMapper.toDto(updated));
-            })
-            .orElseGet(() ->
-                ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Attribute-Template mit ID " + id + " nicht gefunden.")
-            );
+    public ResponseEntity<AttributeTemplateDto> updateAttributeTemplate(
+            @PathVariable Integer id, 
+            @RequestBody AttributeTemplateDto dto) {
+        return ResponseEntity.ok(attributeTemplateService.updateAttributeTemplate(id, dto));
     }
 }

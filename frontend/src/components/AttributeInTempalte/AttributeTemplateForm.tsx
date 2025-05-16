@@ -1,47 +1,66 @@
-import React, { useState } from "react";
+"use client";
+import { useState } from "react";
 import axios from "axios";
+import { AttributeType } from "@/types/attributeInTemplate";
 
-const attributeTypes = ["STRING", "INTEGER", "FLOAT", "BOOLEAN"];
-
-export default function AttributeTemplateForm({
-  templateId,
-}: {
+interface Props {
   templateId: number;
-}) {
-  const [name, setName] = useState("");
-  const [type, setType] = useState("STRING");
-  const [message, setMessage] = useState<string | null>(null);
+  onSubmit: () => void;
+}
 
-  const handleAdd = async () => {
+export default function AttributeTemplateForm({ templateId, onSubmit }: Props) {
+  const [name, setName] = useState("");
+  const [type, setType] = useState<AttributeType>("STRING");
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) {
+      setError("Name darf nicht leer sein");
+      return;
+    }
+
     try {
-      console.log("add attributeToTemplate", templateId, name, type);
       await axios.post("http://localhost:8080/api/attribute-templates", {
-        machineTemplateId: templateId,
         attributeInTemplateName: name,
         attributeInTemplateType: type,
+        machineTemplateId: templateId,
       });
-      setMessage("Attribut erfolgreich hinzugefügt.");
       setName("");
-      setType("STRING");
+      onSubmit();
     } catch (err: any) {
-      setMessage("Fehler beim Hinzufügen");
+      setError(err.response?.data || "Fehler beim Erstellen des Attributes");
     }
   };
 
   return (
-    <div>
+    <form onSubmit={handleSubmit} className="space-y-2">
       <input
+        type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder="Name"
+        placeholder="Attributname"
+        className="p-2 border rounded"
       />
-      <select value={type} onChange={(e) => setType(e.target.value)}>
-        {attributeTypes.map((t) => (
-          <option key={t}>{t}</option>
-        ))}
+
+      <select
+        value={type}
+        onChange={(e) => setType(e.target.value as AttributeType)}
+        className="p-2 border rounded ml-2"
+      >
+        <option value="STRING">Text</option>
+        <option value="INTEGER">Zahl</option>
+        <option value="BOOLEAN">Ja/Nein</option>
       </select>
-      <button onClick={handleAdd}>Attribut hinzufügen</button>
-      {message && <p>{message}</p>}
-    </div>
+
+      <button
+        type="submit"
+        className="px-4 py-2 bg-blue-500 text-white rounded ml-2"
+      >
+        Hinzufügen
+      </button>
+
+      {error && <p className="text-red-500">{error}</p>}
+    </form>
   );
 }

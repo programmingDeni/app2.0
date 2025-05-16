@@ -2,12 +2,12 @@ package com.example.machine_management.mapper;
 
 import com.example.machine_management.dto.MachineAttributeDto;
 import com.example.machine_management.models.Machine;
-import com.example.machine_management.models.MachineAttributes;
+import com.example.machine_management.models.MachineAttribute;
 import com.example.machine_management.models.AttributeType;
 
 public class MachineAttributeMapper {
 
-    public static MachineAttributeDto toDto(MachineAttributes attr) {
+    public static MachineAttributeDto toDto(MachineAttribute attr) {
         return new MachineAttributeDto(
             attr.getId(),
             attr.getAttributeName(),
@@ -17,13 +17,11 @@ public class MachineAttributeMapper {
         );
     }
 
-    public static MachineAttributes toEntity(MachineAttributeDto dto, Machine machine) {
-        MachineAttributes attr = new MachineAttributes();
+    public static MachineAttribute toEntity(MachineAttributeDto dto, Machine machine) {
+        MachineAttribute attr = new MachineAttribute(machine, dto.attributeName);
         //attr.setId(dto.id);
-        attr.setAttributeName(dto.attributeName);
         attr.setType(AttributeType.valueOf(dto.attributeType)); // <-- hier Umwandlung String → Enum
         attr.setAttributeValue(dto.attributeValue);
-        attr.setMachine(machine);
         return attr;
     }
 }

@@ -6,21 +6,17 @@ info:
 tags:
   - name: MachineTemplate
     description: Maschinen-Templates verwalten
-
   - name: AttributeTemplate
     description: Vorlagen für Maschinenattribute
-
   - name: Machine
     description: Einzelne Maschinen verwalten
-
   - name: MachineAttribute
     description: Attribute einzelner Maschinen
 
 paths:
   /machine-templates:
     get:
-      tags:
-        - MachineTemplate
+      tags: [MachineTemplate]
       summary: Alle MachineTemplates abrufen
       responses:
         "200":
@@ -32,8 +28,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/MachineTemplateDto"
     post:
-      tags:
-        - MachineTemplate
+      tags: [MachineTemplate]
       summary: Neues MachineTemplate erstellen
       requestBody:
         required: true
@@ -51,6 +46,7 @@ paths:
 
   /machine-templates/{id}:
     get:
+      tags: [MachineTemplate]
       summary: Einzelnes MachineTemplate abrufen
       parameters:
         - in: path
@@ -66,6 +62,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/MachineTemplateDto"
     put:
+      tags: [MachineTemplate]
       summary: Template aktualisieren
       parameters:
         - in: path
@@ -87,6 +84,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/MachineTemplateDto"
     delete:
+      tags: [MachineTemplate]
       summary: Template löschen
       parameters:
         - in: path
@@ -100,6 +98,7 @@ paths:
 
   /attribute-templates:
     get:
+      tags: [AttributeTemplate]
       summary: Alle AttributeTemplates abrufen
       responses:
         "200":
@@ -111,6 +110,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/AttributeTemplateDto"
     post:
+      tags: [AttributeTemplate]
       summary: Neues AttributeTemplate erstellen
       requestBody:
         required: true
@@ -128,6 +128,7 @@ paths:
 
   /attribute-templates/{id}:
     get:
+      tags: [AttributeTemplate]
       summary: Einzelnes AttributeTemplate abrufen
       parameters:
         - in: path
@@ -143,6 +144,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/AttributeTemplateDto"
     put:
+      tags: [AttributeTemplate]
       summary: Attribut aktualisieren
       parameters:
         - in: path
@@ -164,6 +166,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/AttributeTemplateDto"
     delete:
+      tags: [AttributeTemplate]
       summary: Attribut löschen
       parameters:
         - in: path
@@ -177,6 +180,7 @@ paths:
 
   /machines:
     get:
+      tags: [Machine]
       summary: Alle Maschinen abrufen
       responses:
         "200":
@@ -188,6 +192,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/MachineDto"
     post:
+      tags: [Machine]
       summary: Neue Maschine erstellen
       requestBody:
         required: true
@@ -205,6 +210,7 @@ paths:
 
   /machines/{id}:
     get:
+      tags: [Machine]
       summary: Einzelne Maschine abrufen
       parameters:
         - in: path
@@ -220,6 +226,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/MachineDto"
     put:
+      tags: [Machine]
       summary: Maschine aktualisieren
       parameters:
         - in: path
@@ -241,6 +248,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/MachineDto"
     delete:
+      tags: [Machine]
       summary: Maschine löschen
       parameters:
         - in: path
@@ -254,6 +262,7 @@ paths:
 
   /machine-attributes:
     get:
+      tags: [MachineAttribute]
       summary: Alle Maschinen-Attribute abrufen
       responses:
         "200":
@@ -265,6 +274,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/MachineAttributeDto"
     post:
+      tags: [MachineAttribute]
       summary: Neues Maschinen-Attribut erstellen
       requestBody:
         required: true
@@ -282,6 +292,7 @@ paths:
 
   /machine-attributes/{id}:
     get:
+      tags: [MachineAttribute]
       summary: Einzelnes Maschinen-Attribut abrufen
       parameters:
         - in: path
@@ -297,6 +308,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/MachineAttributeDto"
     put:
+      tags: [MachineAttribute]
       summary: Maschinen-Attribut aktualisieren
       parameters:
         - in: path
@@ -318,6 +330,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/MachineAttributeDto"
     delete:
+      tags: [MachineAttribute]
       summary: Maschinen-Attribut löschen
       parameters:
         - in: path

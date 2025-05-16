@@ -10,14 +10,14 @@ import jakarta.persistence.*;
 public class Machine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(unique = true)
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "machine")
     //@JoinColumn(name = "machine_id") // FK in MachineAttributes
-    private List<MachineAttributes> attributes = new ArrayList<>();
+    private List<MachineAttribute> attributes = new ArrayList<>();
 
 
     //private List<MachineAttributes> attributes;
@@ -41,11 +41,11 @@ public class Machine {
         this.name = name;
     }    
 
-    public List<MachineAttributes> getAttributes() {
+    public List<MachineAttribute> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(List<MachineAttributes> attributes) {
+    public void setAttributes(List<MachineAttribute> attributes) {
         this.attributes = attributes;
     }
 

@@ -5,12 +5,14 @@ public class AttributeTemplateDto {
     public Integer id;
     public String attributeInTemplateName;
     public String attributeInTemplateType;
+    public int machineTemplateId;
 
     public AttributeTemplateDto() {}
 
-    public AttributeTemplateDto(Integer id, String attributeTemplateName, String attributeTemplateType) {
+    public AttributeTemplateDto(Integer id, String attributeTemplateName, String attributeTemplateType, int machineTemplateId) {
         this.id = id;
         this.attributeInTemplateName = attributeTemplateName;
         this.attributeInTemplateType = attributeTemplateType;
+        this.machineTemplateId = machineTemplateId;
     }
 }

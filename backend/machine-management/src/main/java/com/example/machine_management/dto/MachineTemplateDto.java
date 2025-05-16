@@ -6,13 +6,13 @@ import java.util.List;
 public class MachineTemplateDto {
     public Integer id;
     public String templateName;
-    public List<AttributeTemplateDto> attributeTemplates;
 
     public MachineTemplateDto() {}
 
-    public MachineTemplateDto(Integer id, String templateName, List<AttributeTemplateDto> attributeTemplates) {
+    public MachineTemplateDto(Integer id, String templateName) {
         this.id = id;
         this.templateName = templateName;
-        this.attributeTemplates = attributeTemplates;
     }
+
+    
 }

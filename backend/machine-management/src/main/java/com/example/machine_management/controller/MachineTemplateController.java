@@ -2,16 +2,13 @@
 package com.example.machine_management.controller;
 
 import com.example.machine_management.dto.*;
-import com.example.machine_management.mapper.MachineTemplateMapper;
-import com.example.machine_management.models.MachineTemplate;
-import com.example.machine_management.repository.MachineTemplateRepository;
+import com.example.machine_management.services.MachineTemplateService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/machine-templates")
@@ -19,33 +16,33 @@ import java.util.stream.Collectors;
 public class MachineTemplateController {
 
     @Autowired
-    private MachineTemplateRepository templateRepo;
+    private MachineTemplateService machineTemplateService;
 
     @GetMapping
-    public ResponseEntity<?> getAllTemplates() {
-        List<MachineTemplate> templates = templateRepo.findAll();
-        List<MachineTemplateDto> dtos = templates.stream()
-            .map(MachineTemplateMapper::toDto)
-            .collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
+    public ResponseEntity<List<MachineTemplateDto>> getAllTemplates() {
+        return ResponseEntity.ok(machineTemplateService.getAllTemplates());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getTemplateById(@PathVariable Integer id) {
-        return templateRepo.findById(id)
-            .<ResponseEntity<?>>map(template -> ResponseEntity.ok(MachineTemplateMapper.toDto(template)))
-            .orElseGet(() ->
-                ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Template mit ID " + id + " nicht gefunden.")
-            );
+    public ResponseEntity<MachineTemplateDto> getTemplateById(@PathVariable Integer id) {
+        return ResponseEntity.ok(machineTemplateService.getTemplateById(id));
     }
 
     @PostMapping
-    public ResponseEntity<?> createTemplate(@RequestBody MachineTemplateDto dto) {
-        System.out.println("Request erhalten: " + dto.templateName + ", " + dto.attributeTemplates);
-        MachineTemplate entity = MachineTemplateMapper.fromDto(dto);
-        System.out.println("Entity erstellt: " + entity);
-        MachineTemplate saved = templateRepo.save(entity);
-        return ResponseEntity.ok(MachineTemplateMapper.toDto(saved));
+    public ResponseEntity<MachineTemplateDto> createTemplate(@RequestBody MachineTemplateDto dto) {
+        return ResponseEntity.ok(machineTemplateService.createTemplate(dto));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<MachineTemplateDto> updateTemplate(
+            @PathVariable Integer id, 
+            @RequestBody MachineTemplateDto updatedTemplate) {
+        return ResponseEntity.ok(machineTemplateService.updateTemplate(id, updatedTemplate));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteTemplate(@PathVariable Integer id) {
+        machineTemplateService.deleteTemplate(id);
+        return ResponseEntity.ok("Template mit ID " + id + " wurde gelöscht.");
     }
 }
