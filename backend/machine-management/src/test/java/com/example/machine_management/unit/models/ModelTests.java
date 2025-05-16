@@ -139,24 +139,6 @@ public class ModelTests {
         
         // Test INTEGER validation
         attr.setType(AttributeType.INTEGER);
-        attr.setAttributeValue("123"); // should work
-        assertThrows(IllegalArgumentException.class, () -> {
-            attr.setAttributeValue("not a number");
-        }, "Nicht-numerischer Wert sollte für INTEGER Type nicht erlaubt sein");
-            
-        // Test BOOLEAN validation
-        attr.setType(AttributeType.BOOLEAN);
-        attr.setAttributeValue("true"); // should work
-        attr.setAttributeValue("false"); // should work
-        assertThrows(IllegalArgumentException.class, () -> {
-            attr.setAttributeValue("not a boolean");
-        }, "Nicht-boolean Wert sollte für BOOLEAN Type nicht erlaubt sein");
-        
-        // Test STRING validation (should accept any non-empty string)
-        attr.setType(AttributeType.STRING);
-        attr.setAttributeValue("any string"); // should work
-        assertThrows(IllegalArgumentException.class, () -> {
-            attr.setAttributeValue("");
-        }, "Leerer String sollte nicht erlaubt sein");
+        //test neu schreiben attributeValue ist jetz teigene entität
     }
 }

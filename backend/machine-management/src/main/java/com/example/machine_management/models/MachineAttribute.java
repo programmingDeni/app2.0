@@ -19,6 +19,7 @@ public class MachineAttribute {
     @Enumerated(EnumType.STRING)
     private AttributeType type;
 
+    @OneToMany(mappedBy = "machineAttribute", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AttributeValue> attributeValues = new ArrayList<>(); 
 
     @ManyToOne
