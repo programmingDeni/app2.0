@@ -1,5 +1,82 @@
 package com.example.machine_management.unit.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import com.example.machine_management.dto.CreateMachineFromTemplateDto;
+import com.example.machine_management.dto.MachineDto;
+import com.example.machine_management.models.AttributeInTemplate;
+import com.example.machine_management.models.AttributeType;
+import com.example.machine_management.models.Machine;
+import com.example.machine_management.models.MachineAttribute;
+import com.example.machine_management.models.MachineTemplate;
+import com.example.machine_management.repository.MachineRepository;
+import com.example.machine_management.repository.MachineTemplateRepository;
+import com.example.machine_management.services.MachineService;
+
+@ExtendWith(MockitoExtension.class)
 public class MachineServiceTest {
-    
+
+    @InjectMocks
+    private MachineService machineService;
+
+    @Mock
+    private MachineTemplateRepository templateRepository;
+
+    @Mock
+    private MachineRepository machineRepository;
+
+    @Test
+    void createMachineFromTemplate_shouldCreateMachineWithAttributes() {
+        // GIVEN
+        int templateId = 1;
+        String machineName = "Fräse 2000";
+        CreateMachineFromTemplateDto dto = new CreateMachineFromTemplateDto(machineName, templateId);
+
+        MachineTemplate template = new MachineTemplate("Vorlage X");
+        ReflectionTestUtils.setField(template, "id", templateId);
+        AttributeInTemplate attr1 = new AttributeInTemplate("Strom", AttributeType.FLOAT, template);
+        AttributeInTemplate attr2 = new AttributeInTemplate("Druck", AttributeType.INTEGER, template);
+        template.setAttributeTemplates(new ArrayList<>(List.of(attr1, attr2)));
+
+
+        when(templateRepository.findById(templateId)).thenReturn(Optional.of(template));
+
+        // Wir geben einfach dieselbe Machine zurück beim Save
+        ArgumentCaptor<Machine> captor = ArgumentCaptor.forClass(Machine.class);
+        when(machineRepository.save(any(Machine.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        // WHEN
+        MachineDto result = machineService.createMachineFromTemplate(dto);
+
+        // THEN
+        verify(templateRepository).findById(templateId);
+        verify(machineRepository).save(captor.capture());
+
+        Machine savedMachine = captor.getValue();
+        assertEquals(machineName, savedMachine.getName());
+        assertEquals(template, savedMachine.getTemplate());
+        assertEquals(2, savedMachine.getAttributes().size());
+
+        List<String> attributeNames = savedMachine.getAttributes().stream()
+            .map(MachineAttribute::getAttributeName)
+            .toList();
+        assertTrue(attributeNames.contains("Strom"));
+        assertTrue(attributeNames.contains("Druck"));
+    }
 }

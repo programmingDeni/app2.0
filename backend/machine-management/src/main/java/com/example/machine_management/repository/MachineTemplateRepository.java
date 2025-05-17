@@ -11,7 +11,7 @@ import com.example.machine_management.models.MachineTemplate;
 
 public interface MachineTemplateRepository extends JpaRepository<MachineTemplate, Integer> {
 
-    @Query("SELECT t FROM MachineTemplate t LEFT JOIN FETCH t.attributes WHERE t.id = :id")
+    @Query("SELECT t FROM MachineTemplate t LEFT JOIN FETCH t.attributeTemplates WHERE t.id = :id")
     Optional<MachineTemplate> findByIdWithAttributes(@Param("id") Integer id);
 
 } 

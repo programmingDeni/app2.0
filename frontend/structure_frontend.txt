@@ -1,0 +1,15 @@
+src/
+├── types/
+│   └── machine.ts         ✅ dein Interface
+│   └── machineAttribute.ts
+├── services/
+│   └── machineService.ts  ✅ für API-Calls
+├── components/
+│   └── Machine/
+│       ├── MachineList.tsx        → Tabelle/Liste aller Maschinen
+│       ├── MachineDetails.tsx     → Details und Attribute einer Maschine
+│       ├── MachineForm.tsx        → Formular für Erstellen/Bearbeiten
+├── pages/
+│   └── machines/
+│       ├── index.tsx              → Aufruf von MachineList
+│       └── [id].tsx               → Zeigt MachineDetails + Form

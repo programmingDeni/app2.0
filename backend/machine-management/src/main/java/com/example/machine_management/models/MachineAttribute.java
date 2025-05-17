@@ -19,6 +19,7 @@ public class MachineAttribute {
     @Enumerated(EnumType.STRING)
     private AttributeType type;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "machineAttribute")
     private List<AttributeValue> attributeValues = new ArrayList<>(); 
 
     @ManyToOne
@@ -29,6 +30,7 @@ public class MachineAttribute {
 
     protected MachineAttribute() {}
 
+    //initialisierung ohne type 
     public MachineAttribute(Machine besitzendeMachine, String attributeName){
         if (besitzendeMachine == null) {
             throw new IllegalArgumentException("Machine darf nicht null sein");
@@ -39,6 +41,12 @@ public class MachineAttribute {
         this.machine = besitzendeMachine;
         this.attributeName = attributeName;
         besitzendeMachine.getAttributes().add(this);
+    }
+
+    //initialisierung mit type
+    public MachineAttribute(Machine besitzendeMachine, String attributeName, AttributeType type){
+        this(besitzendeMachine, attributeName);
+        this.type = type;
     }
 
     // Getter + Setter
@@ -96,7 +104,20 @@ public class MachineAttribute {
         return attributeValues;
     }
 
-    public void setAttributeValue(AttributeValue attributeValue) {
+    public void setAttributeValues(List<AttributeValue> attributeValues) {
+        // Wenn null übergeben wurde → leere Liste setzen
+        this.attributeValues = new ArrayList<>();
+
+        if (attributeValues != null) {
+            for (AttributeValue attributeValue : attributeValues) {
+                this.attributeValues.add(attributeValue);
+                attributeValue.setMachineAttribute(this); // Bidirektionale Beziehung setzen
+            }
+        }
+    }
+
+
+    public void addAttributeValue(AttributeValue attributeValue) {
         if (attributeValue == null) {
             throw new IllegalArgumentException("AttributeValue darf nicht leer sein");
         }

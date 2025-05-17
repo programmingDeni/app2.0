@@ -1,24 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import {
+  deleteAttribute,
+  getAllAttributes,
+  createAttribute,
+} from "@/app/services/machineAttribute.service";
 import { useParams, useRouter } from "next/navigation";
-import MachineAttributeForm, {
-  MachineAttributeFormDto,
-} from "@/components/Attribute/MachineAttributeForm";
+import AddAttributeForm from "@/components/Attribute/AddAttributeForm";
+import { Machine } from "@/types";
 import MachineAttributeList from "@/components/Attribute/MachineAttributeList";
-
-interface Machine {
-  id?: number;
-  name?: string;
-  attributes: MachineAttribute[];
-}
-
-interface MachineAttribute {
-  id: number;
-  attributeName: string;
-  attributeType: string;
-  machineId: number;
-}
 
 export default function MachineDetails() {
   const [machine, setMachine] = useState<Machine | null>(null);
@@ -28,15 +19,8 @@ export default function MachineDetails() {
   //machinen name bearbeiten
   const [editName, setEditName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  //attribute bearbeiten
-  const [editingAttr, setEditingAttr] = useState<number | null>(null);
-  const [attributeNameEdit, setattributeNameEdit] = useState<{
-    [key: number]: string;
-  }>({}); // namen bearbeiten
-  const [typeEdits, setTypeEdits] = useState<{ [id: number]: string }>({}); // typen bearbeiten
 
-  //mögliche typen
-  const attributeTypes = ["STRING", "INTEGER", "FLOAT", "BOOLEAN"];
+  const [showAddAttribute, setShowAddAttribute] = useState(false);
 
   useEffect(() => {
     if (!params.id) return;
@@ -56,8 +40,8 @@ export default function MachineDetails() {
     fetchMachine();
   }, [params.id]);
 
-  const addAttributes = () => {
-    router.push(`/AddAttribute?machineId=${params.id}`);
+  const toggleShowAddAttribute = () => {
+    setShowAddAttribute(!showAddAttribute);
   };
 
   const saveMachineName = async () => {
@@ -72,6 +56,24 @@ export default function MachineDetails() {
       setIsEditing(false);
     } catch (err) {
       console.error("Fehler beim Aktualisieren:", err);
+    }
+  };
+
+  const handleDeleteAttribute = async (attributeId: number) => {
+    try {
+      await deleteAttribute(attributeId);
+      setMachine((prev) =>
+        prev
+          ? {
+              ...prev,
+              attributes: prev.attributes.filter(
+                (attr) => attr.id !== attributeId
+              ),
+            }
+          : prev
+      );
+    } catch (err) {
+      console.error("Fehler beim Löschen des Attributs:", err);
     }
   };
 
@@ -99,12 +101,29 @@ export default function MachineDetails() {
       )}
       <MachineAttributeList
         attributes={machine.attributes}
-        machineId={machine.id!}
-        onAttributesUpdated={(updated) =>
-          setMachine((prev) => (prev ? { ...prev, attributes: updated } : prev))
-        }
+        onDelete={handleDeleteAttribute}
       />
-      <button onClick={() => addAttributes()}> Attribute hinzufügen </button>
+
+      <button onClick={() => toggleShowAddAttribute()}>
+        {" "}
+        {showAddAttribute ? "Zuklappen" : "Attribut hinzufügen"}{" "}
+      </button>
+      {showAddAttribute && (
+        <AddAttributeForm
+          machineId={machine.id!}
+          onAttributeAdded={(newAttr) =>
+            setMachine((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    attributes: [...prev.attributes, newAttr],
+                  }
+                : prev
+            )
+          }
+          onCancel={() => setShowAddAttribute(false)}
+        />
+      )}
     </div>
   );
 }

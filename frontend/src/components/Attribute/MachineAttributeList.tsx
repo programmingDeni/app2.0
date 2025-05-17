@@ -1,80 +1,39 @@
 "use client";
-import React, { useState } from "react";
-import MachineAttributeForm, {
-  MachineAttributeFormDto,
-} from "./MachineAttributeForm";
-import axios from "axios";
-
-interface MachineAttribute {
-  id: number;
-  attributeName: string;
-  attributeType: string;
-  attributeValue?: string;
-  machineId: number;
-}
+import React from "react";
+import { MachineAttribute } from "@/types/machineAttribute";
 
 interface Props {
   attributes: MachineAttribute[];
-  machineId: number;
-  onAttributesUpdated: (newAttributes: MachineAttribute[]) => void;
+  onDelete?: (id: number) => void;
 }
 
-export default function MachineAttributeList({
-  attributes,
-  machineId,
-  onAttributesUpdated,
-}: Props) {
-  const [editingAttr, setEditingAttr] = useState<number | null>(null);
-
-  const handleUpdate = async (updated: MachineAttributeFormDto) => {
-    const res = await axios.put(
-      `http://localhost:8080/api/attributes/${updated.id}`,
-      updated
-    );
-    onAttributesUpdated(
-      attributes.map((a) => (a.id === res.data.id ? res.data : a))
-    );
-    setEditingAttr(null);
-  };
-
-  const handleDelete = async (attrId: number) => {
-    await axios.delete(`http://localhost:8080/api/attributes/${attrId}`);
-    onAttributesUpdated(attributes.filter((a) => a.id !== attrId));
-  };
+export default function MachineAttributeList({ attributes, onDelete }: Props) {
+  if (!attributes.length) return <div>Keine Attribute vorhanden.</div>;
 
   return (
-    <>
-      <h2>Attribute</h2>
-      {attributes.length === 0 ? (
-        <p>Keine Attribute vorhanden.</p>
-      ) : (
-        <ul>
-          {attributes.map((attr) => (
-            <li key={attr.id}>
-              {editingAttr === attr.id ? (
-                <MachineAttributeForm
-                  machineId={machineId}
-                  attribute={{
-                    id: attr.id,
-                    attributeName: attr.attributeName,
-                    attributeType: attr.attributeType as any,
-                    attributeValue: attr.attributeValue ?? "", // optional
-                    machineId,
-                  }}
-                  onSubmit={handleUpdate}
-                  onCancel={() => setEditingAttr(null)}
-                />
-              ) : (
-                <>
-                  {attr.attributeName + " " + attr.attributeValue}
-                  <button onClick={() => setEditingAttr(attr.id)}>✏️</button>
-                  <button onClick={() => handleDelete(attr.id)}>🗑️</button>
-                </>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
-    </>
+    <ul style={{ padding: 0, listStyle: "none" }}>
+      {attributes.map((attr) => (
+        <li
+          key={attr.id}
+          style={{
+            padding: "0.5rem",
+            marginBottom: "0.5rem",
+            border: "1px solid #ccc",
+            borderRadius: "6px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <span>
+            <strong>{attr.attributeName}</strong> &nbsp;(
+            <em>{attr.attributeType}</em>)
+          </span>
+          {onDelete && (
+            <button onClick={() => onDelete(attr.id)}>Löschen</button>
+          )}
+        </li>
+      ))}
+    </ul>
   );
 }

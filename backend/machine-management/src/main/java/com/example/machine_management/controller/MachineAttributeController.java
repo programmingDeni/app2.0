@@ -6,10 +6,13 @@ import com.example.machine_management.models.MachineAttribute;
 import com.example.machine_management.repository.MachineAttributeRepository;
 import com.example.machine_management.repository.MachineRepository;
 import com.example.machine_management.models.AttributeType;
+import com.example.machine_management.services.MachineAttributeService;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,76 +20,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/attributes")
+@RequestMapping("/api/machine-attributes")
 @CrossOrigin(origins = "http://localhost:3000")
 public class MachineAttributeController {
 
     @Autowired
-    private MachineRepository machineRepository;
-
-    @Autowired
-    private MachineAttributeRepository attributeRepository;
+    private MachineAttributeService machineAttributeService;
 
     @GetMapping
-    public ResponseEntity<?> getAllAttributes() {
-        List<MachineAttribute> attributes = attributeRepository.findAll();
-        List<MachineAttributeDto> dtoList = attributes.stream()
-            .map(MachineAttributeMapper::toDto)
-            .collect(Collectors.toList());
-        return ResponseEntity.ok(dtoList);
+    public List<MachineAttributeDto> getAllAttributes() {
+        return machineAttributeService.getAllAttributes();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getAttributeById(@PathVariable Integer id) {
-        Optional<MachineAttribute> attribute = attributeRepository.findById(id);
-        return attribute
-            .<ResponseEntity<?>>map(attr -> ResponseEntity.ok(MachineAttributeMapper.toDto(attr)))
-            .orElseGet(() ->
-                ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Attribut mit ID " + id + " nicht gefunden.")
-            );
+        return ResponseEntity.ok(machineAttributeService.getAttributeById(id));
     }
 
     @PostMapping
-    public ResponseEntity<?> addAttribute(@RequestBody MachineAttributeDto request) {
-        System.out.println("Request erhalten: " + request.attributeName + ", " + request.machineId + ", " + request.attributeType);
-        return machineRepository.findById(request.machineId)    //finde machine deren attribute gepostet werden soll
-            .<ResponseEntity<?>>map(machine -> {
-                MachineAttribute attr = new MachineAttribute(machine,request.attributeName);       //erstelle die neuen attribute
-                attr.setType(AttributeType.valueOf(request.attributeType));
-                attr.setAttributeValue(request.attributeValue);
-                MachineAttribute saved = attributeRepository.save(attr);
-                return ResponseEntity.ok(MachineAttributeMapper.toDto(saved));
-            })
-            .orElseGet(() ->
-                ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Maschine mit ID " + request.machineId + " nicht gefunden.")
-            );
+    public ResponseEntity<?> createMachineAttribute(@RequestBody MachineAttributeDto machineAttributeDto) {
+        return ResponseEntity.ok(machineAttributeService.createMachineAttribute(machineAttributeDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateAttribute(@PathVariable Integer id, @RequestBody MachineAttributeDto request) {
-        return attributeRepository.findById(id)
-            .<ResponseEntity<?>>map(attr -> {
-                attr.setAttributeName(request.attributeName);
-                attr.setType(AttributeType.valueOf(request.attributeType));
-                attr.setAttributeValue(request.attributeValue);
-                MachineAttribute saved = attributeRepository.save(attr);
-                return ResponseEntity.ok(MachineAttributeMapper.toDto(saved));
-            })
-            .orElseGet(() ->
-                ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Attribut mit ID " + id + " nicht gefunden.")
-            );
+    public ResponseEntity<?> updateAttribute(@PathVariable Integer id, @RequestBody MachineAttributeDto dto) {
+        return ResponseEntity.ok(machineAttributeService.updateAttribute(id, dto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAttribute(@PathVariable Integer id) {
-        if (!attributeRepository.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Attribut mit ID " + id + " nicht gefunden.");
-        }
-        attributeRepository.deleteById(id);
-        return ResponseEntity.ok("Attribut mit ID " + id + " wurde gelöscht.");
+        machineAttributeService.deleteAttribute(id);
+        return ResponseEntity.ok("Machine Attribut mit id" + id + "Gelöscht");
     }
 }

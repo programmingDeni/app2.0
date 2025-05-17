@@ -1,8 +1,10 @@
 package com.example.machine_management.controller;
 
+import com.example.machine_management.dto.CreateMachineFromTemplateDto;
 import com.example.machine_management.dto.MachineDto;
 import com.example.machine_management.models.Machine;
 import com.example.machine_management.repository.MachineRepository;
+import com.example.machine_management.services.MachineService;
 import com.example.machine_management.mapper.MachineMapper;
 
 import java.util.List;
@@ -27,78 +29,41 @@ import org.springframework.web.bind.annotation.RestController;
 public class MachineController {
     
     @Autowired
-    private MachineRepository machineRepository;
+    private MachineService machineService;
 
     @GetMapping
-    public ResponseEntity<?> getAllMachines() {
-        try {
-            List<Machine> machines = machineRepository.findAll();
-
-            List <MachineDto> machineDtos = machines.stream()
-                .map(MachineMapper::toDto)
-                .collect(Collectors.toList());
-
-            return ResponseEntity.ok(machineDtos);
-        } catch (Exception e) {
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(e.getMessage());
-        }
+    public ResponseEntity<List<MachineDto>> getAllMachines() {
+        return ResponseEntity.ok(machineService.getAllMachines());
     }    
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getMachine(@PathVariable Integer id) {
-        return machineRepository.findById(id)
-            .<ResponseEntity<?>>map(machine -> ResponseEntity.ok(MachineMapper.toDto(machine)))
-            .orElseGet(() ->    
-                ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Maschine mit ID " + id + " nicht gefunden.")
-            );
+    public ResponseEntity<MachineDto> getMachine(@PathVariable Integer id) {
+        return ResponseEntity.ok(machineService.getMachineById(id));
     }
-    
 
     @PostMapping
-    public ResponseEntity<?> createMachine(@RequestBody Machine machine) {
-        try {
-            Machine saved = machineRepository.save(machine);
-            return ResponseEntity.ok(MachineMapper.toDto(saved));
-        } catch (Exception e) {
-            return ResponseEntity
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body("Fehler beim hinzufuegen: " + e.getClass().getSimpleName()); 
-        }
+    public ResponseEntity<MachineDto> createMachine(@RequestBody MachineDto machineDto) {
+        return ResponseEntity.ok(machineService.createMachine(machineDto));
     }
+
+    @PostMapping("/from-template")
+    public ResponseEntity<MachineDto> createMachineFromTemplate(@RequestBody CreateMachineFromTemplateDto dto) {
+        MachineDto created = machineService.createMachineFromTemplate(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateMachine(@PathVariable Integer id, @RequestBody Machine updatedMachine) {
-        return machineRepository.findById(id)
-            .map(machine -> {
-                String newName = updatedMachine.getName();
-                if (newName == null || newName.trim().isEmpty()) {
-                    return ResponseEntity.badRequest().body("Maschinenname darf nicht leer sein.");
-                }
-                machine.setName(newName);
-                Machine saved = machineRepository.save(machine);
-                return ResponseEntity.ok(MachineMapper.toDto(saved));
-            })
-            .orElseGet(() ->
-                ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Maschine mit ID " + id + " nicht gefunden.")
-            );
+    public ResponseEntity<MachineDto> updateMachine(
+            @PathVariable Integer id, 
+            @RequestBody MachineDto machineDto) {
+        return ResponseEntity.ok(machineService.updateMachine(id, machineDto));
     }
-
-    
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteMachine(@PathVariable Integer id) {
-        if (!machineRepository.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Maschine mit ID " + id + " nicht gefunden.");
-        }
-
-        machineRepository.deleteById(id);
-        return ResponseEntity.ok("Maschine mit ID " + id + " wurde gelöscht.");
+    public ResponseEntity<Void> deleteMachine(@PathVariable Integer id) {
+        machineService.deleteMachine(id);
+        return ResponseEntity.ok().build();
     }
-
-
-
 }
+

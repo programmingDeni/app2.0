@@ -6,6 +6,7 @@ public class AttributeTemplateDto {
     public String attributeInTemplateName;
     public String attributeInTemplateType;
     public int machineTemplateId;
+    // nur ids in dtos
 
     public AttributeTemplateDto() {}
 
