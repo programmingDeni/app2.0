@@ -3,13 +3,13 @@ package com.example.machine_management.dto;
 public class CreateMachineFromTemplateDto {
 
     public String machineName;
-    public Integer templateId;
+    public Integer machineTemplateId;
 
     public CreateMachineFromTemplateDto() {}
 
-    public CreateMachineFromTemplateDto(String machineName, Integer templateId) {
+    public CreateMachineFromTemplateDto(String machineName, Integer machineTemplateId) {
         this.machineName = machineName;
-        this.templateId = templateId;
+        this.machineTemplateId = machineTemplateId;
     }
     
 }

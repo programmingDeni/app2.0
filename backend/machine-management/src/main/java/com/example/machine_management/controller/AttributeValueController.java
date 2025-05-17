@@ -1,12 +1,16 @@
 package com.example.machine_management.controller;
 
 import com.example.machine_management.dto.AttributeValueDto;
+import com.example.machine_management.mapper.AttributeValueMapper;
+import com.example.machine_management.models.AttributeValue;
 import com.example.machine_management.services.AttributeValueService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/attribute-values")
@@ -18,39 +22,93 @@ public class AttributeValueController {
 
     @PostMapping
     public ResponseEntity<AttributeValueDto> createAttributeValue(@RequestBody AttributeValueDto dto) {
-        return ResponseEntity.ok(attributeValueService.createOrUpdateAttributeValue(dto));
+        // 1. Validate
+        if (dto == null || !isValidValueDto(dto)) {
+            throw new IllegalArgumentException("Invalid attribute value data");
+        }
+
+        // 2. Call service & get entity
+        AttributeValue created = attributeValueService.createOrUpdateAttributeValue(dto);
+
+        // 3. Map to DTO and return
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(AttributeValueMapper.toDto(created));
     }
 
     @GetMapping
     public ResponseEntity<List<AttributeValueDto>> getAllAttributeValues() {
-        return ResponseEntity.ok(attributeValueService.getAllAttributeValues());
-    }
-
-    @GetMapping("/by-attribute/{attributeId}")
-    public ResponseEntity<List<AttributeValueDto>> getByMachineAttributeId(@PathVariable Integer attributeId) {
-        return ResponseEntity.ok(attributeValueService.getAttributeValuesByMachineAttributeId(attributeId));
-    }
-
-    @GetMapping("/by-year/{year}")
-    public ResponseEntity<List<AttributeValueDto>> getAttributeValuesByYear(@PathVariable Integer year) {
-        return ResponseEntity.ok(attributeValueService.getAttributeValuesByYear(year));
+        // 1. Get entities
+        List<AttributeValue> values = attributeValueService.getAllAttributeValues();
+        
+        // 2. Map and return
+        return ResponseEntity.ok(values.stream()
+            .map(AttributeValueMapper::toDto)
+            .collect(Collectors.toList()));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AttributeValueDto> getById(@PathVariable Integer id) {
-        return ResponseEntity.ok(attributeValueService.getAttributeValueById(id));
+        // 1. Validate
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("Invalid ID");
+        }
+
+        // 2. Get entity
+        AttributeValue value = attributeValueService.getAttributeValueById(id);
+
+        // 3. Map and return
+        return ResponseEntity.ok(AttributeValueMapper.toDto(value));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAttributeValue(@PathVariable Integer id) {
-        attributeValueService.deleteAttributeValue(id);
-        return ResponseEntity.ok().build();
+    @GetMapping("/by-attribute/{attributeId}")
+    public ResponseEntity<List<AttributeValueDto>> getByAttributeId(@PathVariable Integer attributeId) {
+        // 1. Validate
+        if (attributeId == null || attributeId <= 0) {
+            throw new IllegalArgumentException("Invalid attribute ID");
+        }
+
+        // 2. Get entities
+        List<AttributeValue> values = attributeValueService.getAttributeValuesByMachineAttributeId(attributeId);
+
+        // 3. Map and return
+        return ResponseEntity.ok(values.stream()
+            .map(AttributeValueMapper::toDto)
+            .collect(Collectors.toList()));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<AttributeValueDto> updateAttributeValue(
-            @PathVariable Integer id, 
+            @PathVariable Integer id,
             @RequestBody AttributeValueDto dto) {
-        return ResponseEntity.ok(attributeValueService.createOrUpdateAttributeValue(dto));
+        // 1. Validate
+        if (id == null || id <= 0 || dto == null || !isValidValueDto(dto)) {
+            throw new IllegalArgumentException("Invalid update data");
+        }
+
+        // 2. Update and get entity
+        AttributeValue updated = attributeValueService.createOrUpdateAttributeValue(dto);
+
+        // 3. Map and return
+        return ResponseEntity.ok(AttributeValueMapper.toDto(updated));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAttributeValue(@PathVariable Integer id) {
+        // 1. Validate
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("Invalid ID");
+        }
+
+        // 2. Delete
+        attributeValueService.deleteAttributeValue(id);
+
+        // 3. Return success
+        return ResponseEntity.noContent().build();
+    }
+
+    private boolean isValidValueDto(AttributeValueDto dto) {
+        return dto.attributeValue != null &&
+               !dto.attributeValue.trim().isEmpty() &&
+               dto.machineAttributeId > 0;
     }
 }

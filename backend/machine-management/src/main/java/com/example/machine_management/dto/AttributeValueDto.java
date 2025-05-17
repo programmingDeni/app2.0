@@ -4,23 +4,23 @@ import com.example.machine_management.models.MachineAttribute;
 
 public class AttributeValueDto {
     public Integer id;
-    public int year;
+    public int attributeValueYear;
     public Integer machineAttributeId;
     public String attributeValue;
 
     public AttributeValueDto() {}
 
-    public AttributeValueDto(Integer id, int year, Integer machineAttributeId) {
+    public AttributeValueDto(Integer id, int attributeValueYear, Integer machineAttributeId) {
         this.id = id;
-        this.year = year;
+        this.attributeValueYear = attributeValueYear;
         this.machineAttributeId = machineAttributeId;
         this.attributeValue = "";
     }
 
-    public AttributeValueDto(Integer id,int year, Integer machineAttributeId, String value) {
+    public AttributeValueDto(Integer id,int year, Integer machineAttributeId, String attributeValue) {
         this.id = id;
-        this.year = year;
+        this.attributeValueYear = year;
         this.machineAttributeId = machineAttributeId;
-        this.attributeValue = value;
+        this.attributeValue = attributeValue;
     }
 }

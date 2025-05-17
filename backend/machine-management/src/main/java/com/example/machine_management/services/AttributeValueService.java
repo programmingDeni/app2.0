@@ -27,46 +27,35 @@ public class AttributeValueService {
     private MachineAttributeRepository machineAttributeRepository;
     
     //CRUD
-    public List<AttributeValueDto> getAllAttributeValues() {
-        return attributeValueRepository.findAll()
-            .stream()
-            .map(AttributeValueMapper::toDto)
-            .collect(Collectors.toList());
+    public List<AttributeValue> getAllAttributeValues() {
+        return attributeValueRepository.findAll();
     }
 
-    public AttributeValueDto getAttributeValueById(Integer id) {
-        AttributeValue value = attributeValueRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException("Attributwert mit ID " + id + " nicht gefunden."));
-        return AttributeValueMapper.toDto(value);
+    public AttributeValue getAttributeValueById(Integer id) {
+        return attributeValueRepository.findById(id).orElseThrow(() -> new NotFoundException("Attributwert mit ID " + id + " nicht gefunden."));
     }
 
-    public List<AttributeValueDto> getAttributeValuesByMachineAttributeId(Integer attributeId) {
-        return attributeValueRepository.findByMachineAttributeId(attributeId)
-            .stream()
-            .map(AttributeValueMapper::toDto)
-            .collect(Collectors.toList());
+    public List<AttributeValue> getAttributeValuesByMachineAttributeId(Integer attributeId) {
+        return attributeValueRepository.findByMachineAttributeId(attributeId);
     }
 
-    public List<AttributeValueDto> getAttributeValuesByYear(Integer year) {
-        return attributeValueRepository.findAllByYear(year)
-            .stream()
-            .map(AttributeValueMapper::toDto)
-            .collect(Collectors.toList());
+    public List<AttributeValue> getAttributeValuesByYear(Integer year) {
+        return attributeValueRepository.findAllByAttributeValueYear(year);
     }
 
-    public AttributeValueDto createOrUpdateAttributeValue(AttributeValueDto attributeValueDto) {
+    public AttributeValue createOrUpdateAttributeValue(AttributeValueDto attributeValueDto) {
         //MachineAttribute attribute = machineAttributeRepository.findBy attributeValueDto.machineAttributeId;
 
         // 1. Existenzprüfung
         MachineAttribute existingAttribute = machineAttributeRepository.findById(attributeValueDto.machineAttributeId)
             .orElseThrow(() -> new IllegalArgumentException("MachineAttribute not found"));
 
-        int year = attributeValueDto.year;
+        int year = attributeValueDto.attributeValueYear;
         String value = attributeValueDto.attributeValue;
 
         // 2. Gibt es schon einen Wert für dieses Jahr?
         Optional<AttributeValue> existingValueOpt = attributeValueRepository
-            .findByMachineAttributeAndYear(existingAttribute, year);
+            .findByMachineAttributeAndAttributeValueYear(existingAttribute, year);
 
         AttributeValue toSave;
 
@@ -83,7 +72,7 @@ public class AttributeValueService {
 
         // 5. Speichern
         AttributeValue saved = attributeValueRepository.save(toSave);
-        return AttributeValueMapper.toDto(saved);
+        return saved; 
     }
 
     public void deleteAttributeValue(Integer id) {

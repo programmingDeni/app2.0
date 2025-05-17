@@ -10,8 +10,8 @@ import com.example.machine_management.models.MachineAttribute;
 public interface AttributeValueRepository extends JpaRepository<AttributeValue, Integer> {
     //muss auf jeden fall möglich sein über das machinheneAttribute zu fidnen 
     List<AttributeValue> findAllByMachineAttribute(MachineAttribute machineAttribute);
-    List<AttributeValue> findAllByYear(int year);
-    Optional<AttributeValue> findByMachineAttributeAndYear(MachineAttribute machineAttribute, int year);
+    List<AttributeValue> findAllByAttributeValueYear(int year);
+    Optional<AttributeValue> findByMachineAttributeAndAttributeValueYear(MachineAttribute machineAttribute, int year);
 
     List<AttributeValue>findByMachineAttributeId(Integer machineAttributeId);
 

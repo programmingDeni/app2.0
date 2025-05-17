@@ -19,33 +19,29 @@ public class MachineTemplateService {
     @Autowired
     private MachineTemplateRepository templateRepo;
 
-    public List<MachineTemplateDto> getAllTemplates() {
-        List<MachineTemplate> templates = templateRepo.findAll();
-        return templates.stream()
-            .map(MachineTemplateMapper::toDto)
-            .collect(Collectors.toList());
+    public List<MachineTemplate> getAllTemplates() {
+        return templateRepo.findAll();
     }
 
-    public MachineTemplateDto getTemplateById(Integer id) {
-        MachineTemplate template = templateRepo.findById(id)
+    public MachineTemplate getTemplateById(Integer id) {
+        return templateRepo.findById(id)
             .orElseThrow(() -> new NotFoundException("Template mit ID " + id + " nicht gefunden."));
-        return MachineTemplateMapper.toDto(template);
     }
 
     @Transactional
-    public MachineTemplateDto createTemplate(MachineTemplateDto dto) {
+    public MachineTemplate createTemplate(MachineTemplateDto dto) {
         MachineTemplate template = new MachineTemplate();
         template.setTemplateName(dto.templateName); // Validation happens in entity
-        return MachineTemplateMapper.toDto(templateRepo.save(template));
+        return template;
     }
 
     @Transactional
-    public MachineTemplateDto updateTemplate(Integer id, MachineTemplateDto dto) {
+    public MachineTemplate updateTemplate(Integer id, MachineTemplateDto dto) {
         MachineTemplate template = templateRepo.findById(id)
             .orElseThrow(() -> new NotFoundException("Template mit ID " + id + " nicht gefunden."));
         
         template.setTemplateName(dto.templateName); // Validation happens in entity
-        return MachineTemplateMapper.toDto(templateRepo.save(template));
+        return template;
     }
 
     @Transactional

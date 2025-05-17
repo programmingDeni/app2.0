@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import com.example.machine_management.models.MachineTemplate;
+import com.example.machine_management.mapper.MachineTemplateMapper;
 
 @RestController
 @RequestMapping("/api/machine-templates")
@@ -16,33 +20,79 @@ import java.util.List;
 public class MachineTemplateController {
 
     @Autowired
-    private MachineTemplateService machineTemplateService;
+    private MachineTemplateService templateService;
+
+    @PostMapping
+    public ResponseEntity<MachineTemplateDto> createTemplate(@RequestBody MachineTemplateDto dto) {
+        // 1. Validate
+        if (dto == null || !isValidTemplateDto(dto)) {
+            throw new IllegalArgumentException("Invalid template data");
+        }
+
+        // 2. Create entity
+        MachineTemplate created = templateService.createTemplate(dto);
+
+        // 3. Map and return
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(MachineTemplateMapper.toDto(created));
+    }
 
     @GetMapping
     public ResponseEntity<List<MachineTemplateDto>> getAllTemplates() {
-        return ResponseEntity.ok(machineTemplateService.getAllTemplates());
+        // 1. Get entities
+        List<MachineTemplate> templates = templateService.getAllTemplates();
+
+        // 2. Map and return
+        return ResponseEntity.ok(templates.stream()
+            .map(MachineTemplateMapper::toDto)
+            .collect(Collectors.toList()));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<MachineTemplateDto> getTemplateById(@PathVariable Integer id) {
-        return ResponseEntity.ok(machineTemplateService.getTemplateById(id));
-    }
+        // 1. Validate
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("Invalid ID");
+        }
 
-    @PostMapping
-    public ResponseEntity<MachineTemplateDto> createTemplate(@RequestBody MachineTemplateDto dto) {
-        return ResponseEntity.ok(machineTemplateService.createTemplate(dto));
+        // 2. Get entity
+        MachineTemplate template = templateService.getTemplateById(id);
+
+        // 3. Map and return
+        return ResponseEntity.ok(MachineTemplateMapper.toDto(template));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<MachineTemplateDto> updateTemplate(
-            @PathVariable Integer id, 
-            @RequestBody MachineTemplateDto updatedTemplate) {
-        return ResponseEntity.ok(machineTemplateService.updateTemplate(id, updatedTemplate));
+            @PathVariable Integer id,
+            @RequestBody MachineTemplateDto dto) {
+        // 1. Validate
+        if (id == null || id <= 0 || dto == null || !isValidTemplateDto(dto)) {
+            throw new IllegalArgumentException("Invalid update data");
+        }
+
+        // 2. Update entity
+        MachineTemplate updated = templateService.updateTemplate(id, dto);
+
+        // 3. Map and return
+        return ResponseEntity.ok(MachineTemplateMapper.toDto(updated));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTemplate(@PathVariable Integer id) {
-        machineTemplateService.deleteTemplate(id);
-        return ResponseEntity.ok("Template mit ID " + id + " wurde gelöscht.");
+    public ResponseEntity<Void> deleteTemplate(@PathVariable Integer id) {
+        // 1. Validate
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("Invalid ID");
+        }
+
+        // 2. Delete
+        templateService.deleteTemplate(id);
+
+        // 3. Return success
+        return ResponseEntity.noContent().build();
+    }
+
+    private boolean isValidTemplateDto(MachineTemplateDto dto) {
+        return dto.templateName != null && !dto.templateName.trim().isEmpty();
     }
 }

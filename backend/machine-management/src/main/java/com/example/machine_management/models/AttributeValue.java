@@ -16,10 +16,10 @@ public class AttributeValue {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "attribute_value")
     private String attributeValue;
 
-    private int year;
+    @Column(name = "")
+    private int attributeValueYear;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "machine_attribute_id", nullable = false)
@@ -30,7 +30,7 @@ public class AttributeValue {
     //Konstruktor mit Jahr
     public AttributeValue(MachineAttribute machineAttribute, int year){
         this.machineAttribute = machineAttribute;
-        this.year = year;
+        this.attributeValueYear = year;
         machineAttribute.getAttributeValues().add(this);
         attributeValue = "";
     }
@@ -53,12 +53,12 @@ public class AttributeValue {
         this.attributeValue = value;
     }
 
-    public int getYear() {
-        return year;
+    public int getAttributeValueYear() {
+        return attributeValueYear;
     }
 
-    public void setYear(int year) {
-        this.year = year;
+    public void setAttributeValueYear(int year) {
+        this.attributeValueYear = year;
     }
 
     public MachineAttribute getMachineAttribute() {

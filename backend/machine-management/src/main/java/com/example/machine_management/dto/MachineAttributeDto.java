@@ -2,6 +2,7 @@ package com.example.machine_management.dto;
 
 import java.util.List;
 
+
 public class MachineAttributeDto {
 
     public int id;

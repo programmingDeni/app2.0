@@ -25,21 +25,18 @@ public class MachineAttributeService {
     @Autowired
     private MachineAttributeRepository attributeRepository;
 
-    public List<MachineAttributeDto> getAllAttributes() {
-        return attributeRepository.findAll()
-            .stream()
-            .map(MachineAttributeMapper::toDto)
-            .collect(Collectors.toList());
+    public List<MachineAttribute> getAllAttributes() {
+        return attributeRepository.findAll();
     }
 
-    public MachineAttributeDto getAttributeById(Integer id) {
+    public MachineAttribute getAttributeById(Integer id) {
         //finde attribut oder werfe fehler
         MachineAttribute attribute = attributeRepository.findById(id).orElseThrow(() -> new NotFoundException("Attribut mit ID " + id + " nicht gefunden."));
         //konvertiere zu dto und return 
-        return MachineAttributeMapper.toDto(attribute);
+        return attribute;
     }
 
-    public MachineAttributeDto createMachineAttribute(MachineAttributeDto request) {
+    public MachineAttribute createMachineAttribute(MachineAttributeDto request) {
         //finde machine oder werfe fehler
         Machine machine = machineRepository.findById(request.machineId).orElseThrow(() -> new NotFoundException("Maschine mit ID " + request.machineId + " nicht gefunden."));
         //erstelle neues attribute mit machine, name und type 
@@ -47,22 +44,13 @@ public class MachineAttributeService {
         //speichere attribute
         MachineAttribute saved = attributeRepository.save(attr);
         //konvertiere zu dto und return
-        return MachineAttributeMapper.toDto(saved);
+        return saved;
     }
 
 
-    public MachineAttributeDto updateAttribute(Integer id, MachineAttributeDto request) {
+    public MachineAttribute updateAttribute(Integer id, MachineAttributeDto request) {
         //finde attribute oder werfe fehler
-        return attributeRepository.findById(id)
-            .map(attr -> {
-                //TODO: 
-                ////attributname und typ updaten, machine anschienend nciht 
-                attr.setAttributeName(request.attributeName);
-                attr.setType(AttributeType.valueOf(request.attributeType));
-                MachineAttribute saved = attributeRepository.save(attr);
-                return MachineAttributeMapper.toDto(saved);
-            })
-            .orElseThrow(() -> new NotFoundException("Attribut mit ID " + id + " nicht gefunden."));
+        return attributeRepository.findById(id).orElseThrow(() -> new NotFoundException("Attribut mit ID " + id + " nicht gefunden."));
     }
 
     public void deleteAttribute(Integer id) {

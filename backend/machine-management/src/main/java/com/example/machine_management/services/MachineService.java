@@ -26,34 +26,32 @@ public class MachineService {
     @Autowired
     private MachineTemplateRepository machineTemplateRepository;
 
-    public List<MachineDto> getAllMachines() {
-        return machineRepository.findAll()
-            .stream()
-            .map(MachineMapper::toDto)
-            .collect(Collectors.toList());
+    public List<Machine> getAllMachines() {
+        return machineRepository.findAll();
     }
 
-    public MachineDto getMachineById(Integer id) {
+    public Machine getMachineById(Integer id) {
         Machine machine = machineRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Maschine mit ID " + id + " nicht gefunden."));
-        return MachineMapper.toDto(machine);
+        return machine;
     }
 
-    public MachineDto createMachine(MachineDto machineDto) {
+    public Machine createMachine(MachineDto machineDto) {
         if (machineDto.name == null || machineDto.name.trim().isEmpty()) {
             throw new IllegalArgumentException("Maschinenname darf nicht leer sein.");
         }
         
         Machine machine = new Machine(machineDto.name);
         Machine saved = machineRepository.save(machine);
-        return MachineMapper.toDto(saved);
+        return saved;
     }
 
-    public MachineDto createMachineFromTemplate(CreateMachineFromTemplateDto dto) {
+    public Machine createMachineFromTemplate(CreateMachineFromTemplateDto dto) {
         //TODO: machine erstellen mit template
 
         //template finden oder fehler werfen
-        MachineTemplate template = machineTemplateRepository.findById(dto.templateId).orElseThrow(() -> new NotFoundException("Template mit ID " + dto.templateId + " nicht gefunden."));
+        MachineTemplate template = machineTemplateRepository.findById(dto.machineTemplateId).orElseThrow(() 
+        -> new NotFoundException("Template mit ID " + dto.machineTemplateId + " nicht gefunden."));
         //Machine erstellen, template setzen
         Machine machine = new Machine(dto.machineName, template);
 
@@ -64,11 +62,11 @@ public class MachineService {
 
         Machine saved = machineRepository.save(machine);
         
-        return MachineMapper.toDto(saved);
+        return saved;
         
     }
 
-    public MachineDto updateMachine(Integer id, MachineDto machineDto) {
+    public Machine updateMachine(Integer id, MachineDto machineDto) {
         if (machineDto.name == null || machineDto.name.trim().isEmpty()) {
             throw new IllegalArgumentException("Maschinenname darf nicht leer sein.");
         }
@@ -78,7 +76,7 @@ public class MachineService {
         
         machine.setName(machineDto.name);
         Machine saved = machineRepository.save(machine);
-        return MachineMapper.toDto(saved);
+        return saved;
     }
 
     public void deleteMachine(Integer id) {

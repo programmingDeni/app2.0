@@ -27,43 +27,83 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/machines")
 @CrossOrigin(origins = "http://localhost:3000")
 public class MachineController {
-    
+
     @Autowired
     private MachineService machineService;
 
+    @PostMapping
+    public ResponseEntity<MachineDto> createMachine(@RequestBody MachineDto dto) {
+        // 1. Validate
+        if (dto == null || !isValidMachineDto(dto)) {
+            throw new IllegalArgumentException("Invalid machine data");
+        }
+
+        // 2. Call service & get entity
+        Machine created = machineService.createMachine(dto);
+
+        // 3. Map to DTO and return
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(MachineMapper.toDto(created));
+    }
+
     @GetMapping
     public ResponseEntity<List<MachineDto>> getAllMachines() {
-        return ResponseEntity.ok(machineService.getAllMachines());
-    }    
+        // 1. Get entities from service
+        List<Machine> machines = machineService.getAllMachines();
+        
+        // 2. Map to DTOs and return
+        List<MachineDto> dtos = machines.stream()
+            .map(MachineMapper::toDto)
+            .collect(Collectors.toList());
+            
+        return ResponseEntity.ok(dtos);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<MachineDto> getMachine(@PathVariable Integer id) {
-        return ResponseEntity.ok(machineService.getMachineById(id));
-    }
+        // 1. Validate
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("Invalid ID");
+        }
 
-    @PostMapping
-    public ResponseEntity<MachineDto> createMachine(@RequestBody MachineDto machineDto) {
-        return ResponseEntity.ok(machineService.createMachine(machineDto));
-    }
+        // 2. Get entity from service
+        Machine machine = machineService.getMachineById(id);
 
-    @PostMapping("/from-template")
-    public ResponseEntity<MachineDto> createMachineFromTemplate(@RequestBody CreateMachineFromTemplateDto dto) {
-        MachineDto created = machineService.createMachineFromTemplate(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        // 3. Map to DTO and return
+        return ResponseEntity.ok(MachineMapper.toDto(machine));
     }
-
 
     @PutMapping("/{id}")
     public ResponseEntity<MachineDto> updateMachine(
             @PathVariable Integer id, 
-            @RequestBody MachineDto machineDto) {
-        return ResponseEntity.ok(machineService.updateMachine(id, machineDto));
+            @RequestBody MachineDto dto) {
+        // 1. Validate
+        if (id == null || id <= 0 || dto == null || !isValidMachineDto(dto)) {
+            throw new IllegalArgumentException("Invalid update data");
+        }
+
+        // 2. Update via service & get entity
+        Machine updated = machineService.updateMachine(id, dto);
+
+        // 3. Map to DTO and return
+        return ResponseEntity.ok(MachineMapper.toDto(updated));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMachine(@PathVariable Integer id) {
+        // 1. Validate
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("Invalid ID");
+        }
+
+        // 2. Delete via service
         machineService.deleteMachine(id);
-        return ResponseEntity.ok().build();
+
+        // 3. Return success response
+        return ResponseEntity.noContent().build();
+    }
+
+    private boolean isValidMachineDto(MachineDto dto) {
+        return dto.name != null && !dto.name.trim().isEmpty();
     }
 }
-

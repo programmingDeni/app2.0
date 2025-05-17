@@ -1,3 +1,4 @@
+import { CreateMachineFromTemplateDto } from "@/types/CreateMachineFromTemplate";
 import axios from "./axios";
 import { Machine } from "@/types/machine";
 
@@ -13,6 +14,13 @@ export const getMachineById = async (id: number) => {
 
 export const createMachine = async (machine: Partial<Machine>) => {
   const res = await axios.post("/api/machines", machine);
+  return res;
+};
+
+export const createMachineFromTemplate = async (
+  machine: Partial<CreateMachineFromTemplateDto>
+) => {
+  const res = await axios.post("/api/machines/from-template", machine);
   return res;
 };
 

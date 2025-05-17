@@ -25,35 +25,35 @@ public class AttributeTemplateService {
     @Autowired
     private MachineTemplateRepository templateRepos;
 
-    public List<AttributeTemplateDto> getAllAttributeTemplates() {
+    public List<AttributeInTemplate> getAllAttributeTemplates() {
         //hole attributes aus repo
         List<AttributeInTemplate> attributes = attributeTemplateRepository.findAll();
         //konvertiere zu dtos und return
-        return AttributeTemplateMapper.toDtoList(attributes);
+        return attributes;
     }
 
-    public AttributeTemplateDto getById(Integer id) {
+    public AttributeInTemplate getById(Integer id) {
         AttributeInTemplate template = attributeTemplateRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Attribute-Template mit ID " + id + " nicht gefunden."));
-        return AttributeTemplateMapper.toDto(template);
+        return template;
     }
 
-    public List<AttributeTemplateDto> getByMachineTemplateId(Integer templateId) {
+    public List<AttributeInTemplate> getByMachineTemplateId(Integer templateId) { 
         List<AttributeInTemplate> attributes = attributeTemplateRepository.findAllByMachineTemplateId(templateId);
-        return AttributeTemplateMapper.toDtoList(attributes);
+        return attributes; 
     }
 
-    public AttributeTemplateDto createOneForTemplate(AttributeTemplateDto dto) {
+    public AttributeInTemplate createOneForTemplate(AttributeTemplateDto dto) {
         MachineTemplate template = templateRepos.findByIdWithAttributes(dto.machineTemplateId)
             .orElseThrow(() -> new NotFoundException("Template mit ID " + dto.machineTemplateId + " nicht gefunden."));
 
         AttributeInTemplate fromDto = AttributeTemplateMapper.fromDto(dto, template);
         
         AttributeInTemplate saved = attributeTemplateRepository.save(fromDto);
-        return AttributeTemplateMapper.toDto(saved);
+        return (saved);
     }
 
-    public AttributeTemplateDto updateAttributeTemplate(Integer id, AttributeTemplateDto dto) {
+    public AttributeInTemplate updateAttributeTemplate(Integer id, AttributeTemplateDto dto) {
         //AttributInTemplate finden oder fehler werfen
         AttributeInTemplate template = attributeTemplateRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Attribute-Template mit ID " + id + " nicht gefunden."));
@@ -65,7 +65,7 @@ public class AttributeTemplateService {
         AttributeInTemplate updated = attributeTemplateRepository.save(template);
 
         //dto returnen
-        return AttributeTemplateMapper.toDto(updated);
+        return (updated);
     }
 
     public void deleteAttributeTemplate(Integer id) {
