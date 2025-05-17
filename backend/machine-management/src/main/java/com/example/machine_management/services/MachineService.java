@@ -53,14 +53,15 @@ public class MachineService {
         MachineTemplate template = machineTemplateRepository.findById(dto.machineTemplateId).orElseThrow(() 
         -> new NotFoundException("Template mit ID " + dto.machineTemplateId + " nicht gefunden."));
         //Machine erstellen, template setzen
-        Machine machine = new Machine(dto.machineName, template);
+        Machine newMachine = new Machine(dto.machineName, template);
 
         for (AttributeInTemplate t : template.getAttributeTemplates()) {
-            MachineAttribute attr = new MachineAttribute(machine, t.getAttributeInTemplateName(),t.getType());
-            machine.addAttribute(attr);
+            MachineAttribute attr = new MachineAttribute(newMachine, t.getAttributeInTemplateName(),t.getType());
+            //newMachine.addAttribute(attr);
+            //TODO: wie bekommt machine davon mit???
         }
 
-        Machine saved = machineRepository.save(machine);
+        Machine saved = machineRepository.save(newMachine);
         
         return saved;
         

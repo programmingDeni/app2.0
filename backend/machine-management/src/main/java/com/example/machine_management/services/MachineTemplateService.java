@@ -32,7 +32,7 @@ public class MachineTemplateService {
     public MachineTemplate createTemplate(MachineTemplateDto dto) {
         MachineTemplate template = new MachineTemplate();
         template.setTemplateName(dto.templateName); // Validation happens in entity
-        return template;
+        return templateRepo.save(template);
     }
 
     @Transactional
@@ -41,7 +41,7 @@ public class MachineTemplateService {
             .orElseThrow(() -> new NotFoundException("Template mit ID " + id + " nicht gefunden."));
         
         template.setTemplateName(dto.templateName); // Validation happens in entity
-        return template;
+        return templateRepo.save(template);
     }
 
     @Transactional

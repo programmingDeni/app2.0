@@ -1,13 +1,20 @@
 "use client";
 import React from "react";
 import { MachineAttribute } from "@/types/machineAttribute";
+import AttributeValueGroup from "@/components/AttributeValue/AttributeValueGroup";
+import { AttributeValue } from "@/types/AttributeValue";
 
 interface Props {
   attributes: MachineAttribute[];
   onDelete?: (id: number) => void;
+  onValueAdded?: (attributeId: number, newValue: AttributeValue) => void;
 }
 
-export default function MachineAttributeList({ attributes, onDelete }: Props) {
+export default function MachineAttributeList({
+  attributes,
+  onDelete,
+  onValueAdded,
+}: Props) {
   if (!attributes.length) return <div>Keine Attribute vorhanden.</div>;
 
   return (
@@ -29,6 +36,12 @@ export default function MachineAttributeList({ attributes, onDelete }: Props) {
             <strong>{attr.attributeName}</strong> &nbsp;(
             <em>{attr.attributeType}</em>)
           </span>
+          <AttributeValueGroup
+            machineAttributeId={attr.id}
+            attributeValues={attr.attributeValues}
+            onValueAdded={(newVal) => onValueAdded?.(attr.id, newVal)}
+          />
+
           {onDelete && (
             <button onClick={() => onDelete(attr.id)}>Löschen</button>
           )}

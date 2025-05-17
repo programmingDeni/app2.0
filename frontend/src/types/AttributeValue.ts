@@ -24,7 +24,7 @@ public class AttributeValueDto {
     */
 export interface AttributeValue {
   id: number;
-  year: number;
+  attributeValueYear: number;
   machineAttributeId: number;
-  value: string;
+  attributeValue: string;
 }

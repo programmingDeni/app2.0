@@ -12,6 +12,7 @@ import {
   createMachineFromTemplate,
 } from "@/app/services/machine.service";
 import { getAllMachineTemplates } from "@/app/services/machineTemplate.service";
+import { useMachineTemplates } from "@/hook/useMachineTemplates";
 
 interface Props {
   onMachineAdded: (machine: Machine) => void;
@@ -19,20 +20,11 @@ interface Props {
 }
 
 export default function AddMachineForm({ onMachineAdded, onCancel }: Props) {
+  const { machineTemplate, loading, error } = useMachineTemplates();
   const [newMachineName, setNewMachineName] = useState("");
   const [selectedTemplateId, setSelectedTemplateId] = useState<number | null>(
     null
   );
-  const [machineTemplates, setMachineTemplates] = useState<MachineTemplate[]>(
-    []
-  );
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    getAllMachineTemplates()
-      .then((res) => setMachineTemplates(res.data))
-      .catch((err) => setError(err));
-  }, []);
 
   const handleSubmit = async () => {
     try {
@@ -49,12 +41,16 @@ export default function AddMachineForm({ onMachineAdded, onCancel }: Props) {
           name: newMachineName,
         });
       }
+      console.log("machine created", res.data);
       onMachineAdded(res.data); // an übergeordnetes Element zurückgeben
       setNewMachineName("");
     } catch (error) {
       console.error("Fehler beim Hinzufügen:", error);
     }
   };
+
+  if (loading) return <p>lade Templates...</p>;
+  if (error) return <p>Fehler beim Laden</p>;
 
   return (
     <div style={{ marginTop: "10px" }}>
@@ -72,7 +68,7 @@ export default function AddMachineForm({ onMachineAdded, onCancel }: Props) {
         <option value="" disabled>
           Template auswählen
         </option>
-        {machineTemplates.map((template) => (
+        {machineTemplate.map((template) => (
           <option key={template.id} value={template.id}>
             {template.templateName}
           </option>

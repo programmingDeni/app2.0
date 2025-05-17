@@ -46,6 +46,22 @@ public class MachineController {
             .body(MachineMapper.toDto(created));
     }
 
+    @PostMapping("/from-template")
+    public ResponseEntity<MachineDto> createMachineFromTemplate(
+            @RequestBody CreateMachineFromTemplateDto dto) {
+        // 1. Validate
+        if (dto == null || !isValidTemplateDto(dto)) {
+            throw new IllegalArgumentException("Invalid template data");
+        }
+
+        // 2. Call service & get entity
+        Machine created = machineService.createMachineFromTemplate(dto);
+
+        // 3. Map to DTO and return
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(MachineMapper.toDto(created));
+    }
+
     @GetMapping
     public ResponseEntity<List<MachineDto>> getAllMachines() {
         // 1. Get entities from service
@@ -105,5 +121,13 @@ public class MachineController {
 
     private boolean isValidMachineDto(MachineDto dto) {
         return dto.name != null && !dto.name.trim().isEmpty();
+    }
+    
+    private boolean isValidTemplateDto(CreateMachineFromTemplateDto dto) {
+        return dto != null &&
+            dto.machineName != null && 
+            !dto.machineName.trim().isEmpty() &&
+            dto.machineTemplateId != null && 
+            dto.machineTemplateId > 0;
     }
 }
