@@ -9,7 +9,7 @@ import java.util.List;
 public class MachineTemplate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(nullable = false)
     private String templateName;
@@ -24,7 +24,7 @@ public class MachineTemplate {
     }
 
     // Getter & Setter
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

@@ -13,3 +13,59 @@ src/
 │   └── machines/
 │       ├── index.tsx              → Aufruf von MachineList
 │       └── [id].tsx               → Zeigt MachineDetails + Form
+
+
+
+views ansicht / überlegungen first 
+
+views:
+    - MachineStructureView        // hier werden die Machinen Strukturen angelegt //die strukturen werden über MachinenTemplates und MachinenAttribute festgelegt 
+
+        routes:     (überlegung: reicht es nicht hier zur darstellung eine route auf machine zu haben? )
+            -GET /machine-attributes/by-machine/{machineId}   //liefert alle angelegten MachinenAttribute einer Machine
+                returns: List<MachineAttributeDto>
+            -GET /machine/{machineId}   //liefert alle angelegten Attribute einer Machine und evtl template 
+                return MachineStrukturDto
+                        -machineId
+                        -name
+                        -machineTemplateId
+                        -machineAttributes
+            
+            //zuweisen von machineTempaltes zu machinen // entfernen von template
+            //hinzufügen von MachinenAttributen // entfernen von attributen
+
+
+    - AttributeValuesTable        //hier sollen dann werte in tabellenform hinzugefügt werden können. die idee ist ein jahr für alle attribute hinzuzufügen. 
+                                    //alle attribute haben dann für das Jahr einen Wert.
+
+        routes: 
+            -GET /machine-attribute-values/by-machine/{machineId}
+                returns: List<MachineAttributeWithValuesDto>
+
+    - MachineTemplateOverview     //hier sollen die Templates angezeigt werden.
+
+            routes: 
+                -GET /machine-templates 
+                    returns: List<MachineTemplateDto>
+                
+                -Post /machine-templates
+                    returns: MachineTemplateDto
+
+    - MachineTemplateForm         //erlaubt bearbeiten von machinenTemplates
+        routes: 
+            -GET /machine-templates/{id}
+                returns: MachineTemplateDto
+            -Put /machine-templates/{id}
+                returns: MachineTemplateDto
+            -Delete /machine-templates/{id}
+
+    - AttributeTemplateForm       //erlaubt bearbeiten von attributenTemplates innerhalb eines machinenTemplates
+        routes: 
+            -GET allAttributeTemplatesForMachineTemplate/{machineTemplateId}
+                returns: List<AttributeTemplateDto>
+            -GET /attribute-templates/{id}
+                returns: AttributeTemplateDto
+            -Put /attribute-templates/{id}
+                returns: AttributeTemplateDto
+            -Delete /attribute-templates/{id}
+

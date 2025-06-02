@@ -97,6 +97,21 @@ public class MachineAttributeController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/by-machine/{machineId}")
+    public ResponseEntity<List<MachineAttributeDto>> getAttributesByMachineId(@PathVariable Integer machineId) {
+        // 1. Validate
+        if (machineId == null || machineId <= 0) {
+            throw new IllegalArgumentException("Invalid machine ID");
+        }
+
+        // 2. Get entities
+        List<MachineAttribute> attributes = attributeService.getAttributesByMachineId(machineId);
+
+        // 3. Map and return
+        return ResponseEntity.ok(MachineAttributeMapper.toDtoList(attributes));
+            
+    }
+
     private boolean isValidAttributeDto(MachineAttributeDto dto) {
         return dto.attributeName != null && 
                !dto.attributeName.trim().isEmpty() &&

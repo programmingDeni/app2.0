@@ -10,8 +10,8 @@ import { CreateMachineFromTemplateDto } from "@/types/CreateMachineFromTemplate"
 import {
   createMachine,
   createMachineFromTemplate,
-} from "@/app/services/machine.service";
-import { getAllMachineTemplates } from "@/app/services/machineTemplate.service";
+} from "@/services/machine.service";
+import { getAllMachineTemplates } from "@/services/machineTemplate.service";
 import { useMachineTemplates } from "@/hook/useMachineTemplates";
 
 interface Props {
@@ -20,7 +20,7 @@ interface Props {
 }
 
 export default function AddMachineForm({ onMachineAdded, onCancel }: Props) {
-  const { machineTemplate, loading, error } = useMachineTemplates();
+  const { machineTemplates, loading, error } = useMachineTemplates();
   const [newMachineName, setNewMachineName] = useState("");
   const [selectedTemplateId, setSelectedTemplateId] = useState<number | null>(
     null
@@ -68,7 +68,7 @@ export default function AddMachineForm({ onMachineAdded, onCancel }: Props) {
         <option value="" disabled>
           Template auswählen
         </option>
-        {machineTemplate.map((template) => (
+        {machineTemplates.map((template) => (
           <option key={template.id} value={template.id}>
             {template.templateName}
           </option>

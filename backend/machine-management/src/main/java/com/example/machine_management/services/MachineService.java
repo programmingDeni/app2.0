@@ -86,4 +86,44 @@ public class MachineService {
         }
         machineRepository.deleteById(id);
     }
+
+    public void removeTemplateFromMachine(Integer machineId) {
+        //machine suchen sonst fehler werfen
+        Machine machine = machineRepository.findById(machineId).orElseThrow(() -> new NotFoundException("Maschine mit ID " + machineId + " nicht gefunden."));
+        if(machine.getTemplate() == null){
+            throw new IllegalArgumentException("Maschine hat kein Template zugewiesen");
+        }
+        
+        
+        //template suche nsonst fehler werfen
+        machine.setTemplate(null);
+        //template attribute aus machine entfernen
+        machine.getAttributes().removeIf(attr -> attr.getFromTemplate());
+        // save
+        machineRepository.save(machine);
+    }
+
+    public void assignTemplate(Integer machineId, Integer templateId){
+        Machine machine = machineRepository.findById(machineId)
+            .orElseThrow(() -> new NotFoundException("[MachineService] assignTemplate(): Maschine mit ID " + machineId + " nicht gefunden."));
+
+        MachineTemplate template = machineTemplateRepository.findById(templateId)
+            .orElseThrow(() -> new NotFoundException("[MachineService] assignTemplate(): Template mit ID " + templateId + " nicht gefunden."));
+
+        machine.setTemplate(template);
+
+        for (AttributeInTemplate templateAttr : template.getAttributeTemplates()) {
+            //machinen attribute sollten über machiine gespeichert werden 
+            MachineAttribute machineAttr = new MachineAttribute(
+                machine,
+                templateAttr.getAttributeInTemplateName(),
+                templateAttr.getType(),
+                true
+            );
+            machine.getAttributes().add(machineAttr);
+        }
+
+        machineRepository.save(machine);
+    }
+
 }

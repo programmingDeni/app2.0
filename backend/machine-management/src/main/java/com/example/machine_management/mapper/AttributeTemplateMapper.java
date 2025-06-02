@@ -19,6 +19,9 @@ public class AttributeTemplateMapper {
     }
 
     public static List<AttributeTemplateDto> toDtoList(List<AttributeInTemplate> attributes) {
+        if(attributes == null) {
+            return new ArrayList<>();
+        }
         List<AttributeTemplateDto> dtos = new ArrayList<>();
         for (AttributeInTemplate attribute : attributes) {
             dtos.add(toDto(attribute));

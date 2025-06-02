@@ -3,6 +3,7 @@ import React from "react";
 import { MachineAttribute } from "@/types/machineAttribute";
 import AttributeValueGroup from "@/components/AttributeValue/AttributeValueGroup";
 import { AttributeValue } from "@/types/AttributeValue";
+import AttributeValueList from "../AttributeValue/AttributeValueList";
 
 interface Props {
   attributes: MachineAttribute[];
@@ -36,12 +37,6 @@ export default function MachineAttributeList({
             <strong>{attr.attributeName}</strong> &nbsp;(
             <em>{attr.attributeType}</em>)
           </span>
-          <AttributeValueGroup
-            machineAttributeId={attr.id}
-            attributeValues={attr.attributeValues}
-            onValueAdded={(newVal) => onValueAdded?.(attr.id, newVal)}
-          />
-
           {onDelete && (
             <button onClick={() => onDelete(attr.id)}>Löschen</button>
           )}

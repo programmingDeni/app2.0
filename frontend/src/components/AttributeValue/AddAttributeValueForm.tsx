@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { createAttributeValue } from "@/app/services/attributeValue.service";
+import { createAttributeValue } from "@/services/attributeValue.service";
 import { AttributeValue } from "@/types/AttributeValue";
 
 interface Props {

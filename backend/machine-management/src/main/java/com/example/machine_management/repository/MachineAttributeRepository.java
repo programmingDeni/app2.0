@@ -16,4 +16,7 @@ public interface MachineAttributeRepository extends JpaRepository<MachineAttribu
     @Query("SELECT ma FROM MachineAttribute ma LEFT JOIN FETCH ma.attributeValues WHERE ma.id = :id")
     Optional<MachineAttribute> findByIdWithValues(@Param("id") Integer id);
 
+    
+    List<MachineAttribute> findAllMachineAttributesByMachineId(Integer machineId);
+
 } 

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { getAllMachines, deleteMachine } from "./services/machine.service";
+import { getAllMachines, deleteMachine } from "../services/machine.service";
 import AddMachineForm from "@/components/Machine/AddMachineForm";
 import MachineList from "@/components/Machine/MachineList";
 import { Machine } from "@/types/machine";

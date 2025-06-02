@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.example.machine_management.models.MachineTemplate;
+import com.example.machine_management.mapper.MachineStructureMapper;
 import com.example.machine_management.mapper.MachineTemplateMapper;
 
 @RestController
@@ -37,10 +38,37 @@ public class MachineTemplateController {
             .body(MachineTemplateMapper.toDto(created));
     }
 
-    @GetMapping
+    @PostMapping("/with-attributes")
+    public ResponseEntity<CreateMachineTemplateWithAttributesDto> createTemplateWithAttributes(@RequestBody CreateMachineTemplateWithAttributesDto dto) {
+        // 1. Validate
+        if (dto == null) {
+            throw new IllegalArgumentException("Invalid template data");
+        }
+
+        // 2. Create entity
+        MachineTemplate created = templateService.createTemplateWithAttributes(dto);
+
+        // 3. Map and return
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(MachineTemplateMapper.toWithAttributesDto(created));
+    }
+
+    //  lazy loading
+    @GetMapping("lazy")
     public ResponseEntity<List<MachineTemplateDto>> getAllTemplates() {
         // 1. Get entities
-        List<MachineTemplate> templates = templateService.getAllTemplates();
+        List<MachineTemplate> templates = templateService.getAllTemplatesLazy();
+
+        // 2. Map and return
+        return ResponseEntity.ok(templates.stream()
+            .map(MachineTemplateMapper::toDtoLazy)
+            .collect(Collectors.toList()));
+    }
+
+    @GetMapping("full")
+    public ResponseEntity<List<MachineTemplateDto>> getAllTemplatesWithAttributes() {
+        // 1. Get entities
+        List<MachineTemplate> templates = templateService.getAllTemplatesWithAttributes();
 
         // 2. Map and return
         return ResponseEntity.ok(templates.stream()

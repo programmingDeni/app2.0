@@ -1,12 +1,17 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Machine } from "@/types/machine";
 import { AttributeValue } from "@/types/AttributeValue";
-import { getMachineById, updateMachine } from "@/app/services/machine.service";
+import {
+  getMachineById,
+  updateMachine,
+  getAllMachines,
+} from "@/services/machine.service";
 
 export function useMachine(machineId: number) {
   const [machine, setMachine] = useState<Machine | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [machines, setMachines] = useState<Machine[]>([]);
 
   // Machine laden
   useEffect(() => {
@@ -60,8 +65,19 @@ export function useMachine(machineId: number) {
     );
   };
 
+  const getAllMachinesWrapper = async () => {
+    try {
+      const res = await getAllMachines();
+      console.log("got machines :", res.data);
+      setMachines(res.data);
+    } catch (error) {
+      console.error("Fehler beim Abrufen der Maschinen:", error);
+    }
+  };
+
   return {
     machine,
+    machines,
     loading,
     error,
     updateName,

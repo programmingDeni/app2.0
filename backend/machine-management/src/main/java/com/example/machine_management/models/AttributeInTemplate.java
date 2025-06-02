@@ -9,7 +9,7 @@ public class AttributeInTemplate {
     //Attribute
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     private String attributeInTemplateName;
 
@@ -29,7 +29,7 @@ public class AttributeInTemplate {
     }
 
     // Getter & Setter
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

@@ -1,14 +1,16 @@
 "use client";
 import React, { useState } from "react";
-import { useParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
 import { useMachine } from "@/hook/useMachine";
 
 import AddAttributeForm from "@/components/Attribute/AddAttributeForm";
 import MachineAttributeList from "@/components/Attribute/MachineAttributeList";
+import AttributeValueGroup from "@/components/AttributeValue/AttributeValueGroup";
 
 export default function MachineDetails() {
   const params = useParams();
+  const router = useRouter();
   const id = parseInt(params.id as string);
 
   const {
@@ -84,6 +86,11 @@ export default function MachineDetails() {
           onCancel={() => setShowAddAttribute(false)}
         />
       )}
+
+      <button onClick={() => router.push(`/machines/${id}/werte`)}>
+        {" "}
+        Werte bearbeiten // zu den Werten
+      </button>
     </div>
   );
 }

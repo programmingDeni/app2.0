@@ -59,4 +59,9 @@ public class MachineAttributeService {
         }
         attributeRepository.deleteById(id);
     }
+
+    public List<MachineAttribute> getAttributesByMachineId(Integer machineId) {
+        return attributeRepository.findAllMachineAttributesByMachineId(machineId);
+    }
+
 }

@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { AttributeType } from "@/types/attributeInTemplate";
 import { MachineAttribute } from "@/types/machineAttribute";
-import { createAttribute } from "@/app/services/machineAttribute.service";
+import { createAttribute } from "@/services/machineAttribute.service";
 
 interface Props {
   machineId: number;

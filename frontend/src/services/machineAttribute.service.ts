@@ -30,3 +30,11 @@ export const deleteAttribute = async (id: number) => {
   const res = await axios.delete(`/api/machine-attributes/${id}`);
   return res;
 };
+
+export const getAttributesByMachineId = async (machineId: number) => {
+  const res = await axios.get<MachineAttribute[]>(
+    `/api/machine-attributes/by-machine/${machineId}`
+  );
+  return res;
+  //@GetMapping("/by-machine/{machineId}")
+};

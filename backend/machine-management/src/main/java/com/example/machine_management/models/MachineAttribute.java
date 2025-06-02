@@ -26,6 +26,8 @@ public class MachineAttribute {
     @JoinColumn(name = "machine_id", nullable = false)
     private Machine machine;
 
+    private boolean fromTemplate = false;
+
     // Constructors
 
     protected MachineAttribute() {}
@@ -47,6 +49,11 @@ public class MachineAttribute {
     public MachineAttribute(Machine besitzendeMachine, String attributeName, AttributeType type){
         this(besitzendeMachine, attributeName);
         this.type = type;
+    }
+    //initialisierung ohne values 
+    public MachineAttribute(Machine besitzendeMachine, String attributeName, AttributeType type, boolean fromTemplate){
+        this(besitzendeMachine, attributeName, type);
+        this.fromTemplate = fromTemplate;
     }
 
     // Getter + Setter
@@ -122,6 +129,14 @@ public class MachineAttribute {
             throw new IllegalArgumentException("AttributeValue darf nicht leer sein");
         }
         this.attributeValues.add(attributeValue);
+    }
+
+    public boolean getFromTemplate(){
+        return fromTemplate;
+    }
+
+    public void setFromTemplate(boolean fromTemplate){
+        this.fromTemplate = fromTemplate;
     }
 
     private void validateValueForType(String value) {
