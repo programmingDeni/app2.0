@@ -4,21 +4,29 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
+
 import java.util.List;
 
 import com.example.machine_management.models.Machine;
 import com.example.machine_management.models.MachineAttribute;
+import com.fasterxml.jackson.databind.annotation.JsonAppend.Attr;
 import com.example.machine_management.models.AttributeType;
+import com.example.machine_management.models.AttributeValue;
 
-
+@ActiveProfiles("test")
 public class ModelTests {
 
     //test übergreifende test machine  
     private Machine testMachine;
 
+    //test übergreifende test machine attribute
+    private MachineAttribute testMachineAttribute;
+
     @BeforeEach
     void setUp() {
         testMachine = new Machine("testMachine");
+        testMachineAttribute = new MachineAttribute(testMachine, "test");
         assertNotNull(testMachine,"Test Machine sollte nach Setup nicht null sein");
     }
 
@@ -44,7 +52,8 @@ public class ModelTests {
         //set und get attributes 
         List<MachineAttribute> attributes = testMachine.getAttributes();
         assertNotNull(attributes, "Attributes sollte nicht null sein");
-        assertEquals(0, attributes.size(), "Attributes sollte leer sein");
+        assertEquals(1, attributes.size(), "Attributes sollte test enthalten sein");
+        assertEquals(testMachineAttribute, attributes.get(0), "Attributes sollte test enthalten sein");
     }
 
     @Test
@@ -76,9 +85,13 @@ public class ModelTests {
         attr.setType(AttributeType.STRING);
         assertEquals(AttributeType.STRING, attr.getType(), "AttributeType sollte korrekt gesetzt sein");
 
-        String testValue = "TestValue";
-        attr.setAttributeValue(testValue);
-        assertEquals(testValue, attr.getAttributeValue(), "AttributeValue sollte korrekt gesetzt sein");
+        // Erstelle neuen AttributWert
+        String testStringValue = "TestValue";
+        AttributeValue testValue = new AttributeValue(attr, 2022,testStringValue);
+
+        attr.addAttributeValue(testValue);
+        assertEquals(2, attr.getAttributeValues().size(), "Attribute sollte genau einen Wert haben");
+
         // Teste Setter Validierungen
         assertThrows(IllegalArgumentException.class, () -> {
             attr.setAttributeName(null);
@@ -96,8 +109,8 @@ public class ModelTests {
             attr.setType(null);
         }, "setType sollte IllegalArgumentException werfen wenn null");
         // Teste dass null für attributeValue erlaubt ist
-        attr.setAttributeValue(null);
-        assertNull(attr.getAttributeValue(), "AttributeValue sollte null sein können");
+        attr.setAttributeValues(null);
+        assertEquals(0, attr.getAttributeValues().size(), "Attribute sollte keine Werte haben");
     }
 
     @Test
@@ -135,10 +148,22 @@ public class ModelTests {
 
     @Test
     void testAttributeValueValidation() {
-        MachineAttribute attr = new MachineAttribute(testMachine, "test");
-        
-        // Test INTEGER validation
-        attr.setType(AttributeType.INTEGER);
-        //test neu schreiben attributeValue ist jetz teigene entität
+
+        AttributeValue attr = new AttributeValue(testMachineAttribute, 2022, "test");
+
     }
+
+    @Test
+    void whenAddAttribute_thenAttributeKnowsMachine() {
+        Machine m = new Machine("X");
+        MachineAttribute attr = new MachineAttribute(m, "Strom");
+        m.addAttribute(attr);
+        assertEquals(m, attr.getMachine());
+    }
+
+    @Test
+    void createMachineFromTemplate(){
+        //TODO: machien von template erstellen -> attribtue sollen initialisiert werden 
+    }
+
 }

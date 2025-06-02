@@ -1,53 +1,64 @@
 package com.example.machine_management.models;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.*;
 
 @Entity
-@Table(
-    name = "attribute_value",
-    uniqueConstraints = @UniqueConstraint(columnNames = {"machine_attribute_id", "year"})
-)
+@Table(name = "attribute_value")
 public class AttributeValue {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String value;
+    private String attributeValue;
 
-    private int year;
+    @Column(name = "")
+    private int attributeValueYear;
 
-    @ManyToOne
-    @JoinColumn(name="machine_attribute_id", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "machine_attribute_id", nullable = false)
     private MachineAttribute machineAttribute;
 
     protected AttributeValue() {}
 
+    //Konstruktor mit Jahr
     public AttributeValue(MachineAttribute machineAttribute, int year){
         this.machineAttribute = machineAttribute;
-        this.year = year;
+        this.attributeValueYear = year;
         machineAttribute.getAttributeValues().add(this);
+        attributeValue = "";
+    }
+
+    //Initialisuerung mit Wert 
+    public AttributeValue (MachineAttribute machineAttribute, int year, String value){
+        this(machineAttribute, year);
+        this.attributeValue = value;
     }
 
     public int getId() {
         return id;
     }
 
-    public String getValue() {
-        return value;
+    public String getAttributeValue() {
+        return attributeValue;
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public void setAttributeValue(String value) {
+        this.attributeValue = value;
     }
 
-    public int getYear() {
-        return year;
+    public int getAttributeValueYear() {
+        return attributeValueYear;
     }
 
-    public void setYear(int year) {
-        this.year = year;
+    public void setAttributeValueYear(int year) {
+        this.attributeValueYear = year;
     }
 
     public MachineAttribute getMachineAttribute() {

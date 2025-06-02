@@ -2,12 +2,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { getAllMachines, deleteMachine } from "../services/machine.service";
+import AddMachineForm from "@/components/Machine/AddMachineForm";
+import MachineList from "@/components/Machine/MachineList";
+import { Machine } from "@/types/machine";
 
 export default function Page() {
-  interface Machine {
-    id?: number;
-    name?: string;
-  }
+  const [showMachineForm, setMachineForm] = useState(false);
 
   const [machines, setMachines] = useState<Machine[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -16,7 +17,7 @@ export default function Page() {
   useEffect(() => {
     const fetchMachines = async () => {
       try {
-        const response = await axios.get("http://localhost:8080/api/machines");
+        const response = await getAllMachines();
         console.log("got machines :", response.data);
         setMachines(response.data);
       } catch (error) {
@@ -27,15 +28,13 @@ export default function Page() {
     fetchMachines();
   }, []);
 
-  const addMachine = () => {
-    router.push("/addMachine");
+  const toggleShowMachineForm = () => {
+    setMachineForm(!showMachineForm);
   };
 
-  const deleteMachine = async (id: number) => {
+  const deleteMachineLocal = async (id: number) => {
     try {
-      const res = await axios.delete(
-        `http://localhost:8080/api/machines/${id}`
-      );
+      const res = await deleteMachine(id);
       console.log("Gelöscht:", res.data);
       setMachines((prev) => prev.filter((machine) => machine.id !== id));
       // z. B. Maschinenliste neu laden oder Filter entfernen
@@ -51,30 +50,21 @@ export default function Page() {
   return (
     <div>
       <h1>Maschinen Liste</h1>
-      <ul>
-        {machines?.map((machine) =>
-          machine.id ? (
-            <div
-              key={machine.id}
-              onClick={() => router.push(`/machines/${machine.id}`)}
-              style={{ cursor: "pointer" }}
-            >
-              {machine.id} name: {machine.name}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  deleteMachine(machine.id!);
-                }}
-              >
-                Löschen
-              </button>
-            </div>
-          ) : (
-            <div>Loading...</div>
-          )
-        )}
-      </ul>
-      <button onClick={() => addMachine()}>Add Machine</button>
+      <MachineList machines={machines} onDelete={deleteMachineLocal} />
+      <button onClick={() => toggleShowMachineForm()}>
+        {!showMachineForm ? "Add Machine" : "Zuklappen"}
+      </button>
+      {showMachineForm && (
+        <AddMachineForm
+          onMachineAdded={(newMachine) => {
+            setMachines((prev) =>
+              prev ? [...prev, newMachine] : [newMachine]
+            );
+            setMachineForm(false);
+          }}
+          onCancel={() => setMachineForm(false)}
+        />
+      )}
       <button onClick={() => router.push("/machine-templates")}>
         Templates
       </button>

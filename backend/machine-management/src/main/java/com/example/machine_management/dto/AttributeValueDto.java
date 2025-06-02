@@ -3,15 +3,24 @@ package com.example.machine_management.dto;
 import com.example.machine_management.models.MachineAttribute;
 
 public class AttributeValueDto {
-    public int year;
-    public MachineAttribute machineAttribute;
-    public String value;
+    public Integer id;
+    public int attributeValueYear;
+    public Integer machineAttributeId;
+    public String attributeValue;
 
     public AttributeValueDto() {}
 
-    public AttributeValueDto(int year, MachineAttribute machineAttribute, String value) {
-        this.year = year;
-        this.machineAttribute = machineAttribute;
-        this.value = value;
+    public AttributeValueDto(Integer id, int attributeValueYear, Integer machineAttributeId) {
+        this.id = id;
+        this.attributeValueYear = attributeValueYear;
+        this.machineAttributeId = machineAttributeId;
+        this.attributeValue = "";
+    }
+
+    public AttributeValueDto(Integer id,int year, Integer machineAttributeId, String attributeValue) {
+        this.id = id;
+        this.attributeValueYear = year;
+        this.machineAttributeId = machineAttributeId;
+        this.attributeValue = attributeValue;
     }
 }

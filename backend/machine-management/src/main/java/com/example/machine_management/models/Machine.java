@@ -19,14 +19,20 @@ public class Machine {
     //@JoinColumn(name = "machine_id") // FK in MachineAttributes
     private List<MachineAttribute> attributes = new ArrayList<>();
 
-
-    //private List<MachineAttributes> attributes;
+    @ManyToOne
+    @JoinColumn(name = "template_id")
+    private MachineTemplate template;
 
     //Constructors
     public Machine () {}
 
     public Machine (String name){
         this.name = name;
+    }
+
+    public Machine(String name, MachineTemplate template) {
+        this(name);
+        this.template = template;
     }
 
     public Integer getId() {
@@ -48,5 +54,28 @@ public class Machine {
     public void setAttributes(List<MachineAttribute> attributes) {
         this.attributes = attributes;
     }
+
+    public void addAttribute(MachineAttribute attribute) {
+        if (this.attributes == null) this.attributes = new ArrayList<>();
+        this.attributes.add(attribute);
+        attribute.setMachine(this);
+    }
+
+    public void removeAttribute(MachineAttribute attribute) {
+        if (this.attributes != null) {
+            this.attributes.remove(attribute);
+            attribute.setMachine(null);
+        }
+    }
+
+    public void setTemplate(MachineTemplate template) {
+        this.template = template;
+    }
+
+    public MachineTemplate getTemplate() {
+        return template;
+    }
+
+    //TODO: Templates add / remove
 
 }

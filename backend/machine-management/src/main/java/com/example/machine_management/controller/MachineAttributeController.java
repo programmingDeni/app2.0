@@ -6,10 +6,13 @@ import com.example.machine_management.models.MachineAttribute;
 import com.example.machine_management.repository.MachineAttributeRepository;
 import com.example.machine_management.repository.MachineRepository;
 import com.example.machine_management.models.AttributeType;
+import com.example.machine_management.services.MachineAttributeService;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,76 +20,102 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/attributes")
+@RequestMapping("/api/machine-attributes")
 @CrossOrigin(origins = "http://localhost:3000")
 public class MachineAttributeController {
 
     @Autowired
-    private MachineRepository machineRepository;
+    private MachineAttributeService attributeService;
 
-    @Autowired
-    private MachineAttributeRepository attributeRepository;
+    @PostMapping
+    public ResponseEntity<MachineAttributeDto> createAttribute(@RequestBody MachineAttributeDto dto) {
+        // 1. Validate
+        if (dto == null || !isValidAttributeDto(dto)) {
+            throw new IllegalArgumentException("Invalid attribute data");
+        }
+
+        // 2. Create entity
+        MachineAttribute created = attributeService.createMachineAttribute(dto);
+
+        // 3. Map and return
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(MachineAttributeMapper.toDto(created));
+    }
 
     @GetMapping
-    public ResponseEntity<?> getAllAttributes() {
-        List<MachineAttribute> attributes = attributeRepository.findAll();
-        List<MachineAttributeDto> dtoList = attributes.stream()
+    public ResponseEntity<List<MachineAttributeDto>> getAllAttributes() {
+        // 1. Get entities
+        List<MachineAttribute> attributes = attributeService.getAllAttributes();
+
+        // 2. Map and return
+        return ResponseEntity.ok(attributes.stream()
             .map(MachineAttributeMapper::toDto)
-            .collect(Collectors.toList());
-        return ResponseEntity.ok(dtoList);
+            .collect(Collectors.toList()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAttributeById(@PathVariable Integer id) {
-        Optional<MachineAttribute> attribute = attributeRepository.findById(id);
-        return attribute
-            .<ResponseEntity<?>>map(attr -> ResponseEntity.ok(MachineAttributeMapper.toDto(attr)))
-            .orElseGet(() ->
-                ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Attribut mit ID " + id + " nicht gefunden.")
-            );
-    }
+    public ResponseEntity<MachineAttributeDto> getAttributeById(@PathVariable Integer id) {
+        // 1. Validate
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("Invalid ID");
+        }
 
-    @PostMapping
-    public ResponseEntity<?> addAttribute(@RequestBody MachineAttributeDto request) {
-        System.out.println("Request erhalten: " + request.attributeName + ", " + request.machineId + ", " + request.attributeType);
-        return machineRepository.findById(request.machineId)    //finde machine deren attribute gepostet werden soll
-            .<ResponseEntity<?>>map(machine -> {
-                MachineAttribute attr = new MachineAttribute(machine,request.attributeName);       //erstelle die neuen attribute
-                attr.setType(AttributeType.valueOf(request.attributeType));
-                attr.setAttributeValue(request.attributeValue);
-                MachineAttribute saved = attributeRepository.save(attr);
-                return ResponseEntity.ok(MachineAttributeMapper.toDto(saved));
-            })
-            .orElseGet(() ->
-                ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Maschine mit ID " + request.machineId + " nicht gefunden.")
-            );
+        // 2. Get entity
+        MachineAttribute attribute = attributeService.getAttributeById(id);
+
+        // 3. Map and return
+        return ResponseEntity.ok(MachineAttributeMapper.toDto(attribute));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateAttribute(@PathVariable Integer id, @RequestBody MachineAttributeDto request) {
-        return attributeRepository.findById(id)
-            .<ResponseEntity<?>>map(attr -> {
-                attr.setAttributeName(request.attributeName);
-                attr.setType(AttributeType.valueOf(request.attributeType));
-                attr.setAttributeValue(request.attributeValue);
-                MachineAttribute saved = attributeRepository.save(attr);
-                return ResponseEntity.ok(MachineAttributeMapper.toDto(saved));
-            })
-            .orElseGet(() ->
-                ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Attribut mit ID " + id + " nicht gefunden.")
-            );
+    public ResponseEntity<MachineAttributeDto> updateAttribute(
+            @PathVariable Integer id,
+            @RequestBody MachineAttributeDto dto) {
+        // 1. Validate
+        if (id == null || id <= 0 || dto == null || !isValidAttributeDto(dto)) {
+            throw new IllegalArgumentException("Invalid update data");
+        }
+
+        // 2. Update entity
+        MachineAttribute updated = attributeService.updateAttribute(id, dto);
+
+        // 3. Map and return
+        return ResponseEntity.ok(MachineAttributeMapper.toDto(updated));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAttribute(@PathVariable Integer id) {
-        if (!attributeRepository.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body("Attribut mit ID " + id + " nicht gefunden.");
+    public ResponseEntity<Void> deleteAttribute(@PathVariable Integer id) {
+        // 1. Validate
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("Invalid ID");
         }
-        attributeRepository.deleteById(id);
-        return ResponseEntity.ok("Attribut mit ID " + id + " wurde gelöscht.");
+
+        // 2. Delete
+        attributeService.deleteAttribute(id);
+
+        // 3. Return success
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/by-machine/{machineId}")
+    public ResponseEntity<List<MachineAttributeDto>> getAttributesByMachineId(@PathVariable Integer machineId) {
+        // 1. Validate
+        if (machineId == null || machineId <= 0) {
+            throw new IllegalArgumentException("Invalid machine ID");
+        }
+
+        // 2. Get entities
+        List<MachineAttribute> attributes = attributeService.getAttributesByMachineId(machineId);
+
+        // 3. Map and return
+        return ResponseEntity.ok(MachineAttributeMapper.toDtoList(attributes));
+            
+    }
+
+    private boolean isValidAttributeDto(MachineAttributeDto dto) {
+        return dto.attributeName != null && 
+               !dto.attributeName.trim().isEmpty() &&
+               dto.attributeType != null &&
+               dto.machineId > 0;
     }
 }

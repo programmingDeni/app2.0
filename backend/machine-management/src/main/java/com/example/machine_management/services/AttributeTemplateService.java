@@ -12,6 +12,7 @@ import com.example.machine_management.repository.AttributeTemplateRepository;
 import com.example.machine_management.dto.AttributeTemplateDto;
 import com.example.machine_management.models.AttributeType;
 import com.example.machine_management.repository.MachineTemplateRepository;
+import com.fasterxml.jackson.databind.annotation.JsonAppend.Attr;
 import com.example.machine_management.exceptions.NotFoundException;
 import com.example.machine_management.mapper.AttributeTemplateMapper;
 
@@ -24,49 +25,47 @@ public class AttributeTemplateService {
     @Autowired
     private MachineTemplateRepository templateRepos;
 
-    public List<AttributeTemplateDto> getAllAttributeTemplates() {
-        return attributeTemplateRepository.findAll()
-            .stream()
-            .map(AttributeTemplateMapper::toDto)
-            .collect(Collectors.toList());
+    public List<AttributeInTemplate> getAllAttributeTemplates() {
+        //hole attributes aus repo
+        List<AttributeInTemplate> attributes = attributeTemplateRepository.findAll();
+        //konvertiere zu dtos und return
+        return attributes;
     }
 
-    public AttributeTemplateDto getById(Integer id) {
+    public AttributeInTemplate getById(Integer id) {
         AttributeInTemplate template = attributeTemplateRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Attribute-Template mit ID " + id + " nicht gefunden."));
-        return AttributeTemplateMapper.toDto(template);
+        return template;
     }
 
-    public List<AttributeTemplateDto> getByMachineTemplateId(Integer templateId) {
-        return attributeTemplateRepository.findAllByMachineTemplateId(templateId)
-            .stream()
-            .map(AttributeTemplateMapper::toDto)
-            .collect(Collectors.toList());
+    public List<AttributeInTemplate> getByMachineTemplateId(Integer templateId) { 
+        List<AttributeInTemplate> attributes = attributeTemplateRepository.findAllByMachineTemplateId(templateId);
+        return attributes; 
     }
 
-    public AttributeTemplateDto createOneForTemplate(AttributeTemplateDto dto) {
+    public AttributeInTemplate createOneForTemplate(AttributeTemplateDto dto) {
         MachineTemplate template = templateRepos.findByIdWithAttributes(dto.machineTemplateId)
             .orElseThrow(() -> new NotFoundException("Template mit ID " + dto.machineTemplateId + " nicht gefunden."));
+
+        AttributeInTemplate fromDto = AttributeTemplateMapper.fromDto(dto, template);
         
-        AttributeInTemplate attr = new AttributeInTemplate(
-            dto.attributeInTemplateName, 
-            AttributeType.valueOf(dto.attributeInTemplateType), 
-            template
-        );
-        
-        AttributeInTemplate saved = attributeTemplateRepository.save(attr);
-        return AttributeTemplateMapper.toDto(saved);
+        AttributeInTemplate saved = attributeTemplateRepository.save(fromDto);
+        return (saved);
     }
 
-    public AttributeTemplateDto updateAttributeTemplate(Integer id, AttributeTemplateDto dto) {
+    public AttributeInTemplate updateAttributeTemplate(Integer id, AttributeTemplateDto dto) {
+        //AttributInTemplate finden oder fehler werfen
         AttributeInTemplate template = attributeTemplateRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("Attribute-Template mit ID " + id + " nicht gefunden."));
+
+        //template updaten
+        AttributeTemplateMapper.updateFromDto(template, dto);
         
-        template.setAttributeInTemplateName(dto.attributeInTemplateName);
-        template.setType(AttributeType.valueOf(dto.attributeInTemplateType));
-        
+        //speichern
         AttributeInTemplate updated = attributeTemplateRepository.save(template);
-        return AttributeTemplateMapper.toDto(updated);
+
+        //dto returnen
+        return (updated);
     }
 
     public void deleteAttributeTemplate(Integer id) {
@@ -81,13 +80,7 @@ public class AttributeTemplateService {
     }
 
     public List<AttributeInTemplate> saveAllForTemplate(List<AttributeTemplateDto> attributeTemplates, MachineTemplate template) {
-        List<AttributeInTemplate> savedAttributeTemplates = attributeTemplates.stream()
-            .map(attr -> new AttributeInTemplate(
-                attr.attributeInTemplateName, 
-                AttributeType.valueOf(attr.attributeInTemplateType), 
-                template
-            ))
-            .collect(Collectors.toList());
+        List<AttributeInTemplate> savedAttributeTemplates = AttributeTemplateMapper.fromDtoList(attributeTemplates, template);
 
         return attributeTemplateRepository.saveAll(savedAttributeTemplates);
     }

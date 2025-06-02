@@ -1,87 +1,51 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useParams, useRouter } from "next/navigation";
-import MachineAttributeForm, {
-  MachineAttributeFormDto,
-} from "@/components/Attribute/MachineAttributeForm";
+import React, { useState } from "react";
+import { useRouter, useParams } from "next/navigation";
+
+import { useMachine } from "@/hook/useMachine";
+
+import AddAttributeForm from "@/components/Attribute/AddAttributeForm";
 import MachineAttributeList from "@/components/Attribute/MachineAttributeList";
-
-interface Machine {
-  id?: number;
-  name?: string;
-  attributes: MachineAttribute[];
-}
-
-interface MachineAttribute {
-  id: number;
-  attributeName: string;
-  attributeType: string;
-  machineId: number;
-}
+import AttributeValueGroup from "@/components/AttributeValue/AttributeValueGroup";
 
 export default function MachineDetails() {
-  const [machine, setMachine] = useState<Machine | null>(null);
   const params = useParams();
   const router = useRouter();
+  const id = parseInt(params.id as string);
 
-  //machinen name bearbeiten
+  const {
+    machine,
+    updateName,
+    addAttribute,
+    removeAttribute,
+    addValue,
+    loading,
+  } = useMachine(id);
+
   const [editName, setEditName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  //attribute bearbeiten
-  const [editingAttr, setEditingAttr] = useState<number | null>(null);
-  const [attributeNameEdit, setattributeNameEdit] = useState<{
-    [key: number]: string;
-  }>({}); // namen bearbeiten
-  const [typeEdits, setTypeEdits] = useState<{ [id: number]: string }>({}); // typen bearbeiten
+  const [showAddAttribute, setShowAddAttribute] = useState(false);
 
-  //mögliche typen
-  const attributeTypes = ["STRING", "INTEGER", "FLOAT", "BOOLEAN"];
-
-  useEffect(() => {
-    if (!params.id) return;
-    const fetchMachine = async () => {
-      try {
-        console.log("params beim zugriff", params.id);
-        const response = await axios.get(
-          `http://localhost:8080/api/machines/${params.id}`
-        );
-
-        setMachine(response.data);
-        console.log(response.data);
-      } catch (error) {
-        console.error("Fehler beim Laden der Maschinendetails:", error);
-      }
-    };
-    fetchMachine();
-  }, [params.id]);
-
-  const addAttributes = () => {
-    router.push(`/AddAttribute?machineId=${params.id}`);
+  const toggleShowAddAttribute = () => {
+    setShowAddAttribute(!showAddAttribute);
   };
 
   const saveMachineName = async () => {
-    try {
-      const response = await axios.put(
-        `http://localhost:8080/api/machines/${params.id}`,
-        {
-          name: editName,
-        }
-      );
-      setMachine(response.data);
-      setIsEditing(false);
-    } catch (err) {
-      console.error("Fehler beim Aktualisieren:", err);
-    }
+    if (!machine) return;
+    await updateName(editName);
+    setIsEditing(false);
   };
 
-  if (!machine) {
-    return <div>Loading...</div>;
-  }
+  if (!machine) return <div>Loading...</div>;
 
   return (
     <div>
       <h1>Machine Details</h1>
+
+      {machine.machineTemplateDto?.templateName && (
+        <h2>Vorlage: {machine.machineTemplateDto.templateName}</h2>
+      )}
+
       {isEditing ? (
         <>
           <input
@@ -94,17 +58,39 @@ export default function MachineDetails() {
       ) : (
         <>
           <h2>Name: {machine.name}</h2>
-          <button onClick={() => setIsEditing(true)}>Name bearbeiten</button>
+          <button
+            onClick={() => {
+              setEditName(machine.name);
+              setIsEditing(true);
+            }}
+          >
+            Name bearbeiten
+          </button>
         </>
       )}
+
       <MachineAttributeList
         attributes={machine.attributes}
-        machineId={machine.id!}
-        onAttributesUpdated={(updated) =>
-          setMachine((prev) => (prev ? { ...prev, attributes: updated } : prev))
-        }
+        onDelete={removeAttribute}
+        onValueAdded={addValue}
       />
-      <button onClick={() => addAttributes()}> Attribute hinzufügen </button>
+
+      <button onClick={toggleShowAddAttribute}>
+        {showAddAttribute ? "Zuklappen" : "Attribut hinzufügen"}
+      </button>
+
+      {showAddAttribute && (
+        <AddAttributeForm
+          machineId={machine.id}
+          onAttributeAdded={addAttribute}
+          onCancel={() => setShowAddAttribute(false)}
+        />
+      )}
+
+      <button onClick={() => router.push(`/machines/${id}/werte`)}>
+        {" "}
+        Werte bearbeiten // zu den Werten
+      </button>
     </div>
   );
 }
