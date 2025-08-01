@@ -1,12 +1,12 @@
 package com.example.machine_management.services;
 
-import com.example.machine_management.dto.MachineAttributeDto;
 import com.example.machine_management.mapper.MachineAttributeMapper;
 import com.example.machine_management.models.MachineAttribute;
 import com.example.machine_management.models.AttributeType;
 import com.example.machine_management.models.Machine;
 import com.example.machine_management.repository.MachineAttributeRepository;
 import com.example.machine_management.repository.MachineRepository;
+import com.example.machine_management.dto.MachineAttributes.MachineAttributeDto;
 import com.example.machine_management.exceptions.NotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,27 +30,30 @@ public class MachineAttributeService {
     }
 
     public MachineAttribute getAttributeById(Integer id) {
-        //finde attribut oder werfe fehler
-        MachineAttribute attribute = attributeRepository.findById(id).orElseThrow(() -> new NotFoundException("Attribut mit ID " + id + " nicht gefunden."));
-        //konvertiere zu dto und return 
+        // finde attribut oder werfe fehler
+        MachineAttribute attribute = attributeRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Attribut mit ID " + id + " nicht gefunden."));
+        // konvertiere zu dto und return
         return attribute;
     }
 
     public MachineAttribute createMachineAttribute(MachineAttributeDto request) {
-        //finde machine oder werfe fehler
-        Machine machine = machineRepository.findById(request.machineId).orElseThrow(() -> new NotFoundException("Maschine mit ID " + request.machineId + " nicht gefunden."));
-        //erstelle neues attribute mit machine, name und type 
-        MachineAttribute attr = new MachineAttribute(machine, request.attributeName,AttributeType.valueOf(request.attributeType));
-        //speichere attribute
+        // finde machine oder werfe fehler
+        Machine machine = machineRepository.findById(request.machineId)
+                .orElseThrow(() -> new NotFoundException("Maschine mit ID " + request.machineId + " nicht gefunden."));
+        // erstelle neues attribute mit machine, name und type
+        MachineAttribute attr = new MachineAttribute(machine, request.attributeName,
+                AttributeType.valueOf(request.attributeType));
+        // speichere attribute
         MachineAttribute saved = attributeRepository.save(attr);
-        //konvertiere zu dto und return
+        // konvertiere zu dto und return
         return saved;
     }
 
-
     public MachineAttribute updateAttribute(Integer id, MachineAttributeDto request) {
-        //finde attribute oder werfe fehler
-        return attributeRepository.findById(id).orElseThrow(() -> new NotFoundException("Attribut mit ID " + id + " nicht gefunden."));
+        // finde attribute oder werfe fehler
+        return attributeRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Attribut mit ID " + id + " nicht gefunden."));
     }
 
     public void deleteAttribute(Integer id) {

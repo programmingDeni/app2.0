@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.example.machine_management.dto.*;
+import com.example.machine_management.dto.AttributeInTemplate.AttributeTemplateDto;
 import com.example.machine_management.models.*;
 
 public class AttributeTemplateMapper {
@@ -19,7 +20,7 @@ public class AttributeTemplateMapper {
     }
 
     public static List<AttributeTemplateDto> toDtoList(List<AttributeInTemplate> attributes) {
-        if(attributes == null) {
+        if (attributes == null) {
             return new ArrayList<>();
         }
         List<AttributeTemplateDto> dtos = new ArrayList<>();
@@ -30,17 +31,18 @@ public class AttributeTemplateMapper {
     }
 
     public static AttributeInTemplate fromDto(AttributeTemplateDto dto, MachineTemplate template) {
-        //String name, AttributeType type, MachineTemplate template
+        // String name, AttributeType type, MachineTemplate template
         AttributeInTemplate attr = new AttributeInTemplate(dto.attributeInTemplateName,
-         AttributeType.valueOf(dto.attributeInTemplateType), template);
+                AttributeType.valueOf(dto.attributeInTemplateType), template);
 
         return attr;
     }
 
-    public static List<AttributeInTemplate> fromDtoList(List<AttributeTemplateDto> attributes, MachineTemplate template) {
+    public static List<AttributeInTemplate> fromDtoList(List<AttributeTemplateDto> attributes,
+            MachineTemplate template) {
         List<AttributeInTemplate> dtos = new ArrayList<>();
         for (AttributeTemplateDto attribute : attributes) {
-            dtos.add(fromDto(attribute,template));
+            dtos.add(fromDto(attribute, template));
         }
         return dtos;
     }

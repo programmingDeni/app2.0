@@ -13,67 +13,68 @@ public class Machine {
     private Integer id;
 
     @Column(unique = true)
-    private String name;
+    private String machineName;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "machine")
     //@JoinColumn(name = "machine_id") // FK in MachineAttributes
-    private List<MachineAttribute> attributes = new ArrayList<>();
+    private List<MachineAttribute> machineAttributes = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "template_id")
-    private MachineTemplate template;
+    private MachineTemplate machineTemplate;
 
     //Constructors
     public Machine () {}
 
     public Machine (String name){
-        this.name = name;
+        this.machineName = name;
     }
 
+    //TODO: obsolete? 
     public Machine(String name, MachineTemplate template) {
         this(name);
-        this.template = template;
+        this.machineTemplate = template;
     }
 
     public Integer getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getMachineName() {
+        return machineName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMachineName(String name) {
+        this.machineName = name;
     }    
 
-    public List<MachineAttribute> getAttributes() {
-        return attributes;
+    public List<MachineAttribute> getMachineAttributes() {
+        return machineAttributes;
     }
 
-    public void setAttributes(List<MachineAttribute> attributes) {
-        this.attributes = attributes;
+    public void setMachineAttributes(List<MachineAttribute> attributes) {
+        this.machineAttributes = attributes;
     }
 
     public void addAttribute(MachineAttribute attribute) {
-        if (this.attributes == null) this.attributes = new ArrayList<>();
-        this.attributes.add(attribute);
+        if (this.machineAttributes == null) this.machineAttributes = new ArrayList<>();
+        this.machineAttributes.add(attribute);
         attribute.setMachine(this);
     }
 
     public void removeAttribute(MachineAttribute attribute) {
-        if (this.attributes != null) {
-            this.attributes.remove(attribute);
+        if (this.machineAttributes != null) {
+            this.machineAttributes.remove(attribute);
             attribute.setMachine(null);
         }
     }
 
-    public void setTemplate(MachineTemplate template) {
-        this.template = template;
+    public void setMachineTemplate(MachineTemplate template) {
+        this.machineTemplate = template;
     }
 
-    public MachineTemplate getTemplate() {
-        return template;
+    public MachineTemplate getMachineTemplate() {
+        return machineTemplate;
     }
 
     //TODO: Templates add / remove

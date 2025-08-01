@@ -2,6 +2,8 @@
 package com.example.machine_management.controller;
 
 import com.example.machine_management.dto.*;
+import com.example.machine_management.dto.MachineTemplates.CreateMachineTemplateWithAttributesDto;
+import com.example.machine_management.dto.MachineTemplates.MachineTemplateDto;
 import com.example.machine_management.services.MachineTemplateService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +37,12 @@ public class MachineTemplateController {
 
         // 3. Map and return
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(MachineTemplateMapper.toDto(created));
+                .body(MachineTemplateMapper.toDto(created));
     }
 
     @PostMapping("/with-attributes")
-    public ResponseEntity<CreateMachineTemplateWithAttributesDto> createTemplateWithAttributes(@RequestBody CreateMachineTemplateWithAttributesDto dto) {
+    public ResponseEntity<CreateMachineTemplateWithAttributesDto> createTemplateWithAttributes(
+            @RequestBody CreateMachineTemplateWithAttributesDto dto) {
         // 1. Validate
         if (dto == null) {
             throw new IllegalArgumentException("Invalid template data");
@@ -50,10 +53,10 @@ public class MachineTemplateController {
 
         // 3. Map and return
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(MachineTemplateMapper.toWithAttributesDto(created));
+                .body(MachineTemplateMapper.toWithAttributesDto(created));
     }
 
-    //  lazy loading
+    // lazy loading
     @GetMapping("lazy")
     public ResponseEntity<List<MachineTemplateDto>> getAllTemplates() {
         // 1. Get entities
@@ -61,8 +64,8 @@ public class MachineTemplateController {
 
         // 2. Map and return
         return ResponseEntity.ok(templates.stream()
-            .map(MachineTemplateMapper::toDtoLazy)
-            .collect(Collectors.toList()));
+                .map(MachineTemplateMapper::toDtoLazy)
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("full")
@@ -72,8 +75,8 @@ public class MachineTemplateController {
 
         // 2. Map and return
         return ResponseEntity.ok(templates.stream()
-            .map(MachineTemplateMapper::toDto)
-            .collect(Collectors.toList()));
+                .map(MachineTemplateMapper::toDto)
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/{id}")

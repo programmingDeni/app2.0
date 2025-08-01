@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.machine_management.repository.AttributeValueRepository;
 import com.example.machine_management.repository.MachineAttributeRepository;
-import com.example.machine_management.dto.AttributeValueDto;
+import com.example.machine_management.dto.AttributeValue.AttributeValueDto;
 import com.example.machine_management.exceptions.NotFoundException;
 import com.example.machine_management.mapper.AttributeValueMapper;
 import com.example.machine_management.models.Machine;
@@ -25,14 +25,15 @@ public class AttributeValueService {
 
     @Autowired
     private MachineAttributeRepository machineAttributeRepository;
-    
-    //CRUD
+
+    // CRUD
     public List<AttributeValue> getAllAttributeValues() {
         return attributeValueRepository.findAll();
     }
 
     public AttributeValue getAttributeValueById(Integer id) {
-        return attributeValueRepository.findById(id).orElseThrow(() -> new NotFoundException("Attributwert mit ID " + id + " nicht gefunden."));
+        return attributeValueRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Attributwert mit ID " + id + " nicht gefunden."));
     }
 
     public List<AttributeValue> getAttributeValuesByMachineAttributeId(Integer attributeId) {
@@ -44,18 +45,19 @@ public class AttributeValueService {
     }
 
     public AttributeValue createOrUpdateAttributeValue(AttributeValueDto attributeValueDto) {
-        //MachineAttribute attribute = machineAttributeRepository.findBy attributeValueDto.machineAttributeId;
+        // MachineAttribute attribute = machineAttributeRepository.findBy
+        // attributeValueDto.machineAttributeId;
 
         // 1. Existenzprüfung
         MachineAttribute existingAttribute = machineAttributeRepository.findById(attributeValueDto.machineAttributeId)
-            .orElseThrow(() -> new IllegalArgumentException("MachineAttribute not found"));
+                .orElseThrow(() -> new IllegalArgumentException("MachineAttribute not found"));
 
         int year = attributeValueDto.attributeValueYear;
         String value = attributeValueDto.attributeValue;
 
         // 2. Gibt es schon einen Wert für dieses Jahr?
         Optional<AttributeValue> existingValueOpt = attributeValueRepository
-            .findByMachineAttributeAndAttributeValueYear(existingAttribute, year);
+                .findByMachineAttributeAndAttributeValueYear(existingAttribute, year);
 
         AttributeValue toSave;
 
@@ -72,7 +74,7 @@ public class AttributeValueService {
 
         // 5. Speichern
         AttributeValue saved = attributeValueRepository.save(toSave);
-        return saved; 
+        return saved;
     }
 
     public void deleteAttributeValue(Integer id) {

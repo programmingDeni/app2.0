@@ -30,11 +30,11 @@ class MachineRepositoryTest {
         entityManager.flush();
 
         // when
-        Machine found = machineRepository.findByName("TestMachine").orElse(null);
+        Machine found = machineRepository.findByMachineName("TestMachine").orElse(null);
 
         // then
         assertNotNull(found, "Machine sollte gefunden werden");
-        assertEquals("TestMachine", found.getName());
+        assertEquals("TestMachine", found.getMachineName());
     }
 
     @Test
@@ -51,7 +51,7 @@ class MachineRepositoryTest {
 
      @Test
     void whenFindByNameNotExists_thenReturnEmpty() {
-        Optional<Machine> found = machineRepository.findByName("NonExistent");
+        Optional<Machine> found = machineRepository.findByMachineName("NonExistent");
         assertTrue(found.isEmpty(), "Sollte leeres Optional zurückgeben");
     }
 
@@ -63,7 +63,7 @@ class MachineRepositoryTest {
 
         Machine found = machineRepository.findById(testMachine.getId()).orElse(null);
         assertNotNull(found, "Machine sollte gefunden werden");
-        assertEquals(testMachine.getName(), found.getName());
+        assertEquals(testMachine.getMachineName(), found.getMachineName());
     }
 
     @Test

@@ -9,9 +9,9 @@ public class MachineStructureMapper {
         
         return new MachineStructureDto(
             machine.getId(),
-            machine.getName(),
-            machine.getTemplate() != null ? machine.getTemplate().getId() : null,
-            MachineAttributeMapper.toDtoList(machine.getAttributes())
+            machine.getMachineName(),
+            machine.getMachineTemplate() != null ? machine.getMachineTemplate().getId() : null,
+            MachineAttributeMapper.toDtoList(machine.getMachineAttributes())
         );
     }
     

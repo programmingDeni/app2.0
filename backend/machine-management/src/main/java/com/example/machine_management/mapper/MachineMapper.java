@@ -1,8 +1,8 @@
 package com.example.machine_management.mapper;
 
-import com.example.machine_management.dto.MachineAttributeDto;
-import com.example.machine_management.dto.MachineDto;
-import com.example.machine_management.dto.MachineTemplateDto;
+import com.example.machine_management.dto.Machine.MachineDto;
+import com.example.machine_management.dto.MachineAttributes.MachineAttributeDto;
+import com.example.machine_management.dto.MachineTemplates.MachineTemplateDto;
 import com.example.machine_management.models.AttributeInTemplate;
 import com.example.machine_management.models.Machine;
 import com.example.machine_management.models.MachineAttribute;
@@ -13,15 +13,15 @@ import java.util.stream.Collectors;
 public class MachineMapper {
 
     public static MachineDto toDto(Machine machine) {
-        MachineTemplateDto templateDto = machine.getTemplate() != null
-            ? MachineTemplateMapper.toDto(machine.getTemplate()) : null;
+        MachineTemplateDto templateDto = machine.getMachineTemplate() != null
+                ? MachineTemplateMapper.toDto(machine.getMachineTemplate())
+                : null;
 
         return new MachineDto(
-            machine.getId(),
-            machine.getName(),
-            MachineAttributeMapper.toDtoList(machine.getAttributes()),
-            templateDto
-        );
+                machine.getId(),
+                machine.getMachineName(),
+                machine.getMachineTemplate() != null ? machine.getMachineTemplate().getId() : null,
+                MachineAttributeMapper.toDtoList(machine.getMachineAttributes()));
     }
 
     // Nur falls du auch Entities aus Dtos erstellen willst (z. B. beim POST):
@@ -37,14 +37,14 @@ public class MachineMapper {
     }
 
     public static Machine fromTemplate(String name, MachineTemplate template) {
-    Machine machine = new Machine(name);
-    machine.setTemplate(template);
+        Machine machine = new Machine(name);
+        machine.setMachineTemplate(template);
 
-    for (AttributeInTemplate t : template.getAttributeTemplates()) {
-        MachineAttribute attr = new MachineAttribute(machine, t.getAttributeInTemplateName());
-        attr.setType(t.getType());
-        machine.addAttribute(attr);
-    }
+        for (AttributeInTemplate t : template.getAttributeTemplates()) {
+            MachineAttribute attr = new MachineAttribute(machine, t.getAttributeInTemplateName());
+            attr.setType(t.getType());
+            machine.addAttribute(attr);
+        }
 
         return machine;
     }

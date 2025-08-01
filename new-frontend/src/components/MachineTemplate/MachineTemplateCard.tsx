@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function MachineTemplateCard({ template }: Props) {
-  const attributeTemplates = template.attributeTemplates ?? [];
+  const attributeTemplates = template.templateAttributes ?? [];
 
   console.log("template", template);
   console.log("attributeTemplates", attributeTemplates);

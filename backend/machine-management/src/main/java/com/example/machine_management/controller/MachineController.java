@@ -1,14 +1,14 @@
 package com.example.machine_management.controller;
 
-import com.example.machine_management.dto.CreateMachineFromTemplateDto;
-import com.example.machine_management.dto.LazyMachineDto;
-import com.example.machine_management.dto.MachineDto;
 import com.example.machine_management.models.Machine;
 import com.example.machine_management.repository.MachineRepository;
 import com.example.machine_management.services.MachineService;
 import com.example.machine_management.mapper.LazyMachineMapper;
 import com.example.machine_management.mapper.MachineMapper;
 import com.example.machine_management.dto.MachineStructureDto;
+import com.example.machine_management.dto.Machine.CreateMachineFromTemplateDto;
+import com.example.machine_management.dto.Machine.LazyMachineDto;
+import com.example.machine_management.dto.Machine.MachineDto;
 import com.example.machine_management.mapper.MachineStructureMapper;
 
 import java.util.List;
@@ -33,7 +33,7 @@ public class MachineController {
     @Autowired
     private MachineService machineService;
 
-    // POST 
+    // POST
     @PostMapping
     public ResponseEntity<MachineDto> createMachine(@RequestBody MachineDto dto) {
         // 1. Validate
@@ -46,10 +46,10 @@ public class MachineController {
 
         // 3. Map to DTO and return
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(MachineMapper.toDto(created));
+                .body(MachineMapper.toDto(created));
     }
 
-    //POST /from-template
+    // POST /from-template
     @PostMapping("/from-template")
     public ResponseEntity<MachineDto> createMachineFromTemplate(
             @RequestBody CreateMachineFromTemplateDto dto) {
@@ -63,44 +63,44 @@ public class MachineController {
 
         // 3. Map to DTO and return
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(MachineMapper.toDto(created));
+                .body(MachineMapper.toDto(created));
     }
 
-    //Lazy Get
+    // Lazy Get
     @GetMapping("/lazy")
     public ResponseEntity<List<LazyMachineDto>> getAllMachinesLazy() {
         // 1. Get entities from service
         List<Machine> machines = machineService.getAllMachines();
-        
+
         // 2. Map to DTOs and return
         List<LazyMachineDto> dtos = LazyMachineMapper.toDtoList(machines);
-            
-        //returnen
+
+        // returnen
         return ResponseEntity.ok(dtos);
-    
+
     }
 
-
-    //EAGER GET !!
-    // GET	all => alle machinen MIT ihren Attributen UND AttributeValues 
-    // das dto format / der mapper entscheidet ob lazy oder eager geladen wird 
-    // das heißt ob die verknüpften relationen mit übergeben werden 
-    // hier werden die Attribute mit übergeben 
-    // auch der MachineAttribut mapper ruft den MachineAttributeValues auf, auch diese werden mit übergeben  
+    // EAGER GET !!
+    // GET all => alle machinen MIT ihren Attributen UND AttributeValues
+    // das dto format / der mapper entscheidet ob lazy oder eager geladen wird
+    // das heißt ob die verknüpften relationen mit übergeben werden
+    // hier werden die Attribute mit übergeben
+    // auch der MachineAttribut mapper ruft den MachineAttributeValues auf, auch
+    // diese werden mit übergeben
     @GetMapping
     public ResponseEntity<List<MachineDto>> getAllMachines() {
         // 1. Get entities from service
         List<Machine> machines = machineService.getAllMachines();
-        
+
         // 2. Map to DTOs and return
         List<MachineDto> dtos = machines.stream()
-            .map(MachineMapper::toDto)
-            .collect(Collectors.toList());
-            
+                .map(MachineMapper::toDto)
+                .collect(Collectors.toList());
+
         return ResponseEntity.ok(dtos);
     }
 
-    //Eager Loading Machines, Attribtue und Values 
+    // Eager Loading Machines, Attribtue und Values
     @GetMapping("/{id}")
     public ResponseEntity<MachineDto> getMachine(@PathVariable Integer id) {
         // 1. Validate
@@ -115,7 +115,7 @@ public class MachineController {
         return ResponseEntity.ok(MachineMapper.toDto(machine));
     }
 
-    //hier jetzt eager die attribute aber lazy die values
+    // hier jetzt eager die attribute aber lazy die values
     @GetMapping("/{id}/structure")
     public ResponseEntity<MachineStructureDto> getMachineStructure(@PathVariable Integer id) {
         // 1. Validate
@@ -130,10 +130,10 @@ public class MachineController {
         return ResponseEntity.ok(MachineStructureMapper.toDto(machine));
     }
 
-    //update name 
+    // update name
     @PutMapping("/{id}")
     public ResponseEntity<MachineDto> updateMachine(
-            @PathVariable Integer id, 
+            @PathVariable Integer id,
             @RequestBody MachineDto dto) {
         // 1. Validate
         if (id == null || id <= 0 || dto == null || !isValidMachineDto(dto)) {
@@ -149,7 +149,7 @@ public class MachineController {
 
     @PutMapping("/{id}/template/{templateId}")
     public ResponseEntity<MachineDto> assignTemplateToMachine(
-            @PathVariable Integer machineId, 
+            @PathVariable("id") Integer machineId,
             @PathVariable Integer templateId) {
         // 1. Validate
         if (machineId == null || machineId <= 0 || templateId == null || templateId <= 0) {
@@ -158,8 +158,6 @@ public class MachineController {
         machineService.assignTemplate(machineId, templateId);
         return ResponseEntity.ok(MachineMapper.toDto(machineService.getMachineById(machineId)));
     }
-
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMachine(@PathVariable Integer id) {
@@ -176,8 +174,12 @@ public class MachineController {
     }
 
     @DeleteMapping("/{id}/template")
-    public ResponseEntity<Void> removeTemplateFromMachine(@PathVariable Integer machineId) {
-        // 1. Validate nur form, logic wirtd im service gecheckt; 
+    public ResponseEntity<Void> removeTemplateFromMachine(@PathVariable("id") Integer machineId) {
+        // 1. Validate nur form, logic wirtd im service gecheckt;
+        if (machineId == null || machineId <= 0) {
+            throw new IllegalArgumentException("Invalid ID");
+        }
+
         machineService.removeTemplateFromMachine(machineId);
 
         return ResponseEntity.noContent().build();
@@ -186,12 +188,12 @@ public class MachineController {
     private boolean isValidMachineDto(MachineDto dto) {
         return dto.name != null && !dto.name.trim().isEmpty();
     }
-    
+
     private boolean isValidTemplateDto(CreateMachineFromTemplateDto dto) {
         return dto != null &&
-            dto.machineName != null && 
-            !dto.machineName.trim().isEmpty() &&
-            dto.machineTemplateId != null && 
-            dto.machineTemplateId > 0;
+                dto.machineName != null &&
+                !dto.machineName.trim().isEmpty() &&
+                dto.machineTemplateId != null &&
+                dto.machineTemplateId > 0;
     }
 }

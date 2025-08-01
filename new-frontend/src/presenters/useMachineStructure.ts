@@ -21,6 +21,7 @@ export function useMachineStructure(machineId: number) {
     try {
       const res = await getMachineStructureByMachineId(machineId);
       setData(res.data);
+      console.log("machineStructure", res.data);
     } catch (err) {
       setError(err as Error);
     } finally {
@@ -42,9 +43,10 @@ export function useMachineStructure(machineId: number) {
   };
 
   const removeTemplateFromMachine = async () => {
-    // call backend sag dass ein template assigned werden soll
+    // call backend sag dass ein template von der machine entfernt werden soll
     try {
       //service call
+      console.log("removeTemplateFromMachineById", machineId);
       await removeTemplateFromMachineById(machineId);
       await fetch();
     } catch (err) {

@@ -42,7 +42,7 @@ public class MachineAttribute {
         }
         this.machine = besitzendeMachine;
         this.attributeName = attributeName;
-        besitzendeMachine.getAttributes().add(this);
+        besitzendeMachine.getMachineAttributes().add(this);
     }
 
     //initialisierung mit type
@@ -50,7 +50,7 @@ public class MachineAttribute {
         this(besitzendeMachine, attributeName);
         this.type = type;
     }
-    //initialisierung ohne values 
+    //initialisierung vom Template ohne values 
     public MachineAttribute(Machine besitzendeMachine, String attributeName, AttributeType type, boolean fromTemplate){
         this(besitzendeMachine, attributeName, type);
         this.fromTemplate = fromTemplate;
@@ -84,15 +84,15 @@ public class MachineAttribute {
         
         // Entferne dieses Attribut von der alten Machine
         if (this.machine != null && this.machine != newMachine) {
-            this.machine.getAttributes().remove(this);
+            this.machine.getMachineAttributes().remove(this);
         }
         
         // Setze neue Machine
         this.machine = newMachine;
         
         // Füge dieses Attribut zur neuen Machine hinzu
-        if (!newMachine.getAttributes().contains(this)) {
-            newMachine.getAttributes().add(this);
+        if (!newMachine.getMachineAttributes().contains(this)) {
+            newMachine.getMachineAttributes().add(this);
         }
     }
 

@@ -22,6 +22,7 @@ import {
 } from "@/services/machine.service";
 
 import { useMachineTemplates } from "@/presenters/useMachineTemplates";
+import TemplateSelect from "../TemplateSelect/TemplateSelect";
 
 interface Props {
   onMachineAdded: () => void;
@@ -69,19 +70,11 @@ export default function AddMachineForm({ onMachineAdded }: Props) {
         value={newMachineName}
         onChange={(e) => setNewMachineName(e.target.value)}
       />
-
-      <select
-        value={selectedTemplateId ?? ""}
-        onChange={(e) => setSelectedTemplateId(Number(e.target.value))}
-      >
-        <option value="">Kein Template verwenden</option>
-        {templates.map((template) => (
-          <option key={template.id} value={template.id}>
-            {template.templateName}
-          </option>
-        ))}
-      </select>
-
+      <TemplateSelect
+        templates={templates}
+        selectedTemplateId={selectedTemplateId}
+        onChange={setSelectedTemplateId}
+      />
       <button onClick={handleSubmit} disabled={!newMachineName.trim()}>
         Speichern
       </button>

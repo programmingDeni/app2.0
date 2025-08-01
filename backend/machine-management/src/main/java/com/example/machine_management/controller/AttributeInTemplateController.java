@@ -1,6 +1,6 @@
 package com.example.machine_management.controller;
 
-import com.example.machine_management.dto.AttributeTemplateDto;
+import com.example.machine_management.dto.AttributeInTemplate.AttributeTemplateDto;
 import com.example.machine_management.mapper.AttributeTemplateMapper;
 import com.example.machine_management.models.AttributeInTemplate;
 import com.example.machine_management.models.AttributeType;
@@ -10,7 +10,6 @@ import com.example.machine_management.services.AttributeTemplateService;
 import com.fasterxml.jackson.databind.annotation.JsonAppend.Attr;
 import com.example.machine_management.models.MachineTemplate;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -19,8 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
-
 @RestController
 @RequestMapping("/api/attribute-templates")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -28,7 +25,7 @@ public class AttributeInTemplateController {
 
     @Autowired
     private AttributeTemplateService attributeTemplateService;
-    
+
     @PostMapping
     public ResponseEntity<AttributeTemplateDto> createAttributeTemplate(@RequestBody AttributeTemplateDto dto) {
         // 1. Validate input
@@ -41,17 +38,17 @@ public class AttributeInTemplateController {
 
         // 3. Convert and return
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(AttributeTemplateMapper.toDto(created));
+                .body(AttributeTemplateMapper.toDto(created));
     }
 
     @GetMapping
     public ResponseEntity<List<AttributeTemplateDto>> getAllAttributeTemplates() {
         // 1. Get data from service
         List<AttributeInTemplate> templates = attributeTemplateService.getAllAttributeTemplates();
-        
+
         // 2. Convert and return
         List<AttributeTemplateDto> dtos = AttributeTemplateMapper.toDtoList(templates);
-            
+
         return ResponseEntity.ok(dtos);
     }
 
@@ -117,9 +114,9 @@ public class AttributeInTemplateController {
     }
 
     private boolean isValidAttributeTemplateDto(AttributeTemplateDto dto) {
-        return dto.attributeInTemplateName != null && 
-               !dto.attributeInTemplateName.trim().isEmpty() &&
-               dto.attributeInTemplateType != null &&
-               dto.machineTemplateId > 0;
+        return dto.attributeInTemplateName != null &&
+                !dto.attributeInTemplateName.trim().isEmpty() &&
+                dto.attributeInTemplateType != null &&
+                dto.machineTemplateId > 0;
     }
 }

@@ -1,5 +1,5 @@
 // AttributeTemplateDto.java
-package com.example.machine_management.dto;
+package com.example.machine_management.dto.AttributeInTemplate;
 
 public class AttributeTemplateDto {
     public Integer id;
@@ -8,9 +8,11 @@ public class AttributeTemplateDto {
     public int machineTemplateId;
     // nur ids in dtos
 
-    public AttributeTemplateDto() {}
+    public AttributeTemplateDto() {
+    }
 
-    public AttributeTemplateDto(Integer id, String attributeTemplateName, String attributeTemplateType, int machineTemplateId) {
+    public AttributeTemplateDto(Integer id, String attributeTemplateName, String attributeTemplateType,
+            int machineTemplateId) {
         this.id = id;
         this.attributeInTemplateName = attributeTemplateName;
         this.attributeInTemplateType = attributeTemplateType;

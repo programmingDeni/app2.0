@@ -5,12 +5,19 @@ export interface MachineStructureDto {
   name: string;
   machineTemplateId: number | null;
   machineAttributes: MachineAttributeDto[];
+  fromTemplate: boolean;
 }
 
 export interface MachineLazy {
   id: number;
   name: string;
   templateName: string;
+}
+
+export interface MachineWithAttributeValues {
+  id: number;
+  machineAttributes: MachineAttributeDto[];
+  //attributeValues: MachineAttributeValue[];
 }
 
 export interface CreateMachineByNameDto {

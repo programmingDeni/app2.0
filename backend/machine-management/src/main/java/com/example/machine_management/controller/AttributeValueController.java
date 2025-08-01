@@ -1,6 +1,6 @@
 package com.example.machine_management.controller;
 
-import com.example.machine_management.dto.AttributeValueDto;
+import com.example.machine_management.dto.AttributeValue.AttributeValueDto;
 import com.example.machine_management.mapper.AttributeValueMapper;
 import com.example.machine_management.models.AttributeValue;
 import com.example.machine_management.services.AttributeValueService;
@@ -32,18 +32,18 @@ public class AttributeValueController {
 
         // 3. Map to DTO and return
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(AttributeValueMapper.toDto(created));
+                .body(AttributeValueMapper.toDto(created));
     }
 
     @GetMapping
     public ResponseEntity<List<AttributeValueDto>> getAllAttributeValues() {
         // 1. Get entities
         List<AttributeValue> values = attributeValueService.getAllAttributeValues();
-        
+
         // 2. Map and return
         return ResponseEntity.ok(values.stream()
-            .map(AttributeValueMapper::toDto)
-            .collect(Collectors.toList()));
+                .map(AttributeValueMapper::toDto)
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/{id}")
@@ -72,8 +72,8 @@ public class AttributeValueController {
 
         // 3. Map and return
         return ResponseEntity.ok(values.stream()
-            .map(AttributeValueMapper::toDto)
-            .collect(Collectors.toList()));
+                .map(AttributeValueMapper::toDto)
+                .collect(Collectors.toList()));
     }
 
     @PutMapping("/{id}")
@@ -108,7 +108,7 @@ public class AttributeValueController {
 
     private boolean isValidValueDto(AttributeValueDto dto) {
         return dto.attributeValue != null &&
-               !dto.attributeValue.trim().isEmpty() &&
-               dto.machineAttributeId > 0;
+                !dto.attributeValue.trim().isEmpty() &&
+                dto.machineAttributeId > 0;
     }
 }
