@@ -1,6 +1,7 @@
 import {
   createAttribute,
   removeAttributeFromMachineService,
+  getMachineAttributes,
 } from "@/services/machineAttribute.service";
 import { MachineAttributeDto } from "@/types/machineAttribute";
 import { CreateMachineAttributeDto } from "@/types/MachineAttributes/CreatemachineAttribute";
@@ -19,20 +20,20 @@ export function useMachineAttributes(machineId: number) {
     //TODO:
     setLoading(true);
     try {
-      //const res = await getMachineAttributes(machineId);
-      //setData(res.data);
+      const res = await getMachineAttributes(machineId);
+      setData(res.data);
     } catch (err) {
       setError(err as Error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [machineId]);
 
   const addAttributetoMachine = async (
     attribute: CreateMachineAttributeDto
   ) => {
     try {
-      await createAttribute(attribute);
+      //await createAttribute(attribute);
       fetch();
     } catch (err) {
       setError(err as Error);

@@ -25,6 +25,7 @@ export default function MachineStructureView({ machineId }: Props) {
     refetch,
     assignTemplateToMachine,
     removeTemplateFromMachine,
+    addAttributeToMachine,
   } = useMachineStructure(machineId);
 
   //template verwaltung
@@ -103,7 +104,8 @@ export default function MachineStructureView({ machineId }: Props) {
   const handleRemoveAttribute = async (attributeId: number) => {
     if (!machineStructure) return;
     //call presenter
-    removeAttributeFromMachine(attributeId);
+    await removeAttributeFromMachine(attributeId);
+    await refetch();
   };
 
   return (

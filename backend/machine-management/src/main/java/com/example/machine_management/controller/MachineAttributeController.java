@@ -25,20 +25,25 @@ public class MachineAttributeController {
     @Autowired
     private MachineAttributeService attributeService;
 
-    @PostMapping
-    public ResponseEntity<MachineAttributeDto> createAttribute(@RequestBody MachineAttributeDto dto) {
-        // 1. Validate
-        if (dto == null || !isValidAttributeDto(dto)) {
-            throw new IllegalArgumentException("Invalid attribute data");
-        }
-
-        // 2. Create entity
-        MachineAttribute created = attributeService.createMachineAttribute(dto);
-
-        // 3. Map and return
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(MachineAttributeMapper.toDto(created));
-    }
+    // POST fügt Machine ein Attribute hinzu
+    // jetzt in machine controller
+    /*
+     * @PostMapping
+     * public ResponseEntity<MachineAttributeDto> createAttribute(@RequestBody
+     * MachineAttributeDto dto) {
+     * // 1. Validate
+     * if (dto == null || !isValidAttributeDto(dto)) {
+     * throw new IllegalArgumentException("Invalid attribute data");
+     * }
+     * 
+     * // 2. Create entity
+     * MachineAttribute created = attributeService.createMachineAttribute(dto);
+     * 
+     * // 3. Map and return
+     * return ResponseEntity.status(HttpStatus.CREATED)
+     * .body(MachineAttributeMapper.toDto(created));
+     * }
+     */
 
     @GetMapping
     public ResponseEntity<List<MachineAttributeDto>> getAllAttributes() {

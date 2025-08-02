@@ -4,6 +4,7 @@ import { AttributeType } from "@/types/attributeType";
 import { CreateMachineAttributeDto } from "@/types/MachineAttributes/CreatemachineAttribute";
 import { MachineAttributeDto } from "@/types/machineAttribute";
 import { useMachineAttributes } from "@/presenters/useMachineAttributes";
+import { useMachineStructure } from "@/presenters/useMachineStructure";
 
 interface Props {
   machineId: number;
@@ -25,7 +26,8 @@ export default function AddAttributeForm({
     "BOOLEAN",
   ];
 
-  const { addAttributetoMachine } = useMachineAttributes(machineId);
+  //const { addAttributetoMachine } = useMachineAttributes(machineId);
+  const { addAttributeToMachine } = useMachineStructure(machineId);
 
   const handleSubmit = async () => {
     try {
@@ -34,7 +36,7 @@ export default function AddAttributeForm({
         attributeType,
         machineId,
       };
-      addAttributetoMachine(newAttr);
+      addAttributeToMachine(newAttr);
       if (onAttributeAdded) onAttributeAdded();
       //onAttributeAdded();
       setAttributeName("");

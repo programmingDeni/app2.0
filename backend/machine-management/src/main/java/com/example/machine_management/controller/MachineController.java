@@ -1,19 +1,33 @@
 package com.example.machine_management.controller;
 
+// 📦 MODELLE
 import com.example.machine_management.models.Machine;
-import com.example.machine_management.repository.MachineRepository;
-import com.example.machine_management.services.MachineService;
-import com.example.machine_management.mapper.LazyMachineMapper;
-import com.example.machine_management.mapper.MachineMapper;
-import com.example.machine_management.dto.MachineStructureDto;
+import com.example.machine_management.models.MachineAttribute;
+
+// 📦 DTOs
 import com.example.machine_management.dto.Machine.CreateMachineFromTemplateDto;
 import com.example.machine_management.dto.Machine.LazyMachineDto;
 import com.example.machine_management.dto.Machine.MachineDto;
+import com.example.machine_management.dto.MachineStructureDto;
+import com.example.machine_management.dto.MachineAttributes.MachineAttributeDto;
+
+// 🔁 MAPPER
+import com.example.machine_management.mapper.LazyMachineMapper;
+import com.example.machine_management.mapper.MachineAttributeMapper;
+import com.example.machine_management.mapper.MachineMapper;
 import com.example.machine_management.mapper.MachineStructureMapper;
 
+// 💾 REPOSITORIES
+
+// 🧠 SERVICES
+import com.example.machine_management.services.MachineAttributeService;
+import com.example.machine_management.services.MachineService;
+
+// 🔧 JAVA / UTILS
 import java.util.List;
 import java.util.stream.Collectors;
 
+// 🌐 SPRING FRAMEWORK
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +46,9 @@ public class MachineController {
 
     @Autowired
     private MachineService machineService;
+
+    @Autowired
+    private MachineAttributeService attributeService;
 
     // POST
     @PostMapping
@@ -64,6 +81,26 @@ public class MachineController {
         // 3. Map to DTO and return
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(MachineMapper.toDto(created));
+    }
+
+    // POST fügt Machine ein Attribute hinzu
+    @PostMapping("/{id}/attributes")
+    public ResponseEntity<MachineAttributeDto> createAttribute(@PathVariable Integer id,
+            @RequestBody MachineAttributeDto dto) {
+        // 1. Validate
+        if (dto == null || !isValidAttributeDto(dto)) {
+            throw new IllegalArgumentException("Invalid attribute data");
+        }
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("Invalid ID");
+        }
+
+        // 2. Create entity
+        MachineAttribute created = attributeService.createMachineAttribute(dto);
+
+        // 3. Map and return
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(MachineAttributeMapper.toDto(created));
     }
 
     // Lazy Get
@@ -195,5 +232,12 @@ public class MachineController {
                 !dto.machineName.trim().isEmpty() &&
                 dto.machineTemplateId != null &&
                 dto.machineTemplateId > 0;
+    }
+
+    private boolean isValidAttributeDto(MachineAttributeDto dto) {
+        return dto.attributeName != null &&
+                !dto.attributeName.trim().isEmpty() &&
+                dto.attributeType != null &&
+                dto.machineId > 0;
     }
 }

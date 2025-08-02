@@ -8,6 +8,7 @@ import {
 
 import axios from "@/services/axios";
 
+//GET
 export function getMachineStructureByMachineId(machineId: number) {
   return axios.get<MachineStructureDto>(`/api/machines/${machineId}/structure`);
 }
@@ -21,7 +22,7 @@ export function getMachinesAttributesValuesByMachineId(machineId: number) {
     `/api/machines/${machineId}/structure`
   );
 }
-
+//TEMPLATES ASSIGN UND REMOVE
 export function assignTemplateToMachineById(
   machineId: number,
   templateId: number
@@ -34,10 +35,12 @@ export function removeTemplateFromMachineById(machineId: number) {
   return axios.delete(`/api/machines/${machineId}/template`);
 }
 
+//CREATE MACHINE
+//BY NAME
 export function createMachineByName(payload: CreateMachineByNameDto) {
   return axios.post("/api/machines", payload);
 }
-
+//BY TEMPLATE
 export function createMachineFromTemplate(
   payload: CreateMachineFromTemplateDto
 ) {

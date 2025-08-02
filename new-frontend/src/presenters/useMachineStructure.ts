@@ -6,9 +6,25 @@ import {
   removeTemplateFromMachineById,
 } from "@/services/machine.service";
 import { MachineStructureDto } from "@/types/machine";
+import { CreateMachineAttributeDto } from "@/types/MachineAttributes/CreatemachineAttribute";
+import { createAttribute } from "@/services/machineAttribute.service";
 
 /* 
-   
+   Der hook soll alle Daten vom Backend laden, die für die Anzeige des MachineStructures benötigt werden.
+   Am besten wäre es die API calls möglichst klein zu halten.
+   Änderungen die nicht persistiert werden gehen verloren, wenn der user den browser schließt.
+
+
+   Structure braucht folgende Services
+   Machines:
+    - get
+    - assignTemplate
+    - removeTemplate
+
+  Attributes:
+    - getAttributes (das holt custom und template )
+    - addAttribute
+    - removeAttribute
 */
 
 export function useMachineStructure(machineId: number) {
@@ -29,11 +45,13 @@ export function useMachineStructure(machineId: number) {
     }
   }, [machineId]);
 
+  //ASSIGN TEMPLATE
   const assignTemplateToMachine = async (templateId: number) => {
     // call backend sag dass ein template assigned werden soll
     try {
       //service call
       await assignTemplateToMachineById(machineId, templateId);
+      //test obs hierrpber läuft
       await fetch();
     } catch (err) {
       setError(err as Error);
@@ -42,12 +60,32 @@ export function useMachineStructure(machineId: number) {
     }
   };
 
+  //REMOVE TEMPLATE
   const removeTemplateFromMachine = async () => {
     // call backend sag dass ein template von der machine entfernt werden soll
     try {
       //service call
-      console.log("removeTemplateFromMachineById", machineId);
       await removeTemplateFromMachineById(machineId);
+      await fetch();
+    } catch (err) {
+      setError(err as Error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  //ADD ATTRIBUTE
+  //erhält ein CreateMachineAttributeDto (name, type und machineId)
+  const addAttributeToMachine = async (
+    attribute: CreateMachineAttributeDto
+  ) => {
+    try {
+      //ruft service auf ums im backend zu erstellen => bvackend returnt das neue attribut
+      const res = await createAttribute(machineId, attribute);
+      const newAttribute = res.data;
+
+      //state update
+
       await fetch();
     } catch (err) {
       setError(err as Error);
@@ -67,5 +105,6 @@ export function useMachineStructure(machineId: number) {
     refetch: fetch,
     assignTemplateToMachine,
     removeTemplateFromMachine,
+    addAttributeToMachine,
   };
 }
