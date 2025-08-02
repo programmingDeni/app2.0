@@ -1,9 +1,13 @@
 // src/views/MachineListView/MachineListView.tsx
 import React, { useState } from "react";
 
+//importiere Presenter: dieser stellt den state zur verfügung
 import { useMachineListLazy } from "@/presenters/useMachineListLazy";
 
-import AddMachineForm from "@/components/AddMachineForm";
+//importiere Komponenten
+//addmachineForm: MVP strukturierte funktionale komponente, wiederverwendbar , kapselt logic zum hinzufügen einer machine
+import AddMachineFormView from "@/components/AddMachineFormMVP";
+
 import MachineListLazy from "@/components/MachineListLazy/MachineListLazy";
 import Button from "@/components/Button";
 
@@ -23,7 +27,7 @@ export default function MachineListView() {
     <div>
       <h2>Maschinenliste (Lazy)</h2>
       <MachineListLazy machines={machines} />
-      {showAddMachineForm && <AddMachineForm onMachineAdded={refetch} />}
+      {showAddMachineForm && <AddMachineFormView onMachineAdded={refetch} />}
 
       <Button onClick={toggleShowAddMachine}>
         {showAddMachineForm ? "Abbrechen" : "+ Maschine hinzufügen"}
