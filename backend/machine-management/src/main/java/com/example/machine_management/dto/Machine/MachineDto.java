@@ -8,19 +8,19 @@ import com.example.machine_management.models.Machine;
 
 public class MachineDto {
 
-    public int id;
-    public String name;
+    public Integer id;
+    public String machineName;
     public List<MachineAttributeDto> attributes;
     public MachineTemplateDto machineTemplateDto;
 
     public MachineDto() {
     }
 
-    public MachineDto(int id, String name, List<MachineAttributeDto> machineAttributeDtos,
+    public MachineDto(Integer id, String machineName, List<MachineAttributeDto> machineAttributeDtos,
             MachineTemplateDto machineTemplate) {
         this.id = id;
-        this.name = name;
-        this.attributes = attributes;
+        this.machineName = machineName;
+        this.attributes = machineAttributeDtos;
         this.machineTemplateDto = machineTemplate;
     }
 }

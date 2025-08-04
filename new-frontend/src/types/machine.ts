@@ -9,8 +9,8 @@ export interface MachineStructureDto {
 }
 
 export interface MachineLazy {
-  id: number;
-  name: string;
+  machineId: number;
+  machineName: string;
   templateName: string;
 }
 

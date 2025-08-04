@@ -67,7 +67,7 @@ class MachineMapperTest {
         MachineDto dto = MachineMapper.toDto(machine);
 
         // Assert
-        assertEquals("Testmaschine", dto.name);
+        assertEquals("Testmaschine", dto.machineName);
         assertEquals(1, dto.id);
         // assertEquals("Spannung", dto.attributes.attributeName);
         assertEquals("Testtemplate", dto.machineTemplateDto.templateName);

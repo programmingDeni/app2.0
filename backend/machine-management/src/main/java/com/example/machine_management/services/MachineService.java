@@ -47,11 +47,11 @@ public class MachineService {
     }
 
     public Machine createMachine(MachineDto machineDto) {
-        if (machineDto.name == null || machineDto.name.trim().isEmpty()) {
+        if (machineDto.machineName == null || machineDto.machineName.trim().isEmpty()) {
             throw new IllegalArgumentException("Maschinenname darf nicht leer sein.");
         }
 
-        Machine machine = new Machine(machineDto.name);
+        Machine machine = new Machine(machineDto.machineName);
         Machine saved = machineRepository.save(machine);
         return saved;
     }
@@ -67,14 +67,14 @@ public class MachineService {
     }
 
     public Machine updateMachine(Integer id, MachineDto machineDto) {
-        if (machineDto.name == null || machineDto.name.trim().isEmpty()) {
+        if (machineDto.machineName == null || machineDto.machineName.trim().isEmpty()) {
             throw new IllegalArgumentException("Maschinenname darf nicht leer sein.");
         }
 
         Machine machine = machineRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Maschine mit ID " + id + " nicht gefunden."));
 
-        machine.setMachineName(machineDto.name);
+        machine.setMachineName(machineDto.machineName);
         Machine saved = machineRepository.save(machine);
         return saved;
     }

@@ -1,16 +1,16 @@
 package com.example.machine_management.dto.Machine;
 
 public class LazyMachineDto {
-    public Integer id;
-    public String name;
+    public Integer machineId;
+    public String machineName;
     public String templateName;
 
     public LazyMachineDto() {
     }
 
-    public LazyMachineDto(Integer id, String name, String templateName) {
-        this.id = id;
-        this.name = name;
+    public LazyMachineDto(Integer machineId, String machineName, String templateName) {
+        this.machineId = machineId;
+        this.machineName = machineName;
         this.templateName = templateName;
     }
 

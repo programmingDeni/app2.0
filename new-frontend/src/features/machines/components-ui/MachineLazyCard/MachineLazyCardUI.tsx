@@ -11,9 +11,9 @@ export default function MachineLazyCardUI({ machine, onRemove }: Props) {
   return (
     <li className={styles.card}>
       <div className={styles.header}>
-        <div className={styles.name}>{machine.name}</div>
+        <div className={styles.name}>{machine.machineName}</div>
         <button
-          onClick={() => onRemove(machine.id)}
+          onClick={() => onRemove(machine.machineId)}
           className={styles.removeButton}
           title="Entfernen"
         >
@@ -26,9 +26,9 @@ export default function MachineLazyCardUI({ machine, onRemove }: Props) {
       </div>
 
       <div className={styles.links}>
-        <Link to={`/machines/${machine.id}`}>Struktur anzeigen</Link>
+        <Link to={`/machines/${machine.machineId}`}>Struktur anzeigen</Link>
         <span>|</span>
-        <Link to={`/machines/${machine.id}/values`}>Werte anzeigen</Link>
+        <Link to={`/machines/${machine.machineId}/values`}>Werte anzeigen</Link>
       </div>
     </li>
   );

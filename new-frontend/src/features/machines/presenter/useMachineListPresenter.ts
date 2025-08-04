@@ -24,7 +24,7 @@ export default function useMachineListPresenter() {
     try {
       await removeMachine(id);
       //
-      setMachines((prev) => prev.filter((m) => m.id !== id));
+      setMachines((prev) => prev.filter((m) => m.machineId !== id));
     } catch (e) {
       console.log(e);
     }

@@ -26,7 +26,7 @@ export default function MachineListView() {
       {machines.map((machine) => (
         <div>
           <MachineCard
-            key={machine.id}
+            key={machine.machineId}
             machine={machine}
             onDelete={handleDelete}
           />

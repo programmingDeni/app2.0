@@ -26,7 +26,7 @@ public class MachineMapper {
 
     // Nur falls du auch Entities aus Dtos erstellen willst (z. B. beim POST):
     public static Machine fromDto(MachineDto dto) {
-        Machine machine = new Machine(dto.name);
+        Machine machine = new Machine(dto.machineName);
         if (dto.attributes != null) {
             for (MachineAttributeDto attrDto : dto.attributes) {
                 MachineAttribute attr = MachineAttributeMapper.toEntity(attrDto, dto.id);

@@ -67,8 +67,10 @@ public class MachineController {
     }
 
     // POST /from-template
+    // diese Methode ruft von der AddMachineForm Komponente hier auf;
+    // liefer das objekt lazy zurück für die uebersicht
     @PostMapping("/from-template")
-    public ResponseEntity<MachineDto> createMachineFromTemplate(
+    public ResponseEntity<LazyMachineDto> createMachineFromTemplate(
             @RequestBody CreateMachineFromTemplateDto dto) {
         // 1. Validate
         if (dto == null || !isValidTemplateDto(dto)) {
@@ -80,7 +82,7 @@ public class MachineController {
 
         // 3. Map to DTO and return
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(MachineMapper.toDto(created));
+                .body(LazyMachineMapper.toDto(created));
     }
 
     // POST fügt Machine ein Attribute hinzu
@@ -223,7 +225,7 @@ public class MachineController {
     }
 
     private boolean isValidMachineDto(MachineDto dto) {
-        return dto.name != null && !dto.name.trim().isEmpty();
+        return dto.machineName != null && !dto.machineName.trim().isEmpty();
     }
 
     private boolean isValidTemplateDto(CreateMachineFromTemplateDto dto) {

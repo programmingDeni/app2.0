@@ -33,10 +33,12 @@ export function useAddMachineFormPresenter(
         console.log("response outside id", response);
         newMachine = response;
       }
+      //add new machineto state
+
+      onMachineAdded(newMachine);
 
       setName("");
       setTemplateId(templateId);
-      onMachineAdded(newMachine);
     } catch (e) {
       console.log(e);
     }
