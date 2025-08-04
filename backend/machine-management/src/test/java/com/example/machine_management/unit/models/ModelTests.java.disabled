@@ -4,52 +4,63 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
 import com.example.machine_management.models.Machine;
 import com.example.machine_management.models.MachineAttribute;
+import com.example.machine_management.repository.MachineRepository;
 import com.fasterxml.jackson.databind.annotation.JsonAppend.Attr;
 import com.example.machine_management.models.AttributeType;
 import com.example.machine_management.models.AttributeValue;
 
 @ActiveProfiles("test")
+@DataJpaTest
+// @SpringBootTest
 public class ModelTests {
 
-    //test übergreifende test machine  
+    // test übergreifende test machine
     private Machine testMachine;
 
-    //test übergreifende test machine attribute
+    // test übergreifende test machine attribute
     private MachineAttribute testMachineAttribute;
+
+    // repo für id
+    @Autowired
+    private MachineRepository machineRepository;
 
     @BeforeEach
     void setUp() {
         testMachine = new Machine("testMachine");
+        machineRepository.save(testMachine);
         testMachineAttribute = new MachineAttribute(testMachine, "test");
-        assertNotNull(testMachine,"Test Machine sollte nach Setup nicht null sein");
+        assertNotNull(testMachine, "Test Machine sollte nach Setup nicht null sein");
     }
 
     @Test
     void testMachines() {
-        // Teste empty constructor 
+        // Teste empty constructor
         Machine leereMachine = new Machine();
         assertNotNull(leereMachine, "Leere Machine sollte nicht null sein");
         assertNull(leereMachine.getMachineName(), "Name sollte initial null sein");
         assertNull(leereMachine.getId(), "ID sollte initial null sein");
-        
+
         // Teste machine mit string initialisiert
         assertEquals("testMachine", testMachine.getMachineName(), "Name sollte korrekt gesetzt sein");
 
-        //getter und setter testen
+        // getter und setter testen
         Machine testMachine2 = new Machine("testMachine2");
         assertEquals("testMachine2", testMachine2.getMachineName(), "Name sollte korrekt gesetzt sein");
 
-        //set und get name
+        // set und get name
         testMachine2.setMachineName("testMachine3");
         assertEquals("testMachine3", testMachine2.getMachineName(), "Name sollte korrekt gesetzt sein");
-    
-        //set und get attributes 
+
+        // set und get attributes
         List<MachineAttribute> attributes = testMachine.getMachineAttributes();
         assertNotNull(attributes, "Attributes sollte nicht null sein");
         assertEquals(1, attributes.size(), "Attributes sollte test enthalten sein");
@@ -65,21 +76,23 @@ public class ModelTests {
 
         // Teste dass Konstruktor ohne Namen nicht möglich ist
         assertThrows(IllegalArgumentException.class, () -> {
-            new MachineAttribute(testMachine, null);
+            new MachineAttribute(testMachine.getId(), null);
         }, "Konstruktor sollte IllegalArgumentException werfen wenn Name null ist");
 
         assertThrows(IllegalArgumentException.class, () -> {
-            new MachineAttribute(testMachine, "");
-        }, "Konstruktor sollte IllegalArgumentException werfen wenn Name leer ist");
+            new MachineAttribute(testMachine.getId(), null);
+        }, "Konstruktor sollte IllegalArgumentException werfen wenn attributeID null ist");
 
         // Teste korrekten Konstruktor
-        String testName = "TestAttribute";
-        MachineAttribute attr = new MachineAttribute(testMachine, testName);
+
+        MachineAttribute attr = new MachineAttribute(testMachine.getId(), 1);
+        attr.setAttributeName("testName");
         assertNotNull(attr, "Attribut sollte nicht null sein");
-        assertEquals(testMachine, attr.getMachine(), "Machine sollte korrekt gesetzt sein");
-        assertEquals(testName, attr.getAttributeName(), "Name sollte korrekt gesetzt sein");
-        assertTrue(testMachine.getMachineAttributes().contains(attr), 
-            "Machine sollte das Attribut in ihrer Liste haben");
+        assertEquals(testMachine.getId(), attr.getMachine().getId(), "Machine sollte korrekt gesetzt sein");
+        assertEquals("testName", attr.getAttributeName(),
+                "Name sollte korrekt gesetzt sein");
+        assertTrue(testMachine.getMachineAttributes().contains(attr),
+                "Machine sollte das Attribut in ihrer Liste haben");
 
         // Teste weitere setter
         attr.setType(AttributeType.STRING);
@@ -87,7 +100,7 @@ public class ModelTests {
 
         // Erstelle neuen AttributWert
         String testStringValue = "TestValue";
-        AttributeValue testValue = new AttributeValue(attr, 2022,testStringValue);
+        AttributeValue testValue = new AttributeValue(attr, 2022, testStringValue);
 
         attr.addAttributeValue(testValue);
         assertEquals(2, attr.getAttributeValues().size(), "Attribute sollte genau einen Wert haben");
@@ -118,32 +131,32 @@ public class ModelTests {
         // Erstelle Test-Setup
         Machine machine1 = new Machine("Machine1");
         Machine machine2 = new Machine("Machine2");
-        MachineAttribute attr = new MachineAttribute(machine1, "TestAttr");
-        
+        MachineAttribute attr = new MachineAttribute(machine1.getId(), 1);
+
         // Prüfe initiale Zuordnung
-        assertTrue(machine1.getMachineAttributes().contains(attr), 
-            "Attribut sollte in Machine1's Liste sein");
-        assertEquals(1, machine1.getMachineAttributes().size(), 
-            "Machine1 sollte genau ein Attribut haben");
-        
+        assertTrue(machine1.getMachineAttributes().contains(attr),
+                "Attribut sollte in Machine1's Liste sein");
+        assertEquals(1, machine1.getMachineAttributes().size(),
+                "Machine1 sollte genau ein Attribut haben");
+
         // Ändere Machine
         attr.setMachine(machine2);
-        
+
         // Prüfe ob Attribut von alter Machine entfernt wurde
-        assertFalse(machine1.getMachineAttributes().contains(attr), 
-            "Attribut sollte nicht mehr in Machine1's Liste sein");
-        assertEquals(0, machine1.getMachineAttributes().size(), 
-            "Machine1 sollte keine Attribute mehr haben");
-        
+        assertFalse(machine1.getMachineAttributes().contains(attr),
+                "Attribut sollte nicht mehr in Machine1's Liste sein");
+        assertEquals(0, machine1.getMachineAttributes().size(),
+                "Machine1 sollte keine Attribute mehr haben");
+
         // Prüfe ob Attribut zu neuer Machine hinzugefügt wurde
-        assertTrue(machine2.getMachineAttributes().contains(attr), 
-            "Attribut sollte in Machine2's Liste sein");
-        assertEquals(1, machine2.getMachineAttributes().size(), 
-            "Machine2 sollte genau ein Attribut haben");
-        
+        assertTrue(machine2.getMachineAttributes().contains(attr),
+                "Attribut sollte in Machine2's Liste sein");
+        assertEquals(1, machine2.getMachineAttributes().size(),
+                "Machine2 sollte genau ein Attribut haben");
+
         // Prüfe ob Machine korrekt gesetzt wurde
-        assertEquals(machine2, attr.getMachine(), 
-            "Machine-Referenz sollte auf Machine2 zeigen");
+        assertEquals(machine2, attr.getMachine(),
+                "Machine-Referenz sollte auf Machine2 zeigen");
     }
 
     @Test
@@ -162,8 +175,8 @@ public class ModelTests {
     }
 
     @Test
-    void createMachineFromTemplate(){
-        //TODO: machien von template erstellen -> attribtue sollen initialisiert werden 
+    void createMachineFromTemplate() {
+        // TODO: machien von template erstellen -> attribtue sollen initialisiert werden
     }
 
 }

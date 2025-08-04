@@ -18,7 +18,7 @@ public class MachineAttributeMapper {
                 attr.getAttributeValues().stream()
                         .map(AttributeValueMapper::toDto)
                         .collect(Collectors.toList()),
-                attr.getMachine().getId(),
+                attr.getMachineId(),
                 attr.getFromTemplate());
     }
 
@@ -30,8 +30,8 @@ public class MachineAttributeMapper {
                 .collect(Collectors.toList());
     }
 
-    public static MachineAttribute toEntity(MachineAttributeDto machineAttributeDto, Machine machine) {
-        MachineAttribute attr = new MachineAttribute(machine, machineAttributeDto.attributeName);
+    public static MachineAttribute toEntity(MachineAttributeDto machineAttributeDto, Integer machineId) {
+        MachineAttribute attr = new MachineAttribute(machineId, machineAttributeDto.id);
         // attr.setId(dto.id);
         attr.setType(AttributeType.valueOf(machineAttributeDto.attributeType)); // <-- hier Umwandlung String → Enum
 

@@ -6,7 +6,7 @@ import com.example.machine_management.dto.AttributeValue.AttributeValueDto;
 
 public class MachineAttributeDto {
 
-    public int id;
+    public Integer id;
     public String attributeName;
     public String attributeType; // wenn du das Enum als String nutzen willst
     public List<AttributeValueDto> attributeValues;
@@ -16,7 +16,7 @@ public class MachineAttributeDto {
     public MachineAttributeDto() {
     }
 
-    public MachineAttributeDto(int id, String attributeName, String attributeType,
+    public MachineAttributeDto(Integer id, String attributeName, String attributeType,
             List<AttributeValueDto> attributeValues, Integer machineId, boolean fromTemplate) {
         this.id = id;
         this.attributeName = attributeName;

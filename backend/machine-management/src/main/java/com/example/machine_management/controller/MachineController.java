@@ -192,8 +192,8 @@ public class MachineController {
         if (machineId == null || machineId <= 0 || templateId == null || templateId <= 0) {
             throw new IllegalArgumentException("Invalid update data");
         }
-        machineService.assignTemplate(machineId, templateId);
-        return ResponseEntity.ok(MachineMapper.toDto(machineService.getMachineById(machineId)));
+
+        return ResponseEntity.ok(MachineMapper.toDto(machineService.assignTemplate(machineId, templateId)));
     }
 
     @DeleteMapping("/{id}")

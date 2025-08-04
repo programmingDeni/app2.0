@@ -29,7 +29,7 @@ public class MachineMapper {
         Machine machine = new Machine(dto.name);
         if (dto.attributes != null) {
             for (MachineAttributeDto attrDto : dto.attributes) {
-                MachineAttribute attr = MachineAttributeMapper.toEntity(attrDto, machine);
+                MachineAttribute attr = MachineAttributeMapper.toEntity(attrDto, dto.id);
                 machine.addAttribute(attr); // bidirektional
             }
         }
@@ -39,13 +39,15 @@ public class MachineMapper {
     public static Machine fromTemplate(String name, MachineTemplate template) {
         Machine machine = new Machine(name);
         machine.setMachineTemplate(template);
-
-        for (AttributeInTemplate t : template.getAttributeTemplates()) {
-            MachineAttribute attr = new MachineAttribute(machine, t.getAttributeInTemplateName());
-            attr.setType(t.getType());
-            machine.addAttribute(attr);
-        }
-
+        /*
+         * 
+         * for (AttributeInTemplate t : template.getAttributeTemplates()) {
+         * MachineAttribute attr = new MachineAttribute(machine,
+         * t.getAttributeInTemplateName());
+         * attr.setType(t.getType());
+         * machine.addAttribute(attr);
+         * }
+         */
         return machine;
     }
 

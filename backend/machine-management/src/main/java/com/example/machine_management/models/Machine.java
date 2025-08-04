@@ -15,22 +15,23 @@ public class Machine {
     @Column(unique = true)
     private String machineName;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "machine")
-    //@JoinColumn(name = "machine_id") // FK in MachineAttributes
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "machineId") // FK in MachineAttributes
     private List<MachineAttribute> machineAttributes = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "template_id")
     private MachineTemplate machineTemplate;
 
-    //Constructors
-    public Machine () {}
+    // Constructors
+    public Machine() {
+    }
 
-    public Machine (String name){
+    public Machine(String name) {
         this.machineName = name;
     }
 
-    //TODO: obsolete? 
+    // TODO: obsolete?
     public Machine(String name, MachineTemplate template) {
         this(name);
         this.machineTemplate = template;
@@ -46,7 +47,7 @@ public class Machine {
 
     public void setMachineName(String name) {
         this.machineName = name;
-    }    
+    }
 
     public List<MachineAttribute> getMachineAttributes() {
         return machineAttributes;
@@ -57,15 +58,16 @@ public class Machine {
     }
 
     public void addAttribute(MachineAttribute attribute) {
-        if (this.machineAttributes == null) this.machineAttributes = new ArrayList<>();
+        if (this.machineAttributes == null)
+            this.machineAttributes = new ArrayList<>();
         this.machineAttributes.add(attribute);
-        attribute.setMachine(this);
+        attribute.setMachineId(this.id);
     }
 
     public void removeAttribute(MachineAttribute attribute) {
         if (this.machineAttributes != null) {
             this.machineAttributes.remove(attribute);
-            attribute.setMachine(null);
+            attribute.setMachineId(null);
         }
     }
 
@@ -77,6 +79,6 @@ public class Machine {
         return machineTemplate;
     }
 
-    //TODO: Templates add / remove
+    // TODO: Templates add / remove
 
 }

@@ -1,8 +1,8 @@
 import {
   MachineLazy,
   MachineStructureDto,
-  CreateMachineByNameDto,
-  CreateMachineFromTemplateDto,
+  CreateMachineByName,
+  CreateMachineFromTemplate,
   MachineWithAttributeValues,
 } from "@/types/machine";
 
@@ -38,16 +38,18 @@ export function removeTemplateFromMachineById(machineId: number) {
 //machinen hinzufügen und entfernen
 //CREATE MACHINE
 //BY NAME
-export function createMachineByName(payload: CreateMachineByNameDto) {
-  return axios.post("/api/machines", payload);
+export async function createMachineByName(
+  payload: CreateMachineByName
+): Promise<MachineLazy> {
+  const response = await axios.post("/api/machines", payload);
+  return response.data;
 }
 //BY TEMPLATE
 export async function createMachineFromTemplate(
-  payload: CreateMachineFromTemplateDto
-) {
+  payload: CreateMachineFromTemplate
+): Promise<MachineLazy> {
   const response = await axios.post("/api/machines/from-template", payload);
-  console.log("serveer response", response);
-  return response;
+  return response.data;
 }
 //DELETE MACHINE
 export function deleteMachine(machineId: number) {

@@ -42,8 +42,8 @@ public class DataInitializer {
             template1 = templateRepo.save(template1);
 
             // Machine aus Template erstellen
-            Machine createdMachine = machineService.createMachineFromTemplate(
-                    new CreateMachineFromTemplateDto("Machine 1", template1.getId()));
+            Machine createdMachine = machineService
+                    .createMachineFromTemplate(new CreateMachineFromTemplateDto("Template 1", template1.getId()));
 
             System.out.println("Erstellte Maschine:");
             System.out.println("Name: " + createdMachine.getMachineName());

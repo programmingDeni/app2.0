@@ -22,9 +22,7 @@ public class MachineAttribute {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "machineAttribute")
     private List<AttributeValue> attributeValues = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "machine_id", nullable = false)
-    private Machine machine;
+    private Integer machineId;
 
     private boolean fromTemplate = false;
 
@@ -35,27 +33,39 @@ public class MachineAttribute {
     }
 
     // initialisierung ohne type
-    public MachineAttribute(Machine besitzendeMachine, String attributeName) {
-        if (besitzendeMachine == null) {
+    public MachineAttribute(Integer machineId, String attributeName) {
+        if (machineId == null) {
             throw new IllegalArgumentException("Machine darf nicht null sein");
         }
         if (attributeName == null || attributeName.trim().isEmpty()) {
             throw new IllegalArgumentException("AttributeName darf nicht null oder leer sein");
         }
-        this.machine = besitzendeMachine;
+        this.machineId = machineId;
         this.attributeName = attributeName;
-        besitzendeMachine.getMachineAttributes().add(this);
     }
 
-    // initialisierung mit type
-    public MachineAttribute(Machine besitzendeMachine, String attributeName, AttributeType type) {
-        this(besitzendeMachine, attributeName);
+    // Initialisierung mit Integer statt Machine
+    // machine und attribute id
+    public MachineAttribute(Integer machineId, Integer attributeId) {
+        if (attributeId == null || attributeId <= 0) {
+            throw new IllegalArgumentException("AttributeID darf nicht null oder leer sein");
+        }
+        if (machineId == null || machineId <= 0) {
+            throw new IllegalArgumentException("MachineID darf nicht null oder leer sein");
+        }
+        this.id = attributeId;
+        this.machineId = machineId;
+    }
+
+    public MachineAttribute(Integer machineId, String attributeName, AttributeType type) {
+        this.machineId = machineId;
+        this.attributeName = attributeName;
         this.type = type;
     }
 
     // initialisierung vom Template ohne values
-    public MachineAttribute(Machine besitzendeMachine, String attributeName, AttributeType type, boolean fromTemplate) {
-        this(besitzendeMachine, attributeName, type);
+    public MachineAttribute(Integer machineId, String attributeName, AttributeType type, boolean fromTemplate) {
+        this(machineId, attributeName, type);
         this.fromTemplate = fromTemplate;
     }
 
@@ -76,27 +86,18 @@ public class MachineAttribute {
         this.attributeName = attributeName;
     }
 
-    public Machine getMachine() {
-        return machine;
+    public Integer getMachineId() {
+        return machineId;
     }
 
-    public void setMachine(Machine newMachine) {
+    public void setMachineId(Integer newMachine) {
+        // passiert so eigentlich nicht, attribute werden nicht von einer machine zur
+        // anderen geschoben
         if (newMachine == null) {
             throw new IllegalArgumentException("Machine darf nicht null sein");
         }
-
-        // Entferne dieses Attribut von der alten Machine
-        if (this.machine != null && this.machine != newMachine) {
-            this.machine.getMachineAttributes().remove(this);
-        }
-
         // Setze neue Machine
-        this.machine = newMachine;
-
-        // Füge dieses Attribut zur neuen Machine hinzu
-        if (!newMachine.getMachineAttributes().contains(this)) {
-            newMachine.getMachineAttributes().add(this);
-        }
+        this.machineId = newMachine;
     }
 
     public AttributeType getType() {

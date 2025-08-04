@@ -57,32 +57,12 @@ public class MachineService {
     }
 
     public Machine createMachineFromTemplate(CreateMachineFromTemplateDto dto) {
-        // template finden oder fehler werfen
-        // hier wird lazy geladen aber ich brauche die attributeTemplates auch
-        MachineTemplate template = machineTemplateRepository.findByIdWithAttributes(dto.machineTemplateId).orElseThrow(
-                () -> new NotFoundException("Template mit ID " + dto.machineTemplateId + " nicht gefunden."));
-        // Machine erstellen
+        // machine erstellen, template assignen
         Machine newMachine = new Machine(dto.machineName);
-        // template setzen
-        newMachine.setMachineTemplate(template);
-        // attribute aus temmplate initialisieren
-        for (AttributeInTemplate t : template.getAttributeTemplates()) {
-            MachineAttribute attr = new MachineAttribute(newMachine, t.getAttributeInTemplateName(), t.getType(), true);
-            /*
-             * //initialisierung vom Template ohne values
-             * public MachineAttribute(Machine besitzendeMachine, String attributeName,
-             * AttributeType type, boolean fromTemplate){
-             * this(besitzendeMachine, attributeName, type);
-             * this.fromTemplate = fromTemplate;
-             * }
-             */
-            // newMachine.addAttribute(attr);
-            // TODO: wie bekommt machine davon mit???
-        }
 
         Machine saved = machineRepository.save(newMachine);
 
-        return saved;
+        return assignTemplate(saved.getId(), dto.machineTemplateId);
 
     }
 
@@ -122,12 +102,13 @@ public class MachineService {
         machineRepository.save(machine);
     }
 
-    public void assignTemplate(Integer machineId, Integer templateId) {
-        Machine machine = machineRepository.findById(machineId)
+    public Machine assignTemplate(Integer machineId, Integer templateId) {
+        // eager load
+        Machine machine = machineRepository.findWithAllDataById(machineId)
                 .orElseThrow(() -> new NotFoundException(
                         "[MachineService] assignTemplate(): Maschine mit ID " + machineId + " nicht gefunden."));
 
-        MachineTemplate template = machineTemplateRepository.findById(templateId)
+        MachineTemplate template = machineTemplateRepository.findByIdWithAttributes(templateId)
                 .orElseThrow(() -> new NotFoundException(
                         "[MachineService] assignTemplate(): Template mit ID " + templateId + " nicht gefunden."));
 
@@ -136,14 +117,14 @@ public class MachineService {
         for (AttributeInTemplate templateAttr : template.getAttributeTemplates()) {
             // machinen attribute sollten über machiine gespeichert werden
             MachineAttribute machineAttr = new MachineAttribute(
-                    machine,
+                    machineId,
                     templateAttr.getAttributeInTemplateName(),
                     templateAttr.getType(),
                     true);
             machine.getMachineAttributes().add(machineAttr);
         }
 
-        machineRepository.save(machine);
+        return machineRepository.save(machine);
     }
 
 }

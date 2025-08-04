@@ -27,11 +27,11 @@ export function useAddMachineFormPresenter(
           machineTemplateId: templateId,
         });
         console.log("response in id", response);
-        newMachine = response.data;
+        newMachine = response;
       } else {
         const response = await createMachineByName({ name });
         console.log("response outside id", response);
-        newMachine = response.data;
+        newMachine = response;
       }
 
       setName("");

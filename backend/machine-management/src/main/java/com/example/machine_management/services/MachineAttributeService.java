@@ -42,7 +42,7 @@ public class MachineAttributeService {
         Machine machine = machineRepository.findById(request.machineId)
                 .orElseThrow(() -> new NotFoundException("Maschine mit ID " + request.machineId + " nicht gefunden."));
         // erstelle neues attribute mit machine, name und type
-        MachineAttribute attr = new MachineAttribute(machine, request.attributeName,
+        MachineAttribute attr = new MachineAttribute(machine.getId(), request.attributeName,
                 AttributeType.valueOf(request.attributeType));
         // speichere attribute
         MachineAttribute saved = attributeRepository.save(attr);
