@@ -35,14 +35,26 @@ export function removeTemplateFromMachineById(machineId: number) {
   return axios.delete(`/api/machines/${machineId}/template`);
 }
 
+//machinen hinzufügen und entfernen
 //CREATE MACHINE
 //BY NAME
 export function createMachineByName(payload: CreateMachineByNameDto) {
   return axios.post("/api/machines", payload);
 }
 //BY TEMPLATE
-export function createMachineFromTemplate(
+export async function createMachineFromTemplate(
   payload: CreateMachineFromTemplateDto
 ) {
-  return axios.post("/api/machines/from-template", payload);
+  const response = await axios.post("/api/machines/from-template", payload);
+  console.log("serveer response", response);
+  return response;
+}
+//DELETE MACHINE
+export function deleteMachine(machineId: number) {
+  try {
+    return axios.delete(`/api/machines/${machineId}`);
+  } catch (err) {
+    console.error("Fehler beim Entfernen der Maschine:", err);
+    return err;
+  }
 }

@@ -20,8 +20,8 @@ public class MachineMapper {
         return new MachineDto(
                 machine.getId(),
                 machine.getMachineName(),
-                machine.getMachineTemplate() != null ? machine.getMachineTemplate().getId() : null,
-                MachineAttributeMapper.toDtoList(machine.getMachineAttributes()));
+                MachineAttributeMapper.toDtoList(machine.getMachineAttributes()),
+                templateDto);
     }
 
     // Nur falls du auch Entities aus Dtos erstellen willst (z. B. beim POST):

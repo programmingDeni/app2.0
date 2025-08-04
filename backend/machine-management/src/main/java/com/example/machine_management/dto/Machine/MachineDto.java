@@ -16,11 +16,11 @@ public class MachineDto {
     public MachineDto() {
     }
 
-    public MachineDto(int id, String name, Integer machienTemplateId, List<MachineAttributeDto> machineAttributeDtos) {
+    public MachineDto(int id, String name, List<MachineAttributeDto> machineAttributeDtos,
+            MachineTemplateDto machineTemplate) {
         this.id = id;
         this.name = name;
-        this.machineTemplateDto = machineTemplateDto;
         this.attributes = attributes;
-
+        this.machineTemplateDto = machineTemplate;
     }
 }

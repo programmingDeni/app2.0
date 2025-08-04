@@ -20,11 +20,18 @@ export interface MachineWithAttributeValues {
   //attributeValues: MachineAttributeValue[];
 }
 
-export interface CreateMachineByNameDto {
+export interface CreateMachineByName {
   name: string;
 }
 
-export interface CreateMachineFromTemplateDto {
+export interface CreateMachineFromTemplate {
   machineName: string;
   machineTemplateId: number;
+}
+
+export interface Machine {
+  id: number;
+  name: string;
+  templateName: string;
+  machineAttributes: MachineAttributeDto[];
 }

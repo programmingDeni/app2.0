@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 //machine DTO / Model laden
-import MachineLazy from "../types/machine.types";
+import { MachineLazy } from "@/types/machine";
 //Service laden
 import { fetchMachinesLazy, removeMachine } from "../services/machineService";
 
@@ -30,8 +30,14 @@ export default function useMachineListPresenter() {
     }
   };
 
+  const addMachineToList = (newMachine: MachineLazy) => {
+    console.log("addedMachineToList", newMachine);
+    setMachines((prev) => [...prev, newMachine]);
+  };
+
   return {
     machines,
     handleDelete,
+    addMachineToList,
   };
 }

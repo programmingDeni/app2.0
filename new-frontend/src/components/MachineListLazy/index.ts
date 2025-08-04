@@ -1,1 +1,1 @@
-export { default } from "./MachineListLazy";
+export { default } from "./MachineListLazyView";
