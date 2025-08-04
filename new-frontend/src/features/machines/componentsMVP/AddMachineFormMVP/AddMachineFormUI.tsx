@@ -1,5 +1,5 @@
 import { MachineTemplateDto } from "@/types/machineTemplate";
-import TemplateSelect from "../../components/TemplateSelect/TemplateSelect";
+import TemplateSelect from "../../../../components/TemplateSelect/TemplateSelect";
 
 interface Props {
   name: string;

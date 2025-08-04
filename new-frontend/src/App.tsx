@@ -3,7 +3,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import MachineStructureWrapper from "@/views/MachineStructureView/MachineStrucutreWrapper";
-import MachineListView from "@/views/MachineListView/MachineListView";
+import MachineListView from "./features/machines/views/MachineList/MachineListView";
 import MachineTemplatesOverview from "@/views/MachineTemplateOverview.tsx";
 import MachineAttributWerteView from "@/views/MachineAttributWerteSicht/MachineAttributWerteView";
 

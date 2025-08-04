@@ -16,9 +16,9 @@ export default function MachineListLazyUI({
     <ul>
       {machines.map((m) => (
         <MachineLazyCard
-          key={m.id}
+          key={m.machineId}
           machine={m}
-          onRemove={() => onremoveMachine(m.id)}
+          onRemove={() => onremoveMachine(m.machineId)}
         />
       ))}
     </ul>

@@ -7,7 +7,7 @@ import MachineCard from "../../components-ui/MachineLazyCard";
 import Button from "@/components/Button";
 
 import ToggleableSection from "@/components/ToggleableSection/ToggleableSection";
-import AddMachineFormView from "../../../AddMachineFormMVP/AddMachineFormView";
+import AddMachineFormView from "../../componentsMVP/AddMachineFormMVP/AddMachineFormView";
 
 //ich will die types global definiert haben; nicht hier encapsulated
 //da sie ja  global (frontend) gültig und mit dem backend sprechen und dessen struktur
