@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.example.machine_management.repository.AttributeValueRepository;
 import com.example.machine_management.repository.MachineAttributeRepository;
+import com.example.machine_management.repository.MachineRepository;
 import com.example.machine_management.dto.AttributeValue.AttributeValueDto;
+import com.example.machine_management.dto.AttributeValue.CreateAttributeValueDto;
 import com.example.machine_management.exceptions.NotFoundException;
 import com.example.machine_management.mapper.AttributeValueMapper;
 import com.example.machine_management.models.Machine;
@@ -25,6 +27,9 @@ public class AttributeValueService {
 
     @Autowired
     private MachineAttributeRepository machineAttributeRepository;
+
+    @Autowired
+    private MachineRepository machineRepository;
 
     // CRUD
     public List<AttributeValue> getAllAttributeValues() {
@@ -44,7 +49,32 @@ public class AttributeValueService {
         return attributeValueRepository.findAllByAttributeValueYear(year);
     }
 
-    public AttributeValue createOrUpdateAttributeValue(AttributeValueDto attributeValueDto) {
+    public AttributeValue createAttributeValue(CreateAttributeValueDto createAttributeValueDto) {
+        // 1. existenz prüfung
+        Machine machine = machineRepository.findById(createAttributeValueDto.machineId)
+                .orElseThrow(() -> new NotFoundException(
+                        "Maschine mit ID " + createAttributeValueDto.machineId + " nicht gefunden."));
+
+        MachineAttribute attribute = machineAttributeRepository.findById(createAttributeValueDto.attributeId)
+                .orElseThrow(() -> new NotFoundException(
+                        "Attribut mit ID " + createAttributeValueDto.attributeId + " nicht gefunden."));
+
+        // Optional: Prüfen, ob das Attribut zur Maschine gehört
+        if (!attribute.getMachineId().equals(machine.getId())) {
+            throw new IllegalArgumentException(
+                    "Attribut mit ID " + createAttributeValueDto.attributeId + " gehört nicht zur Maschine mit ID "
+                            + createAttributeValueDto.machineId + ".");
+        }
+
+        AttributeValue toSave = new AttributeValue(attribute, createAttributeValueDto.attributeValueYear,
+                createAttributeValueDto.attributeValue);
+
+        // 2. Speichern
+        AttributeValue saved = attributeValueRepository.save(toSave);
+        return saved;
+    }
+
+    public AttributeValue updateAttributeValue(AttributeValueDto attributeValueDto) {
         // MachineAttribute attribute = machineAttributeRepository.findBy
         // attributeValueDto.machineAttributeId;
 

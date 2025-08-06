@@ -5,7 +5,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MachineStructureWrapper from "@/views/MachineStructureView/MachineStrucutreWrapper";
 import MachineListView from "./features/machines/views/MachineList/MachineListView";
 import MachineTemplatesOverview from "@/views/MachineTemplateOverview.tsx";
-import MachineAttributWerteView from "@/views/MachineAttributWerteSicht/MachineAttributWerteView";
+//import MachineAttributWerteView from "@/views/MachineAttributWerteSicht/MachineAttributWerteView";
+import MachinenAttributeValuesView from "./features/machines/views/MachineAttributeValuesView";
 
 function App() {
   return (
@@ -20,7 +21,7 @@ function App() {
           />
           <Route
             path="/machines/:id/values"
-            element={<MachineAttributWerteView />}
+            element={<MachinenAttributeValuesView />}
           />
         </Routes>
       </BrowserRouter>

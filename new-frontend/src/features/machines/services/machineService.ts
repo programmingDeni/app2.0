@@ -5,6 +5,7 @@ import {
   CreateMachineByName,
   CreateMachineFromTemplate,
 } from "@/types/machine";
+import { machine } from "os";
 
 export function fetchMachinesLazy() {
   return axios.get<MachineLazy[]>("/api/machines/lazy");
@@ -25,4 +26,33 @@ export function addMachineFromTemplate(
     `/api/machines/from-template`,
     createMachineFromTemplateDto
   );
+}
+
+export async function getMachineAttributesWithYearlyValues(machineId: number) {
+  try {
+    const response = await axios.get(`/api/machines/${machineId}`);
+    return response.data;
+  } catch (e) {
+    throw new Error("Service Function wirft Fehler");
+  }
+}
+
+export async function addMachineAttributeValue(
+  machineId: number,
+  attributeId: number,
+  attributeValue: string,
+  year: number
+) {
+  try {
+    console.log("addMachineAttributeValue");
+    const response = await axios.post(`/api/attribute-values`, {
+      machineId,
+      attributeId,
+      attributeValue,
+      attributeValueYear: year,
+    });
+    return response.data;
+  } catch (e) {
+    throw new Error("Service Function wirft Fehler");
+  }
 }

@@ -7,8 +7,11 @@ import com.example.machine_management.models.MachineAttribute;
 // 📦 DTOs
 import com.example.machine_management.dto.Machine.CreateMachineFromTemplateDto;
 import com.example.machine_management.dto.Machine.LazyMachineDto;
+import com.example.machine_management.dto.Machine.MachineAttributesAndYearlyValuesDto;
 import com.example.machine_management.dto.Machine.MachineDto;
 import com.example.machine_management.dto.MachineStructureDto;
+import com.example.machine_management.dto.AttributeValue.AttributeValueDto;
+import com.example.machine_management.dto.AttributeValue.CreateAttributeValueDto;
 import com.example.machine_management.dto.MachineAttributes.MachineAttributeDto;
 
 // 🔁 MAPPER
@@ -16,6 +19,7 @@ import com.example.machine_management.mapper.LazyMachineMapper;
 import com.example.machine_management.mapper.MachineAttributeMapper;
 import com.example.machine_management.mapper.MachineMapper;
 import com.example.machine_management.mapper.MachineStructureMapper;
+import com.example.machine_management.services.AttributeValueService;
 
 // 💾 REPOSITORIES
 
@@ -49,6 +53,9 @@ public class MachineController {
 
     @Autowired
     private MachineAttributeService attributeService;
+
+    @Autowired
+    AttributeValueService attributeValueService;
 
     // POST
     @PostMapping
@@ -104,6 +111,38 @@ public class MachineController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(MachineAttributeMapper.toDto(created));
     }
+    /*
+     * // fügt einem Machinen Attribut einene Wert hinzu => das jetzt eben im
+     * AttributeValue Controller
+     * 
+     * @PostMapping("/{machineId}/attributes/{attributeId}/values")
+     * public ResponseEntity<MachineAttributeDto> addMachineAttributeValue(
+     * 
+     * @PathVariable Integer machineId,
+     * 
+     * @PathVariable Integer attributeId,
+     * 
+     * @RequestBody String attributeValue,
+     * 
+     * @RequestBody Integer year) {
+     * // 1. Validate
+     * if (machineId == null || machineId <= 0 || attributeId == null || attributeId
+     * <= 0 || attributeValue == null
+     * || year == null) {
+     * throw new IllegalArgumentException("Invalid update data");
+     * }
+     * 
+     * // 2. Create entity
+     * MachineAttribute created = attributeValueService
+     * .createOrUpdateAttributeValue(new CreateAttributeValueDto(machineId,
+     * attributeId,
+     * attributeValue, year));
+     * 
+     * // 3. Map and return
+     * return ResponseEntity.status(HttpStatus.CREATED)
+     * .body(MachineAttributeMapper.toDto(created));
+     * }
+     */
 
     // Lazy Get
     @GetMapping("/lazy")
@@ -168,6 +207,31 @@ public class MachineController {
         // 3. Map to DTO and return
         return ResponseEntity.ok(MachineStructureMapper.toDto(machine));
     }
+
+    // Get für alle Attribute mit Jahreswerten
+    // Eager
+    // Frontend route const response = await
+    // axios.get(`/api/machines/${machineId}/attributes`);
+    // Gets id from route
+    /*
+     * @GetMapping("/{machineId}/attributes")
+     * public ResponseEntity<MachineAttributesAndYearlyValuesDto>
+     * getMachineAttributesWithYearlyValues(
+     * 
+     * @PathVariable Integer machineId) {
+     * // 1. Validate
+     * if (machineId == null || machineId <= 0) {
+     * throw new IllegalArgumentException("Invalid ID");
+     * }
+     * 
+     * // 2. Get entity from service
+     * //MachineAttributesAndYearlyValuesDto response =
+     * machineService.getMachineAttributesWithYearlyValues(machineId);
+     * 
+     * // 3. Map to DTO and return
+     * return ResponseEntity.ok(response);
+     * }
+     */
 
     // update name
     @PutMapping("/{id}")

@@ -1,6 +1,7 @@
 package com.example.machine_management.controller;
 
 import com.example.machine_management.dto.AttributeValue.AttributeValueDto;
+import com.example.machine_management.dto.AttributeValue.CreateAttributeValueDto;
 import com.example.machine_management.mapper.AttributeValueMapper;
 import com.example.machine_management.models.AttributeValue;
 import com.example.machine_management.services.AttributeValueService;
@@ -21,18 +22,21 @@ public class AttributeValueController {
     private AttributeValueService attributeValueService;
 
     @PostMapping
-    public ResponseEntity<AttributeValueDto> createAttributeValue(@RequestBody AttributeValueDto dto) {
-        // 1. Validate
-        if (dto == null || !isValidValueDto(dto)) {
+    public ResponseEntity<AttributeValueDto> createAttributeValue(@RequestBody CreateAttributeValueDto dto) {
+        // Attribute Values werden nur aus einem bestehenden Attribut heraus erstellt.
+
+        // 1. Validate // mehr valiudation?
+        if (dto == null) {
             throw new IllegalArgumentException("Invalid attribute value data");
         }
 
         // 2. Call service & get entity
-        AttributeValue created = attributeValueService.createOrUpdateAttributeValue(dto);
+        AttributeValue created = attributeValueService.createAttributeValue(dto);
 
         // 3. Map to DTO and return
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(AttributeValueMapper.toDto(created));
+
     }
 
     @GetMapping
@@ -86,7 +90,7 @@ public class AttributeValueController {
         }
 
         // 2. Update and get entity
-        AttributeValue updated = attributeValueService.createOrUpdateAttributeValue(dto);
+        AttributeValue updated = attributeValueService.updateAttributeValue(dto);
 
         // 3. Map and return
         return ResponseEntity.ok(AttributeValueMapper.toDto(updated));
