@@ -1,11 +1,10 @@
 package com.example.machine_management.mapper;
 
-import com.example.machine_management.dto.CreateMachineTemplateWithAttributesDto;
 import com.example.machine_management.dto.MachineStructureDto;
-import com.example.machine_management.dto.MachineTemplateDto;
+import com.example.machine_management.dto.MachineTemplates.CreateMachineTemplateWithAttributesDto;
+import com.example.machine_management.dto.MachineTemplates.MachineTemplateDto;
 import com.example.machine_management.models.AttributeInTemplate;
 import com.example.machine_management.models.MachineTemplate;
-
 
 public class MachineTemplateMapper {
 
@@ -24,8 +23,6 @@ public class MachineTemplateMapper {
         return dto;
     }
 
-
-
     public static MachineTemplate fromDto(MachineTemplateDto dto) {
         MachineTemplate template = new MachineTemplate();
         template.setTemplateName(dto.templateName);
@@ -35,8 +32,9 @@ public class MachineTemplateMapper {
     public static CreateMachineTemplateWithAttributesDto toWithAttributesDto(MachineTemplate machineTemplate) {
         CreateMachineTemplateWithAttributesDto withAttributesDto = new CreateMachineTemplateWithAttributesDto();
         withAttributesDto.templateName = machineTemplate.getTemplateName();
-        withAttributesDto.attributeTemplates = AttributeTemplateMapper.toDtoList(machineTemplate.getAttributeTemplates());
+        withAttributesDto.attributeTemplates = AttributeTemplateMapper
+                .toDtoList(machineTemplate.getAttributeTemplates());
         return withAttributesDto;
     }
-    
+
 }

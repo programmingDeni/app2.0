@@ -1,14 +1,15 @@
 "use client";
 import React, { useState } from "react";
 import { AttributeType } from "@/types/attributeType";
-import { CreateMachineAttributeDto } from "@/types/CreatemachineAttribute";
-import { createAttribute } from "@/services/machineAttribute.service";
+import { CreateMachineAttributeDto } from "@/types/MachineAttributes/CreatemachineAttribute";
 import { MachineAttributeDto } from "@/types/machineAttribute";
+import { useMachineAttributes } from "@/presenters/useMachineAttributes";
+import { useMachineStructure } from "@/presenters/useMachineStructure";
 
 interface Props {
   machineId: number;
-  onAttributeAdded: () => void;
-  onCancel: () => void;
+  onAttributeAdded?: () => void;
+  onCancel?: () => void;
 }
 
 export default function AddAttributeForm({
@@ -25,6 +26,9 @@ export default function AddAttributeForm({
     "BOOLEAN",
   ];
 
+  //const { addAttributetoMachine } = useMachineAttributes(machineId);
+  const { addAttributeToMachine } = useMachineStructure(machineId);
+
   const handleSubmit = async () => {
     try {
       const newAttr: CreateMachineAttributeDto = {
@@ -32,8 +36,9 @@ export default function AddAttributeForm({
         attributeType,
         machineId,
       };
-      const res = await createAttribute(newAttr);
-      onAttributeAdded();
+      addAttributeToMachine(newAttr);
+      if (onAttributeAdded) onAttributeAdded();
+      //onAttributeAdded();
       setAttributeName("");
       setAttributeType("STRING");
     } catch (err) {

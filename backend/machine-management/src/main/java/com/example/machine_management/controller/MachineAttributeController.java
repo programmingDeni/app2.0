@@ -1,6 +1,6 @@
 package com.example.machine_management.controller;
 
-import com.example.machine_management.dto.MachineAttributeDto;
+import com.example.machine_management.dto.MachineAttributes.MachineAttributeDto;
 import com.example.machine_management.mapper.MachineAttributeMapper;
 import com.example.machine_management.models.MachineAttribute;
 import com.example.machine_management.repository.MachineAttributeRepository;
@@ -11,8 +11,6 @@ import com.example.machine_management.services.MachineAttributeService;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,20 +25,25 @@ public class MachineAttributeController {
     @Autowired
     private MachineAttributeService attributeService;
 
-    @PostMapping
-    public ResponseEntity<MachineAttributeDto> createAttribute(@RequestBody MachineAttributeDto dto) {
-        // 1. Validate
-        if (dto == null || !isValidAttributeDto(dto)) {
-            throw new IllegalArgumentException("Invalid attribute data");
-        }
-
-        // 2. Create entity
-        MachineAttribute created = attributeService.createMachineAttribute(dto);
-
-        // 3. Map and return
-        return ResponseEntity.status(HttpStatus.CREATED)
-            .body(MachineAttributeMapper.toDto(created));
-    }
+    // POST fügt Machine ein Attribute hinzu
+    // jetzt in machine controller
+    /*
+     * @PostMapping
+     * public ResponseEntity<MachineAttributeDto> createAttribute(@RequestBody
+     * MachineAttributeDto dto) {
+     * // 1. Validate
+     * if (dto == null || !isValidAttributeDto(dto)) {
+     * throw new IllegalArgumentException("Invalid attribute data");
+     * }
+     * 
+     * // 2. Create entity
+     * MachineAttribute created = attributeService.createMachineAttribute(dto);
+     * 
+     * // 3. Map and return
+     * return ResponseEntity.status(HttpStatus.CREATED)
+     * .body(MachineAttributeMapper.toDto(created));
+     * }
+     */
 
     @GetMapping
     public ResponseEntity<List<MachineAttributeDto>> getAllAttributes() {
@@ -49,8 +52,8 @@ public class MachineAttributeController {
 
         // 2. Map and return
         return ResponseEntity.ok(attributes.stream()
-            .map(MachineAttributeMapper::toDto)
-            .collect(Collectors.toList()));
+                .map(MachineAttributeMapper::toDto)
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/{id}")
@@ -109,13 +112,13 @@ public class MachineAttributeController {
 
         // 3. Map and return
         return ResponseEntity.ok(MachineAttributeMapper.toDtoList(attributes));
-            
+
     }
 
     private boolean isValidAttributeDto(MachineAttributeDto dto) {
-        return dto.attributeName != null && 
-               !dto.attributeName.trim().isEmpty() &&
-               dto.attributeType != null &&
-               dto.machineId > 0;
+        return dto.attributeName != null &&
+                !dto.attributeName.trim().isEmpty() &&
+                dto.attributeType != null &&
+                dto.machineId > 0;
     }
 }

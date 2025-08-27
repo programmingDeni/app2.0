@@ -13,69 +13,72 @@ public class Machine {
     private Integer id;
 
     @Column(unique = true)
-    private String name;
+    private String machineName;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "machine")
-    //@JoinColumn(name = "machine_id") // FK in MachineAttributes
-    private List<MachineAttribute> attributes = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "machineId") // FK in MachineAttributes
+    private List<MachineAttribute> machineAttributes = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "template_id")
-    private MachineTemplate template;
+    private MachineTemplate machineTemplate;
 
-    //Constructors
-    public Machine () {}
-
-    public Machine (String name){
-        this.name = name;
+    // Constructors
+    public Machine() {
     }
 
+    public Machine(String name) {
+        this.machineName = name;
+    }
+
+    // TODO: obsolete?
     public Machine(String name, MachineTemplate template) {
         this(name);
-        this.template = template;
+        this.machineTemplate = template;
     }
 
     public Integer getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public String getMachineName() {
+        return machineName;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }    
-
-    public List<MachineAttribute> getAttributes() {
-        return attributes;
+    public void setMachineName(String name) {
+        this.machineName = name;
     }
 
-    public void setAttributes(List<MachineAttribute> attributes) {
-        this.attributes = attributes;
+    public List<MachineAttribute> getMachineAttributes() {
+        return machineAttributes;
+    }
+
+    public void setMachineAttributes(List<MachineAttribute> attributes) {
+        this.machineAttributes = attributes;
     }
 
     public void addAttribute(MachineAttribute attribute) {
-        if (this.attributes == null) this.attributes = new ArrayList<>();
-        this.attributes.add(attribute);
-        attribute.setMachine(this);
+        if (this.machineAttributes == null)
+            this.machineAttributes = new ArrayList<>();
+        this.machineAttributes.add(attribute);
+        attribute.setMachineId(this.id);
     }
 
     public void removeAttribute(MachineAttribute attribute) {
-        if (this.attributes != null) {
-            this.attributes.remove(attribute);
-            attribute.setMachine(null);
+        if (this.machineAttributes != null) {
+            this.machineAttributes.remove(attribute);
+            attribute.setMachineId(null);
         }
     }
 
-    public void setTemplate(MachineTemplate template) {
-        this.template = template;
+    public void setMachineTemplate(MachineTemplate template) {
+        this.machineTemplate = template;
     }
 
-    public MachineTemplate getTemplate() {
-        return template;
+    public MachineTemplate getMachineTemplate() {
+        return machineTemplate;
     }
 
-    //TODO: Templates add / remove
+    // TODO: Templates add / remove
 
 }

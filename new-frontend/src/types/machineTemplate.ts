@@ -15,5 +15,5 @@ export interface CreateMachineTemplateWithAttributesDto {
 export interface MachineTemplateDto {
   id: number;
   templateName: string;
-  attributeTemplates: AttributeTemplateDto[];
+  templateAttributes: AttributeTemplateDto[];
 }

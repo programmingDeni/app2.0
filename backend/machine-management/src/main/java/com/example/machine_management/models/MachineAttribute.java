@@ -13,46 +13,59 @@ public class MachineAttribute {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    
+
     private String attributeName;
 
     @Enumerated(EnumType.STRING)
     private AttributeType type;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "machineAttribute")
-    private List<AttributeValue> attributeValues = new ArrayList<>(); 
+    private List<AttributeValue> attributeValues = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "machine_id", nullable = false)
-    private Machine machine;
+    private Integer machineId;
 
     private boolean fromTemplate = false;
 
     // Constructors
 
-    protected MachineAttribute() {}
+    // protected MachineAttribute() {}
+    public MachineAttribute() {
+    }
 
-    //initialisierung ohne type 
-    public MachineAttribute(Machine besitzendeMachine, String attributeName){
-        if (besitzendeMachine == null) {
+    // initialisierung ohne type
+    public MachineAttribute(Integer machineId, String attributeName) {
+        if (machineId == null) {
             throw new IllegalArgumentException("Machine darf nicht null sein");
         }
         if (attributeName == null || attributeName.trim().isEmpty()) {
             throw new IllegalArgumentException("AttributeName darf nicht null oder leer sein");
         }
-        this.machine = besitzendeMachine;
+        this.machineId = machineId;
         this.attributeName = attributeName;
-        besitzendeMachine.getAttributes().add(this);
     }
 
-    //initialisierung mit type
-    public MachineAttribute(Machine besitzendeMachine, String attributeName, AttributeType type){
-        this(besitzendeMachine, attributeName);
+    // Initialisierung mit Integer statt Machine
+    // machine und attribute id
+    public MachineAttribute(Integer machineId, Integer attributeId) {
+        if (attributeId == null || attributeId <= 0) {
+            throw new IllegalArgumentException("AttributeID darf nicht null oder leer sein");
+        }
+        if (machineId == null || machineId <= 0) {
+            throw new IllegalArgumentException("MachineID darf nicht null oder leer sein");
+        }
+        this.id = attributeId;
+        this.machineId = machineId;
+    }
+
+    public MachineAttribute(Integer machineId, String attributeName, AttributeType type) {
+        this.machineId = machineId;
+        this.attributeName = attributeName;
         this.type = type;
     }
-    //initialisierung ohne values 
-    public MachineAttribute(Machine besitzendeMachine, String attributeName, AttributeType type, boolean fromTemplate){
-        this(besitzendeMachine, attributeName, type);
+
+    // initialisierung vom Template ohne values
+    public MachineAttribute(Integer machineId, String attributeName, AttributeType type, boolean fromTemplate) {
+        this(machineId, attributeName, type);
         this.fromTemplate = fromTemplate;
     }
 
@@ -73,35 +86,26 @@ public class MachineAttribute {
         this.attributeName = attributeName;
     }
 
-    public Machine getMachine() {
-        return machine;
+    public Integer getMachineId() {
+        return machineId;
     }
 
-    public void setMachine(Machine newMachine) {
+    public void setMachineId(Integer newMachine) {
+        // passiert so eigentlich nicht, attribute werden nicht von einer machine zur
+        // anderen geschoben
         if (newMachine == null) {
             throw new IllegalArgumentException("Machine darf nicht null sein");
         }
-        
-        // Entferne dieses Attribut von der alten Machine
-        if (this.machine != null && this.machine != newMachine) {
-            this.machine.getAttributes().remove(this);
-        }
-        
         // Setze neue Machine
-        this.machine = newMachine;
-        
-        // Füge dieses Attribut zur neuen Machine hinzu
-        if (!newMachine.getAttributes().contains(this)) {
-            newMachine.getAttributes().add(this);
-        }
+        this.machineId = newMachine;
     }
 
     public AttributeType getType() {
         return type;
     }
-    
+
     public void setType(AttributeType type) {
-        if (type==null) {
+        if (type == null) {
             throw new IllegalArgumentException("Type darf nicht null sein");
         }
         this.type = type;
@@ -123,7 +127,6 @@ public class MachineAttribute {
         }
     }
 
-
     public void addAttributeValue(AttributeValue attributeValue) {
         if (attributeValue == null) {
             throw new IllegalArgumentException("AttributeValue darf nicht leer sein");
@@ -131,11 +134,11 @@ public class MachineAttribute {
         this.attributeValues.add(attributeValue);
     }
 
-    public boolean getFromTemplate(){
+    public boolean getFromTemplate() {
         return fromTemplate;
     }
 
-    public void setFromTemplate(boolean fromTemplate){
+    public void setFromTemplate(boolean fromTemplate) {
         this.fromTemplate = fromTemplate;
     }
 
@@ -158,8 +161,8 @@ public class MachineAttribute {
             }
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
-                "Wert '" + value + "' ist nicht valid für Typ " + type);
+                    "Wert '" + value + "' ist nicht valid für Typ " + type);
         }
     }
-    
+
 }
