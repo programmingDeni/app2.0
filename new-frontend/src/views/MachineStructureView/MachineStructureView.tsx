@@ -103,6 +103,14 @@ export default function MachineStructureView({ machineId }: Props) {
 
   const handleRemoveAttribute = async (attributeId: number) => {
     if (!machineStructure) return;
+    //user bestätigen lassen, sonst datenverlust
+    const confirm = window.confirm(
+      "⚠️⚠️⚠️Bist du sicher, dass du das Template entfernen möchtest?⚠️⚠️⚠️\n" +
+        "Alle eingetragenen Attribut Werte gehen dabei unwiderruflich verloren."
+    );
+
+    if (!confirm) return;
+
     //call presenter
     await removeAttributeFromMachine(attributeId);
     await refetch();
@@ -110,7 +118,7 @@ export default function MachineStructureView({ machineId }: Props) {
 
   return (
     <div>
-      <h2>Maschine: {machineStructure.name}</h2>
+      <h2>Maschine: {machineStructure.machineName}</h2>
 
       <h3>Maschinen Attribute (Template)</h3>
       {/*WENN TEmplates vorhanden ist dieses anzeigen; erlauben es zu entfernen*/}
