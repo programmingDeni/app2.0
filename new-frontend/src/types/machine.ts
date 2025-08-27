@@ -2,10 +2,16 @@ import { MachineAttributeDto } from "./machineAttribute";
 
 export interface MachineStructureDto {
   machineId: number;
-  name: string;
+  machineName: string;
   machineTemplateId: number | null;
   machineAttributes: MachineAttributeDto[];
   fromTemplate: boolean;
+}
+
+export interface MachineListElement {
+  machineId: number;
+  machineName: string;
+  machineTempalteName: string;
 }
 
 export interface MachineLazy {
@@ -21,7 +27,7 @@ export interface MachineWithAttributeValues {
 }
 
 export interface CreateMachineByName {
-  name: string;
+  machineName: string;
 }
 
 export interface CreateMachineFromTemplate {

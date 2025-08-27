@@ -41,7 +41,9 @@ export function removeTemplateFromMachineById(machineId: number) {
 export async function createMachineByName(
   payload: CreateMachineByName
 ): Promise<MachineLazy> {
+  console.log("createMachineByName", payload);
   const response = await axios.post("/api/machines", payload);
+  console.log("response", response.data);
   return response.data;
 }
 //BY TEMPLATE

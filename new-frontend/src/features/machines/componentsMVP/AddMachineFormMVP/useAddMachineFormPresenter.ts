@@ -1,9 +1,9 @@
 //import der typ nahen hooks
 import { useMachineTemplates } from "@/presenters/useMachineTemplates";
 import {
-  createMachineFromTemplate,
-  createMachineByName,
+  createMachineFromTemplate
 } from "@/services/machine.service";
+import { createMachineByName } from "@/features/machines/services/machineService";
 import { useState } from "react";
 import { MachineLazy } from "@/types/machine";
 
@@ -29,11 +29,13 @@ export function useAddMachineFormPresenter(
         console.log("response in id", response);
         newMachine = response;
       } else {
-        const response = await createMachineByName({ name });
+        const response = await createMachineByName({ machineName: name });
         console.log("response outside id", response);
         newMachine = response;
       }
       //add new machineto state
+      console.log("newMachine", newMachine);
+
 
       onMachineAdded(newMachine);
 

@@ -1,7 +1,7 @@
 import axios from "@/services/axios";
 
-import { Template } from "../types/template.types";
+import { MachineTemplateDto } from "@/types/machineTemplate";
 
-export const getAllTemplates = async () => {};
-
-export const deleteTemplate = async (id: number) => {};
+export async function fetchMachineTemplates() {
+  return axios.get<MachineTemplateDto[]>("/api/machineTemplates");
+}

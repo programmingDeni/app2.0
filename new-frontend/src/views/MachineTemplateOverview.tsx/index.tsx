@@ -2,6 +2,7 @@ import MachineTemplateForm from "@/components/MachineTemplate/MachineTemplateFor
 import { MachineTemplateList } from "@/components/MachineTemplate/MachineTemplateList";
 import ToggleableSection from "@/components/ToggleableSection/ToggleableSection";
 import { useMachineTemplates } from "@/presenters/useMachineTemplates";
+import Button from "@/components/Button";
 
 export default function MachineTemplateOverview() {
   const { templates, loadingTemplates, errorTemplates, refetchTemplates } =
@@ -14,6 +15,10 @@ export default function MachineTemplateOverview() {
     await refetchTemplates();
   };
 
+  const zuHome = () => {
+    window.location.href = "/";
+  };
+
   return (
     <div>
       <h2>Machine Templates Übersicht</h2>
@@ -21,6 +26,7 @@ export default function MachineTemplateOverview() {
       <ToggleableSection toggleLabel="Template hinzufügen">
         <MachineTemplateForm onSubmit={triggerRefresh} />
       </ToggleableSection>
+      <Button to="/">→ Zurück zur Startseite</Button>
     </div>
   );
 }
