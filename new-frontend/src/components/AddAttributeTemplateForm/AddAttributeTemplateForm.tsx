@@ -41,7 +41,7 @@ export default function AddAttributeTemplateForm({ templateId }: Props) {
       />
       <Button onClick={() => submitAttributeTemplate()}>
         {" "}
-        Attribute Tempalte hinzufügen
+        Attribute hinzufügen
       </Button>
     </div>
   );

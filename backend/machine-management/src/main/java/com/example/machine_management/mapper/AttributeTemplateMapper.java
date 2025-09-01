@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.example.machine_management.dto.*;
 import com.example.machine_management.dto.AttributeInTemplate.AttributeTemplateDto;
+import com.example.machine_management.dto.AttributeInTemplate.TemplateAttributeDto;
 import com.example.machine_management.models.*;
 
 public class AttributeTemplateMapper {

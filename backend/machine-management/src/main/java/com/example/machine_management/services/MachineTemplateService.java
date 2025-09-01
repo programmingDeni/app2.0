@@ -2,12 +2,15 @@ package com.example.machine_management.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.example.machine_management.dto.AttributeInTemplate.AttributeTemplateDto;
+import com.example.machine_management.dto.AttributeInTemplate.CreateTemplateAttributeDTO;
 import com.example.machine_management.dto.MachineTemplates.CreateMachineTemplateWithAttributesDto;
 import com.example.machine_management.dto.MachineTemplates.MachineTemplateDto;
 import com.example.machine_management.mapper.MachineTemplateMapper;
@@ -86,5 +89,40 @@ public class MachineTemplateService {
             throw new NotFoundException("Template mit ID " + id + " nicht gefunden.");
         }
         templateRepo.deleteById(id);
+    }
+
+    @Transactional
+    public void removeAttributeFromTemplate(Integer templateId, Integer attributeId) {
+        MachineTemplate template = templateRepo.findById(templateId)
+                .orElseThrow(() -> new EntityNotFoundException("Template not found"));
+
+        AttributeInTemplate attribute = template.getAttributeTemplates().stream()
+                .filter(a -> a.getId() == attributeId)
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Attribut in dem Template nicht gefunden "));
+
+        template.getAttributeTemplates().remove(attribute);
+        // orphan removal sollte das attribut entfernen
+        templateRepo.save(template);
+
+    }
+
+    @Transactional
+    public List<AttributeInTemplate> addAttributesToTemplate(Integer templateId,
+            List<CreateTemplateAttributeDTO> attributes) {
+        MachineTemplate template = templateRepo.findById(templateId)
+                .orElseThrow(() -> new NotFoundException("Template mit ID " + templateId + " nicht gefunden."));
+
+        // Attribute in Template erstellen
+        List<AttributeInTemplate> created = attributes.stream()
+                .map(a -> new AttributeInTemplate(a.attributeName,
+                        a.attributeType, template))
+                .collect(Collectors.toList());
+
+        // die irgendwie speichern
+        template.getAttributeTemplates().addAll(created);
+        templateRepo.save(template);
+
+        return created;
     }
 }

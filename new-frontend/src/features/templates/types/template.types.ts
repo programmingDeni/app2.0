@@ -5,7 +5,7 @@ export interface Template {
 }
 
 export interface TemplateAttribute {
-  id: number;
+  id?: number;
   attributeName: string;
   attributeType: string;
 }
