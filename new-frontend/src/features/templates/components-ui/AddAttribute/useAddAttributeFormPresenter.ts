@@ -4,15 +4,20 @@ import { TemplateAttribute } from "../../types/template.types";
 
 import { addAttributesToExistingTemplateService } from "@/features/templates/services/templateService";
 
+//global hook holen
+import useTemplates from "@/features/templates/hooks/useTemplates";
+
 export function useAddAttributeFormPresenter() {
+  const { addAttributesToTemplate } = useTemplates();
+
   const [attributes, setAttributes] = useState<TemplateAttribute[]>([
-    { attributeName: "", attributeType: "STRING" },
+    { templateAttributeName: "", templateAttributeType: "STRING" },
   ]);
 
   const onChangeName = (idx: number, val: string) => {
     setAttributes((prev) => {
       const copy = [...prev];
-      copy[idx].attributeName = val;
+      copy[idx].templateAttributeName = val;
       return copy;
     });
   };
@@ -20,7 +25,7 @@ export function useAddAttributeFormPresenter() {
   const onChangeType = (idx: number, val: string) => {
     setAttributes((prev) => {
       const copy = [...prev];
-      copy[idx].attributeType = val;
+      copy[idx].templateAttributeType = val;
       return copy;
     });
   };
@@ -30,7 +35,7 @@ export function useAddAttributeFormPresenter() {
       const copy = [...prev];
       copy.splice(idx, 1);
       return copy.length === 0
-        ? [{ attributeName: "", attributeType: "STRING" }]
+        ? [{ templateAttributeName: "", templateAttributeType: "STRING" }]
         : copy;
     });
   };
@@ -38,43 +43,21 @@ export function useAddAttributeFormPresenter() {
   const onAdd = () => {
     setAttributes((prev) => [
       ...prev,
-      { attributeName: "", attributeType: "STRING" },
+      { templateAttributeName: "", templateAttributeType: "STRING" },
     ]);
   };
 
+  //onSUbmitFunctiopn ruft den globalen useTemplates und resettet die Form felder
   const onSubmit = async (
     templateId: number,
     attributes: TemplateAttribute[]
   ) => {
-    console.log("onSubmit", attributes);
-    // 1. Validierung
-    const hasEmpty = attributes.some((attr) => !attr.attributeName.trim());
-    if (hasEmpty) {
-      alert("Alle Attributnamen müssen ausgefüllt sein!");
-      return;
-    }
-
     try {
-      // 2. Backend-Call
-      const response = await addAttributesToExistingTemplateService(
-        templateId,
-        attributes
-      );
-      // wenn response im 200 bereich
-      if (
-        response.status === 201 &&
-        response.status >= 200 &&
-        response.status < 300
-      ) {
-        //state update, füge response.data zum attribtues hinzu
-        //backend giobt nur neue attribute zurück
-        setAttributes((prev) => [...prev, ...response.data]);
-      }
-      // 3. Erfolgsmeldung
-      console.log(response);
+      await addAttributesToTemplate(templateId, attributes);
+      setAttributes([
+        { templateAttributeName: "", templateAttributeType: "STRING" },
+      ]);
     } catch (err) {
-      // 4. Fehlerbehandlung
-      alert("Fehler beim Hinzufügen der Attribute.");
       console.error(err);
     }
   };

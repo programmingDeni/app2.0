@@ -7,7 +7,7 @@ public class TemplateAttributeMapper {
 
     public static TemplateAttributeDto toDto(AttributeInTemplate attr) {
         TemplateAttributeDto dto = new TemplateAttributeDto();
-        dto.attributeId = attr.getId();
+        dto.id = attr.getId();
         dto.attributeName = attr.getAttributeInTemplateName();
         dto.attributeType = attr.getType();
         return dto;

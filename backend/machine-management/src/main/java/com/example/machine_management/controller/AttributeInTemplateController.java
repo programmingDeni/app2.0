@@ -114,9 +114,9 @@ public class AttributeInTemplateController {
     }
 
     private boolean isValidAttributeTemplateDto(AttributeTemplateDto dto) {
-        return dto.attributeInTemplateName != null &&
-                !dto.attributeInTemplateName.trim().isEmpty() &&
-                dto.attributeInTemplateType != null &&
+        return dto.templateAttributeName != null &&
+                !dto.templateAttributeName.trim().isEmpty() &&
+                dto.templateAttributeType != null &&
                 dto.machineTemplateId > 0;
     }
 }

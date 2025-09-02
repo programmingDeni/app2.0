@@ -11,6 +11,7 @@ import ToggleableSection from "@/components/ToggleableSection/ToggleableSection"
 import TemplateSelect from "@/components/TemplateSelect/TemplateSelect";
 import { assignTemplateToMachineById } from "@/services/machine.service";
 import { useMachineAttributes } from "@/presenters/useMachineAttributes";
+import TemplateView from "@/features/templates/views/TempalteDetails";
 
 interface Props {
   machineId: number;
@@ -169,6 +170,9 @@ export default function MachineStructureView({ machineId }: Props) {
       <ToggleableSection toggleLabel="Attribute hinzufügen">
         <AddAttributeForm machineId={machineId} onAttributeAdded={refetch} />
       </ToggleableSection>
+
+      <h1> Neue Componente TEst </h1>
+      <TemplateView templateId={1} />
 
       <Link to={`/`}>→ Zur Startseite</Link>
       <Link to={`/machines/${machineId}/values`}>→ Zu den Werten</Link>

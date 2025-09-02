@@ -27,12 +27,12 @@ export default function AddAttributeFormUI({
           <input
             type="text"
             placeholder="Attributname"
-            value={attr.attributeName}
+            value={attr.templateAttributeName}
             onChange={(e) => onChangeName(idx, e.target.value)}
             className="p-2 border rounded"
           />
           <select
-            value={attr.attributeType}
+            value={attr.templateAttributeType}
             onChange={(e) => onChangeType(idx, e.target.value)}
             className="p-2 border rounded"
           >

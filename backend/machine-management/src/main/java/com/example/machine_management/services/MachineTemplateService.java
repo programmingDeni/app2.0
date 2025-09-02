@@ -120,9 +120,17 @@ public class MachineTemplateService {
                 .collect(Collectors.toList());
 
         // die irgendwie speichern
-        template.getAttributeTemplates().addAll(created);
+        // template.getAttributeTemplates().addAll(created);
         templateRepo.save(template);
 
-        return created;
+        // Nach dem Speichern: Die neuen Attribute mit IDs aus dem Template holen
+        List<AttributeInTemplate> savedAttributes = template.getAttributeTemplates().stream()
+                .filter(attr -> attributes.stream()
+                        .anyMatch(a -> a.attributeName.equals(attr.getAttributeInTemplateName()) &&
+                                a.attributeType == attr.getType()))
+                .collect(Collectors.toList());
+
+        return savedAttributes;
+
     }
 }

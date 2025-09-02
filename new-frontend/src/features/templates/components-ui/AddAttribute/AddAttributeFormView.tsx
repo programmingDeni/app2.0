@@ -12,11 +12,11 @@ export default function AddAttributeFormView({ templateId, onSubmit }: Props) {
   const { attributes } = presenter;
 
   const handleSubmit = () => {
+    console.log("added attributes", attributes);
     if (onSubmit) {
       if (templateId !== undefined) {
         onSubmit(attributes, templateId);
       } else {
-        console.log("test");
         onSubmit(attributes);
       }
     } else if (templateId !== undefined) {

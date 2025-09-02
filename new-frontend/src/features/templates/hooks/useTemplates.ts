@@ -9,7 +9,10 @@ import {
 } from "@/features/templates/types/template.types";
 
 //service importieren
-import { createMachineTemplateService } from "@/features/templates/services/templateService";
+import {
+  createMachineTemplateService,
+  addAttributesToExistingTemplateService,
+} from "@/features/templates/services/templateService";
 
 //hook um mit backend CRUD zu arbeiten
 //also templates Create, Read, Update, Delete (Remove)
@@ -76,6 +79,7 @@ export default function useTemplates() {
     try {
       const response = await fetchMachineTemplates();
       const data = response.data;
+      console.log("TEMPLATE DATA", data);
       setMachineTemplates(data);
     } catch (e) {
       console.error(e);
@@ -99,20 +103,54 @@ export default function useTemplates() {
   };
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Template Attribute  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  //Add Attribute to Template
+  // useTemplates.ts
+  const addAttributesToTemplate = async (
+    templateId: number,
+    attributes: TemplateAttribute[]
+  ) => {
+    // Validierung (optional)
+    if (attributes.some((attr) => !attr.templateAttributeName.trim())) {
+      throw new Error("Alle Attributnamen müssen ausgefüllt sein!");
+    }
+    const response = await addAttributesToExistingTemplateService(
+      templateId,
+      attributes
+    );
+    console.log("addAttributesToExistingTemplateService", response.data);
+
+    if (response.status >= 200 && response.status < 300) {
+      setMachineTemplates((prev) =>
+        prev.map((t) =>
+          t.id !== templateId
+            ? t
+            : {
+                ...t,
+                templateAttributes: [
+                  ...(t.templateAttributes || []),
+                  ...response.data,
+                ],
+              }
+        )
+      );
+      return response.data;
+    }
+    throw new Error("Fehler beim Hinzufügen der Attribute.");
+  };
+
   //Remove
   const removeAttributeFromTemplate = async (
     templateId: number,
     attributeId: number
   ) => {
     //der presenter ruft den service und ändert den state
-    console.log("test remove attributeId:", attributeId);
     try {
       //service call
       const response = await removeAttributeFromTemplateService(
         templateId,
         attributeId
       );
-      console.log("response", response);
       //aus dem state entfernen
       if (response.status === 204) {
         setMachineTemplates((prev) =>
@@ -121,7 +159,9 @@ export default function useTemplates() {
               ? t
               : {
                   ...t,
-                  attributes: t.attributes?.filter((a) => a.id !== attributeId),
+                  templateAttributes: t.templateAttributes?.filter(
+                    (a) => a.id !== attributeId
+                  ),
                 }
           )
         );
@@ -140,6 +180,7 @@ export default function useTemplates() {
     machineTemplates,
     removeTemplate,
     removeAttributeFromTemplate,
+    addAttributesToTemplate,
     errorMsg,
     setErrorMsg,
     successMsg,

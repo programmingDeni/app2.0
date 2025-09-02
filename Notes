@@ -10,3 +10,41 @@ TemplateDetails => templates bearbeiten
 
 
 Machine TEmplate hinzufügen klappt nicht, muss in richtigem dto format wie im backend erwartet uebergeben werden 
+
+
+das backend gibt irgendwie nicht schön strukturiere daten zurück 
+machien FETCH data 
+Array [ {…} ]
+​
+0: Object { id: 1, machineName: "Template 1", attributes: (2) […], … }
+​​
+attributes: Array [ {…}, {…} ]
+​​​
+0: Object { id: 3, attributeName: "Attribute String", attributeType: "STRING", … }
+​​​
+1: Object { id: 4, attributeName: "Attribute Boolean", attributeType: "BOOLEAN", … }
+​​​
+length: 2
+​​​
+<prototype>: Array []
+​​
+id: 1
+​​
+machineName: "Template 1"
+​​
+machineTemplateDto: Object { id: 1, templateName: "Template 1", templateAttributes: (2) […] }
+​​​
+id: 1
+​​​
+templateAttributes: Array [ {…}, {…} ]
+​​​
+templateName: "Template 1"
+​​​
+<prototype>: Object { … }
+​​
+<prototype>: Object { … }
+​
+length: 1
+​
+<prototype>: Array []
+useMachines.ts:39:15

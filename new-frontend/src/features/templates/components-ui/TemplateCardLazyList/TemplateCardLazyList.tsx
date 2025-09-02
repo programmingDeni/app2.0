@@ -16,11 +16,12 @@ export default function TemplateCardLazyList({ template }: Props) {
       <div>
         <h3> Template Name {template.templateName} </h3>
         <h4> Attribute Templates: </h4>
-        {template.attributes && template.attributes.length > 0 ? (
-          template.attributes.slice(0, 3).map((attr) => (
+        {template.templateAttributes &&
+        template.templateAttributes.length > 0 ? (
+          template.templateAttributes.slice(0, 3).map((attr) => (
             <div key={attr.id}>
-              Attribut Name {attr.attributeName}, Attribut Typ{" "}
-              {attr.attributeType}
+              Attribut Name {attr.templateAttributeName}, Attribut Typ{" "}
+              {attr.templateAttributeType}
             </div>
           ))
         ) : (

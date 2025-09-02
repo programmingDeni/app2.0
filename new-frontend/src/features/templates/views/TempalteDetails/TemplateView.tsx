@@ -14,20 +14,28 @@ import AddAttributeFormView from "@/features/templates/components-ui/AddAttribut
 //importiere den presenter
 import useTemplates from "@/features/templates/hooks/useTemplates";
 
-export default function TemplateView() {
+interface TemplateViewProps {
+  templateId?: number;
+}
+
+export default function TemplateView(props: TemplateViewProps) {
   const { machineTemplates, removeAttributeFromTemplate } = useTemplates();
 
-  const { templateId } = useParams();
-  const templateIdInteger = templateId ? parseInt(templateId, 10) : undefined;
+  // Nutze Prop, falls vorhanden, sonst Params
+  let templateId = props.templateId;
+  if (templateId === undefined) {
+    const params = useParams();
+    templateId = params.templateId
+      ? parseInt(params.templateId, 10)
+      : undefined;
+  }
 
-  console.log("templateIdInteger", templateIdInteger, machineTemplates);
-
-  if (!templateIdInteger) {
+  if (!templateId) {
     return <div>Ungültige Template-ID.</div>;
   }
 
   // Finde das Template mit der passenden ID
-  const template = machineTemplates.find((t) => t.id === templateIdInteger);
+  const template = machineTemplates.find((t) => t.id === templateId);
 
   if (!template) {
     return <div>Template nicht gefunden.</div>;

@@ -3,13 +3,13 @@
 export interface Template {
   id?: number;
   templateName: string;
-  attributes?: TemplateAttribute[];
+  templateAttributes?: TemplateAttribute[];
 }
 
 export interface TemplateAttribute {
   id?: number;
-  attributeName: string;
-  attributeType: string;
+  templateAttributeName: string;
+  templateAttributeType: string;
 }
 
 //one for creating an template (without id)

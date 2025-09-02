@@ -5,15 +5,11 @@ import {
   CreateMachineByName,
   CreateMachineFromTemplate,
   MachineStructureDto,
-  MachineListElement
+  MachineListElement,
 } from "@/types/machine";
 
 export function fetchMachinesLazy() {
   return axios.get<MachineLazy[]>("/api/machines/lazy");
-}
-
-export function removeMachine(machineId: number) {
-  return axios.delete(`/api/machines/${machineId}`);
 }
 
 export async function createMachineByName(payload: CreateMachineByName) {
@@ -28,14 +24,19 @@ export async function createMachineByName(payload: CreateMachineByName) {
       templateName: responseData.machineTemplateDto,
     } as MachineLazy;
   } catch (e) {
-    throw new Error("Service Function wirft Fehler beim erstellen einer Machine ohne Template");
+    throw new Error(
+      "Service Function wirft Fehler beim erstellen einer Machine ohne Template"
+    );
   }
 }
 
 export async function addMachineFromTemplate(
   createMachineFromTemplateDto: CreateMachineFromTemplate
 ) {
-  console.log("Trying to add machine in SERVICE with TEMPLATE:", createMachineFromTemplateDto);
+  console.log(
+    "Trying to add machine in SERVICE with TEMPLATE:",
+    createMachineFromTemplateDto
+  );
   try {
     const response = await axios.post(
       `/api/machines/from-template`,
@@ -47,11 +48,11 @@ export async function addMachineFromTemplate(
       machineId: responseData.id,
       machineName: responseData.machineName,
       machineTempalteName: responseData.machineTemplateDto.templateName,
-    } as MachineListElement
-
-  }
-  catch (e) {
-    throw new Error("Service Function wirft Fehler beim erstellen einer Machine mit Template");
+    } as MachineListElement;
+  } catch (e) {
+    throw new Error(
+      "Service Function wirft Fehler beim erstellen einer Machine mit Template"
+    );
   }
 }
 
@@ -83,3 +84,40 @@ export async function addMachineAttributeValue(
     throw new Error("Service Function wirft Fehler");
   }
 }
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Machine Service (neu)  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Machine  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+//Crud Operationen + assign und remove template
+
+//neuen typ holen aus feature
+import { Machine } from "@/features/machines/types/machine.types";
+
+//Create
+export async function createMachineService(machine: Partial<Machine>) {
+  try {
+    const response = await axios.post("/api/machines", machine);
+    return response.data as Machine;
+  } catch (e) {
+    throw e;
+  }
+}
+//Read
+export async function fetchMachinesService() {
+  const response = await axios.get("/api/machines");
+  const machines: Machine[] = response.data.map((dto: any) => ({
+    ...dto,
+    machineTemplate: dto.machineTemplateDto,
+  }));
+  return machines;
+}
+//Update
+//TODO: Update Machine
+
+//Delete
+export function removeMachineService(machineId: number) {
+  return axios.delete(`/api/machines/${machineId}`);
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Machine Service (neu)  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

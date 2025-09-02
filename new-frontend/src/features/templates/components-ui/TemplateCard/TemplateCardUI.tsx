@@ -7,21 +7,6 @@ import { Template } from "../../types/template.types";
 //Button Import
 import Button from "@/components/Button";
 
-/* Machinene Template DTO Struktur 
-export interface MachineTemplateDto {
-  id: number;
-  templateName: string;
-  templateAttributes: AttributeTemplateDto[];
-}
-Attribut Struktur
-export interface AttributeTemplateDto {
-  id: number;
-  attributeInTemplateName: string;
-  attributeInTemplateType: AttributeType;
-  machineTemplateId: number;
-}
-  */
-
 interface Props {
   machineTemplate: Template;
   onRemoveAttribute: (
@@ -33,11 +18,13 @@ interface Props {
 export default function TemplateCardUI(props: Props) {
   const machineTemplate = props.machineTemplate;
   const { onRemoveAttribute } = props;
-  const attributeTemplates = machineTemplate.attributes ?? [];
+  const attributeTemplates = machineTemplate.templateAttributes ?? [];
+
+  console.log("attributeTemplates", attributeTemplates);
 
   return (
     <div>
-      <h3>Template Id: {machineTemplate.id}</h3>
+      {/*<h3>Template Id: {machineTemplate.id}</h3>*/}
       <div className={styles.name}>
         Template Name: {machineTemplate.templateName}
       </div>
@@ -47,8 +34,8 @@ export default function TemplateCardUI(props: Props) {
       ) : (
         attributeTemplates.map((attr) => (
           <div key={attr.id}>
-            Attribut Name {attr.attributeName}, Attribut Typ{" "}
-            {attr.attributeType}
+            Attribut Name {attr.templateAttributeName}, Attribut Typ{" "}
+            {attr.templateAttributeType}
             <Button
               onClick={() => onRemoveAttribute(machineTemplate.id!, attr.id!)}
             >

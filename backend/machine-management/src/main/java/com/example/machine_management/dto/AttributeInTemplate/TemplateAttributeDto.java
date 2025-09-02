@@ -3,7 +3,7 @@ package com.example.machine_management.dto.AttributeInTemplate;
 import com.example.machine_management.models.AttributeType;
 
 public class TemplateAttributeDto {
-    public Integer attributeId;
+    public Integer id;
     public String attributeName;
     public AttributeType attributeType;
 
@@ -11,7 +11,7 @@ public class TemplateAttributeDto {
     }
 
     public TemplateAttributeDto(Integer attributeId, String attributeName, AttributeType attributeType) {
-        this.attributeId = attributeId;
+        this.id = attributeId;
         this.attributeName = attributeName;
         this.attributeType = attributeType;
     }

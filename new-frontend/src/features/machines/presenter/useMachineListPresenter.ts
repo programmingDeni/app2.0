@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 //machine DTO / Model laden
 import { MachineLazy } from "@/types/machine";
 //Service laden
-import { fetchMachinesLazy, removeMachine } from "../services/machineService";
+import {
+  fetchMachinesLazy,
+  removeMachineService,
+} from "../services/machineService";
 
 export default function useMachineListPresenter() {
   const [machines, setMachines] = useState<MachineLazy[]>([]);
@@ -22,7 +25,7 @@ export default function useMachineListPresenter() {
 
   const handleDelete = async (id: number) => {
     try {
-      await removeMachine(id);
+      await removeMachineService(id);
       //
       setMachines((prev) => prev.filter((m) => m.machineId !== id));
     } catch (e) {

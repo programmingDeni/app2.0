@@ -15,8 +15,8 @@ public class AttributeTemplateMapper {
     public static AttributeTemplateDto toDto(AttributeInTemplate attr) {
         AttributeTemplateDto dto = new AttributeTemplateDto();
         dto.id = attr.getId();
-        dto.attributeInTemplateName = attr.getAttributeInTemplateName();
-        dto.attributeInTemplateType = attr.getType().toString();
+        dto.templateAttributeName = attr.getAttributeInTemplateName();
+        dto.templateAttributeType = attr.getType().toString();
         return dto;
     }
 
@@ -33,8 +33,8 @@ public class AttributeTemplateMapper {
 
     public static AttributeInTemplate fromDto(AttributeTemplateDto dto, MachineTemplate template) {
         // String name, AttributeType type, MachineTemplate template
-        AttributeInTemplate attr = new AttributeInTemplate(dto.attributeInTemplateName,
-                AttributeType.valueOf(dto.attributeInTemplateType), template);
+        AttributeInTemplate attr = new AttributeInTemplate(dto.templateAttributeName,
+                AttributeType.valueOf(dto.templateAttributeType), template);
 
         return attr;
     }
@@ -49,8 +49,8 @@ public class AttributeTemplateMapper {
     }
 
     public static void updateFromDto(AttributeInTemplate attributeInTemplate, AttributeTemplateDto dto) {
-        attributeInTemplate.setAttributeInTemplateName(dto.attributeInTemplateName);
-        attributeInTemplate.setType(AttributeType.valueOf(dto.attributeInTemplateType));
+        attributeInTemplate.setAttributeInTemplateName(dto.templateAttributeName);
+        attributeInTemplate.setType(AttributeType.valueOf(dto.templateAttributeType));
     }
 
 }

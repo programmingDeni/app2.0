@@ -2,7 +2,8 @@ import "./App.css";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import MachineStructureWrapper from "@/views/MachineStructureView/MachineStrucutreWrapper";
+import MachineDetailsView from "@/features/machines/componentsMVP/MachineDetails";
+//import MachineStructureWrapper from "@/views/MachineStructureView/MachineStrucutreWrapper";
 import MachineListView from "./features/machines/views/MachineList/MachineListView";
 import TemplateListView from "./features/templates/views/TemplateList/TemplateListView";
 //import MachineAttributWerteView from "@/views/MachineAttributWerteSicht/MachineAttributWerteView";
@@ -16,7 +17,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<MachineListView />} />
-          <Route path="/machines/:id" element={<MachineStructureWrapper />} />
+          <Route path="/machines/:machineId" element={<MachineDetailsView />} />
           <Route path="/machine-templates" element={<TemplateListView />} />
           <Route
             path="/machine-templates/:templateId"
