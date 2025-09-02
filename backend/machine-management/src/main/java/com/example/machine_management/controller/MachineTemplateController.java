@@ -45,22 +45,6 @@ public class MachineTemplateController {
                 .body(MachineTemplateMapper.toDto(created));
     }
 
-    @PostMapping("/with-attributes")
-    public ResponseEntity<CreateMachineTemplateWithAttributesDto> createTemplateWithAttributes(
-            @RequestBody CreateMachineTemplateWithAttributesDto dto) {
-        // 1. Validate
-        if (dto == null) {
-            throw new IllegalArgumentException("Invalid template data");
-        }
-
-        // 2. Create entity
-        MachineTemplate created = templateService.createTemplateWithAttributes(dto);
-
-        // 3. Map and return
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(MachineTemplateMapper.toWithAttributesDto(created));
-    }
-
     // Create an attribute within an existing template
     // `/api/machine-templates/${templateId}/attributes`,
     @PostMapping("/{templateId}/attributes")

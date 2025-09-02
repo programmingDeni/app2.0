@@ -3,3 +3,10 @@ Jetzt die Backend Route zum AddAttributeFormView erstellen
 backend route löäuft
 
 frontend state update klappt nicht 
+
+TODO: => backend gibt ID vopn hinzugefügtes attribute nicht zurück
+TemplateListView => nur noch LazyTemplates anzeigen mit edit, delete button 
+TemplateDetails => templates bearbeiten 
+
+
+Machine TEmplate hinzufügen klappt nicht, muss in richtigem dto format wie im backend erwartet uebergeben werden 

@@ -4,10 +4,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import MachineStructureWrapper from "@/views/MachineStructureView/MachineStrucutreWrapper";
 import MachineListView from "./features/machines/views/MachineList/MachineListView";
-import MachineTemplatesOverview from "@/views/MachineTemplateOverview.tsx";
 import TemplateListView from "./features/templates/views/TemplateList/TemplateListView";
 //import MachineAttributWerteView from "@/views/MachineAttributWerteSicht/MachineAttributWerteView";
 import MachinenAttributeValuesView from "./features/machines/views/MachineAttributeValuesView";
+
+import TemplateDetails from "./features/templates/views/TempalteDetails";
 
 function App() {
   return (
@@ -17,6 +18,10 @@ function App() {
           <Route path="/" element={<MachineListView />} />
           <Route path="/machines/:id" element={<MachineStructureWrapper />} />
           <Route path="/machine-templates" element={<TemplateListView />} />
+          <Route
+            path="/machine-templates/:templateId"
+            element={<TemplateDetails />}
+          />
           <Route
             path="/machines/:id/values"
             element={<MachinenAttributeValuesView />}

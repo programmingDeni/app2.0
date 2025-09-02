@@ -1,5 +1,7 @@
 package com.example.machine_management.exceptions;
 
+import java.util.Map;
+
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,5 +32,15 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body("Nicht gefunden: " + ex.getMessage());
     }
-    // Du kannst weitere Exceptiontypen hinzufügen, z. B. DataIntegrityViolationException, etc.
+
+    @ExceptionHandler(TemplateInUseException.class)
+    public ResponseEntity<?> handleTemplateInUse(TemplateInUseException ex) {
+        return ResponseEntity.status(409).body(Map.of(
+                "status", 409,
+                "error", "Conflict",
+                "message", ex.getMessage()));
+    }
+
+    // Du kannst weitere Exceptiontypen hinzufügen, z. B.
+    // DataIntegrityViolationException, etc.
 }

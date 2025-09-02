@@ -16,16 +16,21 @@ import com.example.machine_management.dto.MachineTemplates.MachineTemplateDto;
 import com.example.machine_management.mapper.MachineTemplateMapper;
 import com.example.machine_management.models.AttributeInTemplate;
 import com.example.machine_management.models.AttributeType;
+import com.example.machine_management.models.Machine;
 import com.example.machine_management.models.MachineTemplate;
 import com.example.machine_management.repository.MachineTemplateRepository;
 import com.fasterxml.jackson.databind.annotation.JsonAppend.Attr;
 import com.example.machine_management.exceptions.NotFoundException;
+import com.example.machine_management.exceptions.TemplateInUseException;
 
 @Service
 public class MachineTemplateService {
 
     @Autowired
     private MachineTemplateRepository templateRepo;
+
+    @Autowired
+    private MachineService machineService;
 
     @Autowired
     private AttributeTemplateService attributeTemplateService;
@@ -47,31 +52,19 @@ public class MachineTemplateService {
     public MachineTemplate createTemplate(MachineTemplateDto dto) {
         MachineTemplate template = new MachineTemplate();
         template.setTemplateName(dto.templateName); // Validation happens in entity
-        return templateRepo.save(template);
-    }
-
-    @Transactional
-    public MachineTemplate createTemplateWithAttributes(CreateMachineTemplateWithAttributesDto dto) {
-        MachineTemplate template = new MachineTemplate();
-        template.setTemplateName(dto.templateName); // Validation happens in entity
-        // speichern, sonst keine id
         MachineTemplate saved = templateRepo.save(template);
 
-        if (dto.attributeTemplates == null || dto.attributeTemplates.isEmpty() || saved.getId() == null) { // wenn keine
-                                                                                                           // attriutes
-                                                                                                           // vorhanden
-            throw new IllegalArgumentException("Template darf nicht leer sein.");
-        } else {
-            // hier muss dass attribute tempalte erstellt werden ohne existiierende
-            // attribute_template_id
-            for (AttributeTemplateDto attr : dto.attributeTemplates) {
-                // templatze id setzen
+        // Falls Attribute mitgegeben werden, diese anlegen
+        if (dto.templateAttributes != null && !dto.templateAttributes.isEmpty()) {
+            for (AttributeTemplateDto attr : dto.templateAttributes) {
                 attr.machineTemplateId = saved.getId();
-                // attribute template erstellen
                 attributeTemplateService.createOneForTemplate(attr);
             }
+            // Optional: Template nochmal speichern, falls die Beziehung bidirektional ist
+            templateRepo.save(saved);
         }
-        return templateRepo.save(saved);
+
+        return saved;
     }
 
     @Transactional
@@ -85,8 +78,15 @@ public class MachineTemplateService {
 
     @Transactional
     public void deleteTemplate(Integer id) {
-        if (!templateRepo.existsById(id)) {
-            throw new NotFoundException("Template mit ID " + id + " nicht gefunden.");
+        MachineTemplate template = templateRepo.findById(id)
+                .orElseThrow(() -> new NotFoundException("Template mit ID " + id + " nicht gefunden."));
+        List<Machine> machines = machineService.findByTemplate(template);
+
+        if (!machines.isEmpty()) {
+            List<String> machineNames = machines.stream()
+                    .map(Machine::getMachineName)
+                    .collect(Collectors.toList());
+            throw new TemplateInUseException("Template wird noch von folgenden Maschinen verwendet: " + machineNames);
         }
         templateRepo.deleteById(id);
     }

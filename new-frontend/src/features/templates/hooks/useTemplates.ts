@@ -1,27 +1,75 @@
+// framework / libs
 import { useEffect, useState } from "react";
-import { MachineTemplateDto } from "@/types/machineTemplate";
 import axios from "axios";
+
+//Template relevante types importieren
+import {
+  Template,
+  TemplateAttribute,
+} from "@/features/templates/types/template.types";
+
+//service importieren
+import { createMachineTemplateService } from "@/features/templates/services/templateService";
 
 //hook um mit backend CRUD zu arbeiten
 //also templates Create, Read, Update, Delete (Remove)
+//UND
+// Template Attribute Create, Read, Update, Delete (Remove)
 
 //server importierren
 import {
   fetchMachineTemplates,
+  deleteTemplateService,
   removeAttributeFromTemplateService,
 } from "@/features/templates/services/templateService";
 
 export default function useTemplates() {
-  const [machineTemplates, setMachineTemplates] = useState<
-    MachineTemplateDto[]
-  >([]);
+  // state variablen
+  //main: machine Templates
+  const [machineTemplates, setMachineTemplates] = useState<Template[]>([]);
+  // error und success state
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   useEffect(() => {
     fetch();
   }, []);
 
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Machine Templates  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //Create
-  //ist in eigenständiger komponente
+  //returned true if success, false sonst
+  const createTemplate = async (
+    templateName: string,
+    attributes: TemplateAttribute[]
+  ) => {
+    setErrorMsg(null);
+    setSuccessMsg(null);
+    // 1. Validierung (nur name, attribute, ihre namen und types werden schon in AddAttribtue gechecket )
+    if (!templateName.trim()) {
+      setErrorMsg("Name darf nicht leer sein");
+      return;
+    }
+    try {
+      const response = await createMachineTemplateService(
+        templateName,
+        attributes
+      );
+      if (response.status >= 200 && response.status < 300) {
+        setMachineTemplates((prev) => [...prev, response.data]);
+        setSuccessMsg(response.data.templateName + " erfolgreich erstellt!");
+        return true;
+      } else {
+        setErrorMsg("Fehler beim Erstellen des Templates.");
+        return false;
+      }
+    } catch (e: any) {
+      return {
+        success: false,
+        error:
+          e?.response?.data?.message || "Unbekannter Fehler beim Erstellen.",
+      };
+    }
+  };
 
   //Read
   const fetch = async () => {
@@ -34,8 +82,23 @@ export default function useTemplates() {
     }
   };
   //Update
-  //TODO: Update
+  //TODO: Update Template
 
+  //Delete
+  const removeTemplate = async (templateId: number) => {
+    try {
+      const response = await deleteTemplateService(templateId);
+      //TODO: state update
+      if (response.status >= 200 && response.status < 300) {
+        setMachineTemplates((prev) => prev.filter((t) => t.id !== templateId));
+      }
+    } catch (e) {
+      console.error("error in removeTemplate", e);
+      throw e;
+    }
+  };
+
+  // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Template Attribute  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //Remove
   const removeAttributeFromTemplate = async (
     templateId: number,
@@ -58,9 +121,7 @@ export default function useTemplates() {
               ? t
               : {
                   ...t,
-                  templateAttributes: t.templateAttributes.filter(
-                    (a) => a.id !== attributeId
-                  ),
+                  attributes: t.attributes?.filter((a) => a.id !== attributeId),
                 }
           )
         );
@@ -75,5 +136,14 @@ export default function useTemplates() {
     }
   };
 
-  return { machineTemplates, removeAttributeFromTemplate };
+  return {
+    machineTemplates,
+    removeTemplate,
+    removeAttributeFromTemplate,
+    errorMsg,
+    setErrorMsg,
+    successMsg,
+    setSuccessMsg,
+    createTemplate,
+  };
 }

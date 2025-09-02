@@ -2,8 +2,9 @@
 import styles from "../../../machines/components-ui/MachineLazyCard/MachineLazyCard.module.css";
 
 // Types aus dem neuen Frontend
-import { MachineTemplateDto } from "@/types/machineTemplate";
-import { AttributeTemplateDto } from "@/types/attributeTemplate";
+import { Template } from "../../types/template.types";
+
+//Button Import
 import Button from "@/components/Button";
 
 /* Machinene Template DTO Struktur 
@@ -22,7 +23,7 @@ export interface AttributeTemplateDto {
   */
 
 interface Props {
-  machineTemplate: MachineTemplateDto;
+  machineTemplate: Template;
   onRemoveAttribute: (
     templateId: number,
     attributeId: number
@@ -32,7 +33,7 @@ interface Props {
 export default function TemplateCardUI(props: Props) {
   const machineTemplate = props.machineTemplate;
   const { onRemoveAttribute } = props;
-  const attributeTemplates = machineTemplate.templateAttributes ?? [];
+  const attributeTemplates = machineTemplate.attributes ?? [];
 
   return (
     <div>
@@ -46,10 +47,10 @@ export default function TemplateCardUI(props: Props) {
       ) : (
         attributeTemplates.map((attr) => (
           <div key={attr.id}>
-            Attribut Name {attr.attributeInTemplateName}, Attribut Typ{" "}
-            {attr.attributeInTemplateType}
+            Attribut Name {attr.attributeName}, Attribut Typ{" "}
+            {attr.attributeType}
             <Button
-              onClick={() => onRemoveAttribute(machineTemplate.id, attr.id)}
+              onClick={() => onRemoveAttribute(machineTemplate.id!, attr.id!)}
             >
               {" "}
               Remove Attribute{" "}

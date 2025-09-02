@@ -11,13 +11,14 @@ public class MachineTemplate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String templateName;
 
     @OneToMany(mappedBy = "machineTemplate", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AttributeInTemplate> attributeTemplates = new ArrayList<>();
 
-    public MachineTemplate() {}
+    public MachineTemplate() {
+    }
 
     public MachineTemplate(String templateName) {
         setTemplateName(templateName);
@@ -35,7 +36,7 @@ public class MachineTemplate {
     public List<AttributeInTemplate> getAttributeTemplates() {
         return attributeTemplates;
     }
-    
+
     public void setAttributeTemplates(List<AttributeInTemplate> attrs) {
         this.attributeTemplates = new ArrayList<>(attrs); // immer kopieren!
         if (attrs != null) {
@@ -45,7 +46,6 @@ public class MachineTemplate {
         }
     }
 
-
     // Setter mit Basis-Validierung
     public void setTemplateName(String templateName) {
         if (templateName == null || templateName.trim().isEmpty()) {
@@ -54,7 +54,7 @@ public class MachineTemplate {
         this.templateName = templateName.trim();
     }
 
-    //Entitäts Methdoen
+    // Entitäts Methdoen
     public void addAttribute(AttributeInTemplate attr) {
         this.attributeTemplates.add(attr);
         attr.setMachineTemplate(this); // bidirektional setzen

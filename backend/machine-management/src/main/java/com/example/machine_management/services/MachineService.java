@@ -127,4 +127,8 @@ public class MachineService {
         return machineRepository.save(machine);
     }
 
+    public List<Machine> findByTemplate(MachineTemplate template) {
+        return machineRepository.findByMachineTemplate(template);
+    }
+
 }

@@ -20,7 +20,7 @@ export function useAddAttributeFormPresenter() {
   const onChangeType = (idx: number, val: string) => {
     setAttributes((prev) => {
       const copy = [...prev];
-      copy[idx].attributeName = val;
+      copy[idx].attributeType = val;
       return copy;
     });
   };
@@ -56,9 +56,22 @@ export function useAddAttributeFormPresenter() {
 
     try {
       // 2. Backend-Call
-      await addAttributesToExistingTemplateService(templateId, attributes);
+      const response = await addAttributesToExistingTemplateService(
+        templateId,
+        attributes
+      );
+      // wenn response im 200 bereich
+      if (
+        response.status === 201 &&
+        response.status >= 200 &&
+        response.status < 300
+      ) {
+        //state update, füge response.data zum attribtues hinzu
+        //backend giobt nur neue attribute zurück
+        setAttributes((prev) => [...prev, ...response.data]);
+      }
       // 3. Erfolgsmeldung
-      alert("Attribute erfolgreich hinzugefügt!");
+      console.log(response);
     } catch (err) {
       // 4. Fehlerbehandlung
       alert("Fehler beim Hinzufügen der Attribute.");

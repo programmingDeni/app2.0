@@ -1,15 +1,41 @@
 import axios from "@/services/axios";
 import type { AxiosResponse } from "axios";
 
-//Backend model
-import { MachineTemplateDto } from "@/types/machineTemplate";
-
 //denk moderneres Model
-import { TemplateAttribute } from "../types/template.types";
+import { Template, TemplateAttribute } from "../types/template.types";
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Templates  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 export async function fetchMachineTemplates() {
-  return axios.get<MachineTemplateDto[]>("/api/machine-templates/full");
+  return axios.get<Template[]>("/api/machine-templates/full");
 }
+
+export async function deleteTemplateService(templateId: number) {
+  return axios.delete(`/api/machine-templates/${templateId}`);
+}
+
+export async function createMachineTemplateService(
+  templateName: string,
+  attributes: TemplateAttribute[]
+) {
+  console.log("createMachineTemplate", templateName, attributes);
+
+  return axios.post(`/api/machine-templates`, {
+    templateName,
+    attributes,
+  });
+}
+
+/**
+ * export function createMachineTemplateWithAttributes(
+  dto: CreateMachineTemplateWithAttributesDto
+) {
+  return axios.post("/api/machine-templates/with-attributes", dto);
+}
+
+ */
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Template Attribute  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 export async function removeAttributeFromTemplateService(
   templateId: number,
