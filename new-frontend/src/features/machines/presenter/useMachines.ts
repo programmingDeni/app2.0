@@ -15,7 +15,7 @@ import {
   fetchMachinesService,
   removeMachineService,
   fetchMachineService,
-  removeAttributeFromMachineService,
+  removeCustomAttributeFromMachineService,
 } from "../services/machineService";
 import { AttributeType } from "@/types/attributeType";
 
@@ -123,12 +123,12 @@ export function useMachines() {
     }
   };
 
-  const removeAttributeFromMachine = async (
+  const removeCustomAttributeFromMachine = async (
     machineId: number,
     attributeId: number
   ) => {
     try {
-      const response = await removeAttributeFromMachineService(
+      const response = await removeCustomAttributeFromMachineService(
         machineId,
         attributeId
       );
@@ -179,6 +179,6 @@ export function useMachines() {
     assignTemplateToMachine,
     removeTemplateFromMachine,
     addCustomAttribute,
-    removeAttributeFromMachine,
+    removeCustomAttributeFromMachine,
   };
 }

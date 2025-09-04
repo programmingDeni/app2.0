@@ -9,6 +9,7 @@ export function useMachineDetails(machineId: number) {
     assignTemplateToMachine,
     removeTemplateFromMachine,
     addCustomAttribute,
+    removeCustomAttributeFromMachine,
   } = useMachines();
   const { machineTemplates } = useTemplates();
 
@@ -30,6 +31,7 @@ export function useMachineDetails(machineId: number) {
     assignTemplateToMachine,
     removeTemplateFromMachine,
     addCustomAttribute,
+    removeCustomAttributeFromMachine,
     refetchMachine,
   };
 }

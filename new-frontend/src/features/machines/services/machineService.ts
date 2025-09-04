@@ -155,7 +155,7 @@ export async function createMachineAttributeService(
   }
 }
 
-export async function removeAttributeFromMachineService(
+export async function removeCustomAttributeFromMachineService(
   machineId: number,
   attributeId: number
 ) {

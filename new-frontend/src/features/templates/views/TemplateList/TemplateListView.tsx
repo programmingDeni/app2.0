@@ -17,6 +17,9 @@ export default function TemplateListView() {
   const { machineTemplates, removeTemplate } = useTemplates();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  //state für showform
+  const [showForm, setShowForm] = useState(false);
+
   const handleRemoveTemplate = async (templateId: number) => {
     const confirm = window.confirm(
       "⚠️⚠️⚠️Bist du sicher, dass du das Template entfernen möchtest?⚠️⚠️⚠️\n" +
@@ -58,9 +61,12 @@ export default function TemplateListView() {
           </Button>
         </div>
       ))}
-      <ToggleableSection toggleLabel="Template hinzufügen">
-        <div>{/*TODO: Add Template Form */}add tempalte form </div>
-        {/*<MachineTemplateForm onSubmit={() => console.log("submit")} />*/}
+      <ToggleableSection
+        toggleLabel="Template hinzufügen"
+        open={showForm}
+        onOpen={() => setShowForm(true)}
+        onClose={() => setShowForm(false)}
+      >
         <AddTemplateFormView />
       </ToggleableSection>
       <Button to="/">→ Zurück zur Startseite</Button>

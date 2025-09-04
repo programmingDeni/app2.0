@@ -17,7 +17,14 @@ export default function MachineDetailsView() {
   }
 
   //presenter
-  const { machine, template } = useMachineDetails(machineIdInt);
+  const {
+    machine,
+    template,
+    addCustomAttribute,
+    removeCustomAttributeFromMachine,
+    removeTemplateFromMachine,
+    assignTemplateToMachine,
+  } = useMachineDetails(machineIdInt);
 
   //ui
   if (!machine) {
@@ -49,7 +56,7 @@ export default function MachineDetailsView() {
   };
   //Remove
   const handleRemoveAttribute = async (attributeId: number) => {
-    await removeAttributeFromMachine(machineId, attributeId);
+    await removeCustomAttributeFromMachine(machineIdInt, attributeId);
   };
 
   const customAttributes = machine.attributes.filter(
