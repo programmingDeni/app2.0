@@ -1,14 +1,14 @@
-"use client";
 import React, { useState } from "react";
 import { AttributeType } from "@/types/attributeType";
-import { CreateMachineAttributeDto } from "@/types/MachineAttributes/CreatemachineAttribute";
-import { MachineAttributeDto } from "@/types/machineAttribute";
-import { useMachineAttributes } from "@/presenters/useMachineAttributes";
-import { useMachineStructure } from "@/presenters/useMachineStructure";
+import { useMachinesContext } from "@/features/machines/context/MachineContext";
 
 interface Props {
   machineId: number;
-  onAttributeAdded?: () => void;
+  onAttributeAdded: (
+    machineId: number,
+    attributeName: string,
+    attributeType: AttributeType
+  ) => void;
   onCancel?: () => void;
 }
 
@@ -26,24 +26,10 @@ export default function AddAttributeForm({
     "BOOLEAN",
   ];
 
-  //const { addAttributetoMachine } = useMachineAttributes(machineId);
-  const { addAttributeToMachine } = useMachineStructure(machineId);
-
   const handleSubmit = async () => {
-    try {
-      const newAttr: CreateMachineAttributeDto = {
-        attributeName,
-        attributeType,
-        machineId,
-      };
-      addAttributeToMachine(newAttr);
-      if (onAttributeAdded) onAttributeAdded();
-      //onAttributeAdded();
-      setAttributeName("");
-      setAttributeType("STRING");
-    } catch (err) {
-      console.error("Fehler beim Attribut-Hinzufügen:", err);
-    }
+    onAttributeAdded(machineId, attributeName, attributeType);
+    setAttributeName("");
+    setAttributeType("STRING");
   };
 
   return (

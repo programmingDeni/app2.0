@@ -50,9 +50,14 @@ export async function addAttributesToExistingTemplateService(
   templateId: number,
   attributes: TemplateAttribute[]
 ): Promise<AxiosResponse> {
+  const payload = attributes.map((attr) => ({
+    attributeName: attr.templateAttributeName,
+    attributeType: attr.templateAttributeType,
+  }));
+
   const response = axios.post(
     `/api/machine-templates/${templateId}/attributes`,
-    attributes
+    payload
   );
   return response;
 }

@@ -9,6 +9,7 @@ import com.example.machine_management.dto.Machine.CreateMachineFromTemplateDto;
 import com.example.machine_management.dto.Machine.LazyMachineDto;
 import com.example.machine_management.dto.Machine.MachineAttributesAndYearlyValuesDto;
 import com.example.machine_management.dto.Machine.MachineDto;
+import com.example.machine_management.dto.Machine.Attributes.CreateMachineAttributeDto;
 import com.example.machine_management.dto.MachineStructureDto;
 import com.example.machine_management.dto.AttributeValue.AttributeValueDto;
 import com.example.machine_management.dto.AttributeValue.CreateAttributeValueDto;
@@ -95,9 +96,9 @@ public class MachineController {
     // POST fügt Machine ein Attribute hinzu
     @PostMapping("/{id}/attributes")
     public ResponseEntity<MachineAttributeDto> createAttribute(@PathVariable Integer id,
-            @RequestBody MachineAttributeDto dto) {
+            @RequestBody CreateMachineAttributeDto dto) {
         // 1. Validate
-        if (dto == null || !isValidAttributeDto(dto)) {
+        if (dto == null || !isValidMachineAttributeDto(dto)) {
             throw new IllegalArgumentException("Invalid attribute data");
         }
         if (id == null || id <= 0) {
@@ -105,7 +106,7 @@ public class MachineController {
         }
 
         // 2. Create entity
-        MachineAttribute created = attributeService.createMachineAttribute(dto);
+        MachineAttribute created = attributeService.createMachineAttribute(id, dto);
 
         // 3. Map and return
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -305,5 +306,11 @@ public class MachineController {
                 !dto.attributeName.trim().isEmpty() &&
                 dto.attributeType != null &&
                 dto.machineId > 0;
+    }
+
+    private boolean isValidMachineAttributeDto(CreateMachineAttributeDto dto) {
+        return dto.attributeName != null &&
+                !dto.attributeName.trim().isEmpty() &&
+                dto.attributeType != null;
     }
 }

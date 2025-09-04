@@ -3,7 +3,13 @@ import { useMachines } from "@/features/machines/presenter/useMachines";
 import useTemplates from "@/features/templates/hooks/useTemplates";
 
 export function useMachineDetails(machineId: number) {
-  const { machines } = useMachines();
+  const {
+    machines,
+    fetchMachine,
+    assignTemplateToMachine,
+    removeTemplateFromMachine,
+    addCustomAttribute,
+  } = useMachines();
   const { machineTemplates } = useTemplates();
 
   const machine = machines.find((m) => m.id === machineId);
@@ -13,8 +19,17 @@ export function useMachineDetails(machineId: number) {
     (t) => t.id === machine?.machineTemplate?.id
   );
 
+  const refetchMachine = async (machineId: number) => {
+    const machine = await fetchMachine(machineId);
+    return machine;
+  };
+
   return {
     machine,
     template,
+    assignTemplateToMachine,
+    removeTemplateFromMachine,
+    addCustomAttribute,
+    refetchMachine,
   };
 }

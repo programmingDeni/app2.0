@@ -1,3 +1,5 @@
+//react
+import { useState } from "react";
 //Types
 import { Machine, MachineAttribute } from "../../types/machine.types";
 import {
@@ -10,8 +12,9 @@ import MachineAttributeCard from "@/features/machines/components-ui/MachineAttri
 import Button from "@/components/Button";
 import ToggleableSection from "@/components/ToggleableSection/ToggleableSection";
 import TemplateSelect from "@/components/TemplateSelect/TemplateSelect";
-import AddAttributeForm from "@/components/AddAttributeForm/AddAttributeForm";
+import AddAttributeForm from "@/features/machines/components-ui/AddAttributeForm/AddAttributeForm";
 import TemplateView from "@/features/templates/views/TempalteDetails";
+import { AttributeType } from "@/types/attributeType";
 
 interface Props {
   machine: Machine;
@@ -23,13 +26,18 @@ interface Props {
   setSelectedTemplateId: (id: number | null) => void;
   handleAssignTemplate: () => void;
   handleRemoveTemplate: () => void;
-  handleRemoveAttribute: (attributeId: number) => void;
+  handleRemoveAttribute: (machineId: number, attributeId: number) => void;
   refetch: () => void;
   loading?: boolean;
   error?: string | null;
+  onCustomAttributeAdded?: (
+    machineId: number,
+    attributeName: string,
+    attributeType: AttributeType
+  ) => void;
 }
 
-export default function MachineDetails(props: Props) {
+export default function MachineDetailsUI(props: Props) {
   const {
     machine,
     template,
@@ -38,7 +46,10 @@ export default function MachineDetails(props: Props) {
     refetch,
     loading,
     error,
+    onCustomAttributeAdded,
   } = props;
+
+  const [showAddAttributeForm, setShowAddAttributeForm] = useState(false);
 
   return (
     <div>
@@ -56,7 +67,9 @@ export default function MachineDetails(props: Props) {
           {customAttributes.map((attribute) => (
             <div key={attribute.id} className="flex  gap-4 mb-2">
               <MachineAttributeCard key={attribute.id} attribute={attribute} />
-              <Button onClick={() => handleRemoveAttribute(attribute.id)}>
+              <Button
+                onClick={() => handleRemoveAttribute(machine.id!, attribute.id)}
+              >
                 Attribut entfernen
               </Button>
             </div>
@@ -65,8 +78,18 @@ export default function MachineDetails(props: Props) {
       ) : (
         <p className="text-gray-500">❗ Keine aktuellen Attribute vorhanden</p>
       )}
-      <ToggleableSection toggleLabel="Attribute hinzufügen">
-        <AddAttributeForm machineId={machine.id!} onAttributeAdded={refetch} />
+      <ToggleableSection
+        toggleLabel="Attribute hinzufügen"
+        toggleLabelActive="Schließen"
+        open={showAddAttributeForm}
+        onClose={() => setShowAddAttributeForm(false)}
+        onOpen={() => setShowAddAttributeForm(true)}
+      >
+        <AddAttributeForm
+          machineId={machine.id!}
+          onAttributeAdded={onCustomAttributeAdded}
+          onCancel={() => setShowAddAttributeForm(false)}
+        />
       </ToggleableSection>
 
       <Button to={`/`}>→ Zur Startseite</Button>

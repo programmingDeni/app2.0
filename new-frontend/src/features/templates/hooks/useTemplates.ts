@@ -119,7 +119,6 @@ export default function useTemplates() {
       attributes
     );
     console.log("addAttributesToExistingTemplateService", response.data);
-
     if (response.status >= 200 && response.status < 300) {
       setMachineTemplates((prev) =>
         prev.map((t) =>

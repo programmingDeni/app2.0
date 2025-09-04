@@ -104,6 +104,7 @@ export async function createMachineService(machine: Partial<Machine>) {
   }
 }
 //Read
+//all machines
 export async function fetchMachinesService() {
   const response = await axios.get("/api/machines");
   const machines: Machine[] = response.data.map((dto: any) => ({
@@ -112,6 +113,13 @@ export async function fetchMachinesService() {
   }));
   return machines;
 }
+//one machine
+export async function fetchMachineService(machineId: number) {
+  const response = await axios.get(`/api/machines/${machineId}`);
+  //TODO: mapping auf "schöne" frontend datenstruktur
+  return response.data;
+}
+
 //Update
 //TODO: Update Machine
 
@@ -120,4 +128,42 @@ export function removeMachineService(machineId: number) {
   return axios.delete(`/api/machines/${machineId}`);
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Machine Service (neu)  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+export function assignTemplateToMachine(machineId: number, templateId: number) {
+  //TODO:
+  //return axios.post(`/api/machines/${machineId}/template`, { templateId });
+}
+
+export function removeTemplateFromMachine(machineId: number) {
+  //TODO
+  //return axios.delete(`/api/machines/${machineId}/template`);
+}
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Machine Attributes  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+export async function createMachineAttributeService(
+  machineId: number,
+  attributeName: string,
+  attributeType: string
+) {
+  try {
+    return await axios.post(`/api/machines/${machineId}/attributes`, {
+      attributeName,
+      attributeType,
+    });
+  } catch (e) {
+    throw e;
+  }
+}
+
+export async function removeAttributeFromMachineService(
+  machineId: number,
+  attributeId: number
+) {
+  try {
+    return await axios.delete(
+      `/api/machines/${machineId}/attributes/${attributeId}`
+    );
+  } catch (e) {
+    throw e;
+  }
+}

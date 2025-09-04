@@ -1,6 +1,7 @@
 // Komponente zur Darstellung und Bearbeitung eines Templates
 
 // react zeug
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 
 // importiere TEmplateCardUi
@@ -20,6 +21,8 @@ interface TemplateViewProps {
 
 export default function TemplateView(props: TemplateViewProps) {
   const { machineTemplates, removeAttributeFromTemplate } = useTemplates();
+
+  const [showForm, setShowForm] = useState(false);
 
   // Nutze Prop, falls vorhanden, sonst Params
   let templateId = props.templateId;
@@ -48,7 +51,12 @@ export default function TemplateView(props: TemplateViewProps) {
         machineTemplate={template}
         onRemoveAttribute={removeAttributeFromTemplate}
       />
-      <ToggleableSection toggleLabel="Attribute zu Template hinzufügen">
+      <ToggleableSection
+        toggleLabel="Attribute zu Template hinzufügen"
+        onOpen={() => setShowForm(true)}
+        onClose={() => setShowForm(false)}
+        open={showForm}
+      >
         <AddAttributeFormView templateId={template.id} />
       </ToggleableSection>
     </div>

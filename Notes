@@ -32,7 +32,12 @@ id: 1
 ​​
 machineName: "Template 1"
 ​​
+
+// das hieer nervt
 machineTemplateDto: Object { id: 1, templateName: "Template 1", templateAttributes: (2) […] }
+
+
+///
 ​​​
 id: 1
 ​​​
@@ -48,3 +53,7 @@ length: 1
 ​
 <prototype>: Array []
 useMachines.ts:39:15
+
+
+
+=> react query für templates und machines 

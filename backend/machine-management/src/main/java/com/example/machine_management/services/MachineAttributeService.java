@@ -6,6 +6,7 @@ import com.example.machine_management.models.AttributeType;
 import com.example.machine_management.models.Machine;
 import com.example.machine_management.repository.MachineAttributeRepository;
 import com.example.machine_management.repository.MachineRepository;
+import com.example.machine_management.dto.Machine.Attributes.CreateMachineAttributeDto;
 import com.example.machine_management.dto.MachineAttributes.MachineAttributeDto;
 import com.example.machine_management.exceptions.NotFoundException;
 
@@ -37,13 +38,13 @@ public class MachineAttributeService {
         return attribute;
     }
 
-    public MachineAttribute createMachineAttribute(MachineAttributeDto request) {
+    public MachineAttribute createMachineAttribute(Integer machineId, CreateMachineAttributeDto dto) {
         // finde machine oder werfe fehler
-        Machine machine = machineRepository.findById(request.machineId)
-                .orElseThrow(() -> new NotFoundException("Maschine mit ID " + request.machineId + " nicht gefunden."));
+        Machine machine = machineRepository.findById(machineId)
+                .orElseThrow(() -> new NotFoundException("Maschine mit ID " + machineId + " nicht gefunden."));
         // erstelle neues attribute mit machine, name und type
-        MachineAttribute attr = new MachineAttribute(machine.getId(), request.attributeName,
-                AttributeType.valueOf(request.attributeType));
+        MachineAttribute attr = new MachineAttribute(machine.getId(), dto.attributeName,
+                AttributeType.valueOf(dto.attributeType));
         // speichere attribute
         MachineAttribute saved = attributeRepository.save(attr);
         // konvertiere zu dto und return

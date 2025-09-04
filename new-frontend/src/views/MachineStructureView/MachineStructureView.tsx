@@ -1,6 +1,6 @@
 import { useMachineStructure } from "@/presenters/useMachineStructure";
 import AttributeList from "@/components/AttributeList";
-import AddAttributeForm from "@/components/AddAttributeForm/AddAttributeForm";
+import AddAttributeForm from "@/features/machines/components-ui/AddAttributeForm/AddAttributeForm";
 import { useEffect, useState } from "react";
 import { MachineAttributeDto } from "@/types/machineAttribute";
 import { useMachineTemplates } from "@/presenters/useMachineTemplates";

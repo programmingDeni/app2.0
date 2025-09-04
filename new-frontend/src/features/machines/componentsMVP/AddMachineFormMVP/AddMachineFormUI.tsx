@@ -1,5 +1,5 @@
-import { MachineTemplateDto } from "@/types/machineTemplate";
 import TemplateSelect from "../../../../components/TemplateSelect/TemplateSelect";
+import { Template } from "@/features/templates/types/template.types";
 
 interface Props {
   name: string;
@@ -7,7 +7,7 @@ interface Props {
   selectedTemplateId: number | null;
   onTemplateChange: (id: number | null) => void;
   onSubmit: () => void;
-  templates: MachineTemplateDto[];
+  templates: Template[];
   loading: boolean;
   error: Error | null;
 }

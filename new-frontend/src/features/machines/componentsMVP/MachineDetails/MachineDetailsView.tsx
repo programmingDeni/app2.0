@@ -1,9 +1,12 @@
 // react
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 //Presenter
 import { useMachineDetails } from "./useMachineDetails";
 //UI
 import MachineDetailsUI from "./MachineDetailsUI";
+import { MachineAttribute } from "../../types/machine.types";
+import { AttributeType } from "@/types/attributeType";
 
 export default function MachineDetailsView() {
   const { machineId } = useParams();
@@ -23,7 +26,43 @@ export default function MachineDetailsView() {
   if (!template) {
     return <div>Template nicht gefunden</div>;
   }
-  const templateAttributes = template.templateAttributes;
-  const machineAttributes = machine.attributes;
-  return <MachineDetailsUI machine={machine} template={template} />;
+
+  //Template change
+  const handleTemplateChange = async (templateId: number | null) => {
+    if (machine.id === undefined) return;
+    if (templateId === null) {
+      await removeTemplateFromMachine(machine.id);
+    } else {
+      await assignTemplateToMachine(machine.id, templateId);
+    }
+  };
+
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Custom Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  //Create
+  const handleCustomAttributeAdded = async (
+    machineId: number,
+    attributeName: string,
+    attributeType: AttributeType
+  ) => {
+    await addCustomAttribute(machineId, attributeName, attributeType);
+    //TODO: funktioniert nicht, warum? bekomme richtige backend antwort
+  };
+  //Remove
+  const handleRemoveAttribute = async (attributeId: number) => {
+    await removeAttributeFromMachine(machineId, attributeId);
+  };
+
+  const customAttributes = machine.attributes.filter(
+    (attr) => attr.fromTemplate === false
+  );
+
+  return (
+    <MachineDetailsUI
+      machine={machine}
+      template={template}
+      customAttributes={customAttributes}
+      onCustomAttributeAdded={handleCustomAttributeAdded}
+      handleRemoveAttribute={handleRemoveAttribute}
+    />
+  );
 }
