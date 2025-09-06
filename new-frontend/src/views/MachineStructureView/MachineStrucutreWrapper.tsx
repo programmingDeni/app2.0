@@ -1,6 +1,6 @@
 // src/views/MachineStructureView/MachineStructureWrapper.tsx
 import { useParams } from "react-router-dom";
-import MachineStructureView from "./MachineStructureView";
+import MachineStructureView from "./MachineStructureView.tsx";
 
 export default function MachineStructureWrapper() {
   const { id } = useParams();

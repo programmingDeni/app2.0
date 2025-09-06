@@ -1,8 +1,23 @@
 // react
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-//Presenter
-import { useMachineDetails } from "./useMachineDetails";
+//Presenter wird erseztz durch query
+//import { useMachineDetails } from "./useMachineDetails";
+//Queries
+//Query (Machine) import
+import {
+  useMachine,
+  useAddCustomAttribute,
+  useRemoveCustomAttribute,
+  useAssignTemplate,
+  useRemoveTemplate,
+} from "@/features/machines/query/useMachineQueries";
+import {
+  useTemplate,
+  useAddAttributesToTemplate,
+  useRemoveAttributeFromTemplate,
+} from "@/features/templates/query/useTemplateQueries";
+
 //UI
 import MachineDetailsUI from "./MachineDetailsUI";
 import { MachineAttribute } from "../../types/machine.types";
@@ -16,23 +31,42 @@ export default function MachineDetailsView() {
     return <div>Ungültige Maschinen-ID.</div>;
   }
 
-  //presenter
-  const {
-    machine,
-    template,
-    addCustomAttribute,
-    removeCustomAttributeFromMachine,
-    removeTemplateFromMachine,
-    assignTemplateToMachine,
-  } = useMachineDetails(machineIdInt);
+  // Queries & Mutations
+  const { data: machine, isLoading, error } = useMachine(machineIdInt);
+  const addCustomAttributeMutation = useAddCustomAttribute(machineIdInt);
+  const removeCustomAttributeMutation = useRemoveCustomAttribute(machineIdInt);
 
-  //ui
+  const assignTemplateMutation = useAssignTemplate(machineIdInt);
+  const removeTemplateMutation = useRemoveTemplate(machineIdInt);
+
+  // State
+  const [selectedTemplateId, setSelectedTemplateId] = useState<number | null>(
+    null
+  );
+
+  const templateId = machine?.machineTemplate?.id;
+  const { data: template } = useTemplate(templateId, { enabled: !!templateId });
+
+  const handleAssignTemplate = async (templateId: number) => {
+    await assignTemplateMutation.mutateAsync(templateId);
+  };
+
+  const handleRemoveTemplate = async (machineId: number) => {
+    await removeTemplateMutation.mutateAsync(machineId);
+  };
+
   if (!machine) {
     return <div>Maschine nicht gefunden</div>;
   }
+
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Template Operationen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  //template noch nicht implementiert
+  /*
   if (!template) {
     return <div>Template nicht gefunden</div>;
   }
+    
 
   //Template change
   const handleTemplateChange = async (templateId: number | null) => {
@@ -43,24 +77,27 @@ export default function MachineDetailsView() {
       await assignTemplateToMachine(machine.id, templateId);
     }
   };
+  */
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Custom Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //Create
   const handleCustomAttributeAdded = async (
-    machineId: number,
     attributeName: string,
     attributeType: AttributeType
   ) => {
-    await addCustomAttribute(machineId, attributeName, attributeType);
+    await addCustomAttributeMutation.mutateAsync({
+      attributeName,
+      attributeType,
+    });
     //TODO: funktioniert nicht, warum? bekomme richtige backend antwort
   };
   //Remove
   const handleRemoveAttribute = async (attributeId: number) => {
-    await removeCustomAttributeFromMachine(machineIdInt, attributeId);
+    await removeCustomAttributeMutation.mutateAsync(attributeId);
   };
 
   const customAttributes = machine.attributes.filter(
-    (attr) => attr.fromTemplate === false
+    (attr: MachineAttribute) => attr.fromTemplate === false
   );
 
   return (
@@ -70,6 +107,10 @@ export default function MachineDetailsView() {
       customAttributes={customAttributes}
       onCustomAttributeAdded={handleCustomAttributeAdded}
       handleRemoveAttribute={handleRemoveAttribute}
+      selectedTemplateId={selectedTemplateId}
+      setSelectedTemplateId={setSelectedTemplateId}
+      handleAssignTemplate={handleAssignTemplate}
+      handleRemoveTemplate={handleRemoveTemplate}
     />
   );
 }

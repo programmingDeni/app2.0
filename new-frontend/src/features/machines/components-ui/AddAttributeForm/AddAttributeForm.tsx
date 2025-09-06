@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { AttributeType } from "@/types/attributeType";
-import { useMachinesContext } from "@/features/machines/context/MachineContext";
 
 interface Props {
   machineId: number;
   onAttributeAdded: (
-    machineId: number,
     attributeName: string,
     attributeType: AttributeType
   ) => void;
@@ -27,7 +25,7 @@ export default function AddAttributeForm({
   ];
 
   const handleSubmit = async () => {
-    onAttributeAdded(machineId, attributeName, attributeType);
+    onAttributeAdded(attributeName, attributeType);
     setAttributeName("");
     setAttributeType("STRING");
   };

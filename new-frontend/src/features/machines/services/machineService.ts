@@ -92,10 +92,15 @@ export async function addMachineAttributeValue(
 //Crud Operationen + assign und remove template
 
 //neuen typ holen aus feature
-import { Machine } from "@/features/machines/types/machine.types";
+import {
+  Machine,
+  MachineAttribute,
+} from "@/features/machines/types/machine.types";
 
 //Create
-export async function createMachineService(machine: Partial<Machine>) {
+export async function createMachineService(
+  machine: Partial<Machine>
+): Promise<Machine> {
   try {
     const response = await axios.post("/api/machines", machine);
     return response.data as Machine;
@@ -105,7 +110,7 @@ export async function createMachineService(machine: Partial<Machine>) {
 }
 //Read
 //all machines
-export async function fetchMachinesService() {
+export async function fetchMachinesService(): Promise<Machine[]> {
   const response = await axios.get("/api/machines");
   const machines: Machine[] = response.data.map((dto: any) => ({
     ...dto,
@@ -114,27 +119,54 @@ export async function fetchMachinesService() {
   return machines;
 }
 //one machine
-export async function fetchMachineService(machineId: number) {
+export async function fetchMachineByIdService(
+  machineId: number
+): Promise<Machine> {
   const response = await axios.get(`/api/machines/${machineId}`);
-  //TODO: mapping auf "schöne" frontend datenstruktur
-  return response.data;
+  const dto = response.data;
+  // mapping auf "schöne" frontend datenstruktur
+  const machine: Machine = {
+    ...dto,
+    machineTemplate: dto.machineTemplateDto,
+  };
+  return machine;
 }
 
 //Update
 //TODO: Update Machine
 
 //Delete
-export function removeMachineService(machineId: number) {
-  return axios.delete(`/api/machines/${machineId}`);
+export async function removeMachineService(machineId: number) {
+  try {
+    const response = await axios.delete(`/api/machines/${machineId}`);
+    return response.data;
+  } catch (e) {
+    throw e;
+  }
 }
 
-export function assignTemplateToMachine(machineId: number, templateId: number) {
-  //TODO:
-  //return axios.post(`/api/machines/${machineId}/template`, { templateId });
+export async function assignTemplateToMachineService(
+  machineId: number,
+  templateId: number
+): Promise<Machine> {
+  //TODO: ist implementiert?
+  try {
+    const response = await axios.post(`/api/machines/${machineId}/template`, {
+      templateId,
+    });
+    return response.data;
+  } catch (e) {
+    throw e;
+  }
 }
 
-export function removeTemplateFromMachine(machineId: number) {
-  //TODO
+export async function removeTemplateFromMachineService(machineId: number) {
+  //TODO ist implementiert?
+  try {
+    await axios.delete(`/api/machines/${machineId}/template`);
+  } catch (e) {
+    throw e;
+  }
   //return axios.delete(`/api/machines/${machineId}/template`);
 }
 
@@ -144,12 +176,13 @@ export async function createMachineAttributeService(
   machineId: number,
   attributeName: string,
   attributeType: string
-) {
+): Promise<MachineAttribute> {
   try {
-    return await axios.post(`/api/machines/${machineId}/attributes`, {
+    const response = await axios.post(`/api/machines/${machineId}/attributes`, {
       attributeName,
       attributeType,
     });
+    return response.data;
   } catch (e) {
     throw e;
   }
@@ -160,9 +193,10 @@ export async function removeCustomAttributeFromMachineService(
   attributeId: number
 ) {
   try {
-    return await axios.delete(
+    const response = await axios.delete(
       `/api/machines/${machineId}/attributes/${attributeId}`
     );
+    return response.data;
   } catch (e) {
     throw e;
   }

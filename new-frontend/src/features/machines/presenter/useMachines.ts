@@ -14,7 +14,7 @@ import {
   createMachineAttributeService,
   fetchMachinesService,
   removeMachineService,
-  fetchMachineService,
+  fetchMachineByIdService,
   removeCustomAttributeFromMachineService,
 } from "../services/machineService";
 import { AttributeType } from "@/types/attributeType";
@@ -38,7 +38,7 @@ export function useMachines() {
   //eine machine, wenn ich gezielt vom backend nach laden will?
   const fetchMachine = async (machineId: number) => {
     try {
-      const response = await fetchMachineService(machineId);
+      const response = await fetchMachineByIdService(machineId);
 
       //TODO: state der machine updaten
       /*
@@ -46,7 +46,7 @@ export function useMachines() {
         prev.map((m) => (m.id === machineId ? response.data : m))
       );
       */
-      return response.data;
+      return response;
     } catch (e) {
       throw e;
     }
@@ -103,21 +103,19 @@ export function useMachines() {
         attributeType
       );
       console.log("response", response, "machines", machines);
-      if (response.status >= 200 && response.status < 300) {
-        const newAttribute = response.data;
-        // State aktualisieren:
-        setMachines((prev) =>
-          prev.map((machine) =>
-            machine.id === machineId
-              ? {
-                  ...machine,
-                  attributes: [...(machine.attributes || []), newAttribute],
-                }
-              : machine
-          )
-        );
-        return newAttribute;
-      }
+      const newAttribute = response;
+      // State aktualisieren:
+      setMachines((prev) =>
+        prev.map((machine) =>
+          machine.id === machineId
+            ? {
+                ...machine,
+                attributes: [...(machine.attributes || []), newAttribute],
+              }
+            : machine
+        )
+      );
+      return newAttribute;
     } catch (e) {
       throw e;
     }

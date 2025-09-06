@@ -18,20 +18,17 @@ import { AttributeType } from "@/types/attributeType";
 
 interface Props {
   machine: Machine;
-  template: Template | null;
-  templateAttributes: TemplateAttribute[];
+  template: Template | undefined;
   customAttributes: MachineAttribute[];
-  templates: Template[];
   selectedTemplateId: number | null;
   setSelectedTemplateId: (id: number | null) => void;
-  handleAssignTemplate: () => void;
-  handleRemoveTemplate: () => void;
+  handleAssignTemplate: (templateId: number) => void;
+  handleRemoveTemplate: (machineId: number) => void;
   handleRemoveAttribute: (machineId: number, attributeId: number) => void;
-  refetch: () => void;
+  refetch?: () => void;
   loading?: boolean;
   error?: string | null;
-  onCustomAttributeAdded?: (
-    machineId: number,
+  onCustomAttributeAdded: (
     attributeName: string,
     attributeType: AttributeType
   ) => void;
@@ -50,6 +47,9 @@ export default function MachineDetailsUI(props: Props) {
   } = props;
 
   const [showAddAttributeForm, setShowAddAttributeForm] = useState(false);
+
+  console.log("template", template);
+  console.log("machine", machine);
 
   return (
     <div>

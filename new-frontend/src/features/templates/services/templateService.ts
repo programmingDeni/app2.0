@@ -6,58 +6,92 @@ import { Template, TemplateAttribute } from "../types/template.types";
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Templates  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-export async function fetchMachineTemplates() {
-  return axios.get<Template[]>("/api/machine-templates/full");
+export async function fetchMachineTemplates(): Promise<Template[]> {
+  try {
+    const response = await axios.get<Template[]>("/api/machine-templates/full");
+    return response.data;
+  } catch (error) {
+    console.error("Fehler beim Laden der Templates:", error);
+    throw error;
+  }
 }
 
-export async function deleteTemplateService(templateId: number) {
-  return axios.delete(`/api/machine-templates/${templateId}`);
+export async function fetchTemplateByIdService(
+  templateId: number
+): Promise<Template> {
+  try {
+    const response = await axios.get<Template>(
+      `/api/machine-templates/${templateId}`
+    );
+    console.log("TemplateService response", response);
+    return response.data;
+  } catch (error) {
+    console.error("Fehler beim Laden des Templates:", error);
+    throw error;
+  }
+}
+
+export async function deleteTemplateService(templateId: number): Promise<void> {
+  try {
+    await axios.delete(`/api/machine-templates/${templateId}`);
+  } catch (error) {
+    console.error("Fehler beim Löschen des Templates:", error);
+    throw error;
+  }
 }
 
 export async function createMachineTemplateService(
   templateName: string,
   attributes: TemplateAttribute[]
-) {
-  console.log("createMachineTemplate", templateName, attributes);
-
-  return axios.post(`/api/machine-templates`, {
-    templateName,
-    attributes,
-  });
+): Promise<Template> {
+  try {
+    const response = await axios.post<Template>(`/api/machine-templates`, {
+      templateName,
+      attributes,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Fehler beim Erstellen des Templates:", error);
+    throw error;
+  }
 }
-
-/**
- * export function createMachineTemplateWithAttributes(
-  dto: CreateMachineTemplateWithAttributesDto
-) {
-  return axios.post("/api/machine-templates/with-attributes", dto);
-}
-
- */
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Template Attribute  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 export async function removeAttributeFromTemplateService(
   templateId: number,
   attributeId: number
-): Promise<AxiosResponse> {
-  return axios.delete(
-    `/api/machine-templates/${templateId}/attributes/${attributeId}`
-  );
+): Promise<void> {
+  try {
+    await axios.delete(
+      `/api/machine-templates/${templateId}/attributes/${attributeId}`
+    );
+  } catch (error) {
+    console.error(
+      "Fehler beim Entfernen des Attributs aus dem Template:",
+      error
+    );
+    throw error;
+  }
 }
 
 export async function addAttributesToExistingTemplateService(
   templateId: number,
   attributes: TemplateAttribute[]
-): Promise<AxiosResponse> {
-  const payload = attributes.map((attr) => ({
-    attributeName: attr.templateAttributeName,
-    attributeType: attr.templateAttributeType,
-  }));
+): Promise<TemplateAttribute[]> {
+  try {
+    const payload = attributes.map((attr) => ({
+      attributeName: attr.templateAttributeName,
+      attributeType: attr.templateAttributeType,
+    }));
 
-  const response = axios.post(
-    `/api/machine-templates/${templateId}/attributes`,
-    payload
-  );
-  return response;
+    const response = await axios.post<TemplateAttribute[]>(
+      `/api/machine-templates/${templateId}/attributes`,
+      payload
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Fehler beim Hinzufügen von Attributen zum Template:", error);
+    throw error;
+  }
 }

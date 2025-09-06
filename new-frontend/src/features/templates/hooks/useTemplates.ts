@@ -57,14 +57,15 @@ export default function useTemplates() {
         templateName,
         attributes
       );
-      if (response.status >= 200 && response.status < 300) {
-        setMachineTemplates((prev) => [...prev, response.data]);
-        setSuccessMsg(response.data.templateName + " erfolgreich erstellt!");
-        return true;
+      //if (response.status >= 200 && response.status < 300) {
+      setMachineTemplates((prev) => [...prev, response]);
+      setSuccessMsg(response.templateName + " erfolgreich erstellt!");
+      return true;
+      /*
       } else {
         setErrorMsg("Fehler beim Erstellen des Templates.");
         return false;
-      }
+      }*/
     } catch (e: any) {
       return {
         success: false,
@@ -78,7 +79,7 @@ export default function useTemplates() {
   const fetch = async () => {
     try {
       const response = await fetchMachineTemplates();
-      const data = response.data;
+      const data = response;
       console.log("TEMPLATE DATA", data);
       setMachineTemplates(data);
     } catch (e) {
@@ -93,9 +94,7 @@ export default function useTemplates() {
     try {
       const response = await deleteTemplateService(templateId);
       //TODO: state update
-      if (response.status >= 200 && response.status < 300) {
-        setMachineTemplates((prev) => prev.filter((t) => t.id !== templateId));
-      }
+      setMachineTemplates((prev) => prev.filter((t) => t.id !== templateId));
     } catch (e) {
       console.error("error in removeTemplate", e);
       throw e;
@@ -118,24 +117,20 @@ export default function useTemplates() {
       templateId,
       attributes
     );
-    console.log("addAttributesToExistingTemplateService", response.data);
-    if (response.status >= 200 && response.status < 300) {
-      setMachineTemplates((prev) =>
-        prev.map((t) =>
-          t.id !== templateId
-            ? t
-            : {
-                ...t,
-                templateAttributes: [
-                  ...(t.templateAttributes || []),
-                  ...response.data,
-                ],
-              }
-        )
-      );
-      return response.data;
-    }
-    throw new Error("Fehler beim Hinzufügen der Attribute.");
+    setMachineTemplates((prev) =>
+      prev.map((t) =>
+        t.id !== templateId
+          ? t
+          : {
+              ...t,
+              templateAttributes: [
+                ...(t.templateAttributes || []),
+                ...response,
+              ],
+            }
+      )
+    );
+    return response;
   };
 
   //Remove
@@ -151,20 +146,18 @@ export default function useTemplates() {
         attributeId
       );
       //aus dem state entfernen
-      if (response.status === 204) {
-        setMachineTemplates((prev) =>
-          prev.map((t) =>
-            t.id !== templateId
-              ? t
-              : {
-                  ...t,
-                  templateAttributes: t.templateAttributes?.filter(
-                    (a) => a.id !== attributeId
-                  ),
-                }
-          )
-        );
-      }
+      setMachineTemplates((prev) =>
+        prev.map((t) =>
+          t.id !== templateId
+            ? t
+            : {
+                ...t,
+                templateAttributes: t.templateAttributes?.filter(
+                  (a) => a.id !== attributeId
+                ),
+              }
+        )
+      );
     } catch (err) {
       if (axios.isAxiosError(err)) {
         console.error("Remove failed:", err.response?.data ?? err.message);
