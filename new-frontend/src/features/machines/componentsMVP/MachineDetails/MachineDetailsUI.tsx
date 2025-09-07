@@ -17,13 +17,9 @@ import TemplateView from "@/features/templates/views/TempalteDetails";
 import { AttributeType } from "@/types/attributeType";
 
 interface Props {
+  //Machine(s)
   machine: Machine;
-  template: Template | undefined;
   customAttributes: MachineAttribute[];
-  selectedTemplateId: number | null;
-  setSelectedTemplateId: (id: number | null) => void;
-  handleAssignTemplate: (templateId: number) => void;
-  handleRemoveTemplate: (machineId: number) => void;
   handleRemoveAttribute: (machineId: number, attributeId: number) => void;
   refetch?: () => void;
   loading?: boolean;
@@ -32,6 +28,14 @@ interface Props {
     attributeName: string,
     attributeType: AttributeType
   ) => void;
+  //tempaltes
+  template: Template | undefined;
+  handleAssignTemplate: (templateId: number) => void;
+  handleRemoveTemplate: (machineId: number) => void;
+  // für template select
+  templates: Template[];
+  selectedTemplateId: number | null;
+  setSelectedTemplateId: (id: number | null) => void;
 }
 
 export default function MachineDetailsUI(props: Props) {
@@ -44,20 +48,55 @@ export default function MachineDetailsUI(props: Props) {
     loading,
     error,
     onCustomAttributeAdded,
+    //temnplates
+    templates,
+    selectedTemplateId,
+    setSelectedTemplateId,
+    handleRemoveTemplate,
   } = props;
 
   const [showAddAttributeForm, setShowAddAttributeForm] = useState(false);
-
-  console.log("template", template);
-  console.log("machine", machine);
 
   return (
     <div>
       <h2>Maschine: {machine.machineName}</h2>
       {/* TemplateView */}
+      {/** Templates zugewiesen? */}
       {template && template.id != null && (
-        <TemplateView templateId={template?.id} />
+        <div>
+          <TemplateView templateId={template?.id} allowEdit={false} />
+          <Button
+            onClick={() => {
+              if (
+                window.confirm(
+                  "Möchtest du das Template wirklich entfernen? Alle Template Attribute und Ihre Werte gehen dabei verloren."
+                )
+              ) {
+                handleRemoveTemplate(machine.id!);
+              }
+            }}
+          >
+            Template entfernen
+          </Button>
+        </div>
       )}
+      {/** //TODO: Templates zugewiesen aber keine attribute? */}
+
+      {/** //TODO: kein template zugewiesen*/}
+      {!template && (
+        <div>
+          <div>Kein Template zugewiesen</div>
+          <TemplateSelect
+            templates={templates}
+            selectedTemplateId={selectedTemplateId}
+            onChange={setSelectedTemplateId}
+          />
+        </div>
+      )}
+      <div>
+        <Button to={`/machine-templates`}>→ Zu den Templates</Button>
+      </div>
+
       {/* Template Wechseln */}
 
       {/* Custom Attributes */}
@@ -79,7 +118,7 @@ export default function MachineDetailsUI(props: Props) {
         <p className="text-gray-500">❗ Keine aktuellen Attribute vorhanden</p>
       )}
       <ToggleableSection
-        toggleLabel="Attribute hinzufügen"
+        toggleLabel="Benutzerdefinierte Attribute hinzufügen"
         toggleLabelActive="Schließen"
         open={showAddAttributeForm}
         onClose={() => setShowAddAttributeForm(false)}
@@ -91,9 +130,17 @@ export default function MachineDetailsUI(props: Props) {
           onCancel={() => setShowAddAttributeForm(false)}
         />
       </ToggleableSection>
-
-      <Button to={`/`}>→ Zur Startseite</Button>
-      <Button to={`/machines/${machine.id}/values`}>→ Zu den Werten</Button>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.5rem",
+          alignItems: "center",
+        }}
+      >
+        <Button to={`/machines/${machine.id}/values`}>→ Zu den Werten</Button>
+        <Button to={`/`}>→ Zur Startseite</Button>
+      </div>
     </div>
   );
 }

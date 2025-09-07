@@ -6,6 +6,7 @@ import {
   deleteTemplateService,
   addAttributesToExistingTemplateService,
   removeAttributeFromTemplateService,
+  editTemplateService,
 } from "@/features/templates/services/templateService";
 import {
   Template,
@@ -52,6 +53,17 @@ export function useAddTemplate() {
     }) => createMachineTemplateService(templateName, attributes),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["templates"] });
+    },
+  });
+}
+
+export function useEditTemplate(templateId: number) {
+  const queryClient = useQueryClient();
+  return useMutation<Template, unknown, Partial<Template>>({
+    mutationFn: (template: Partial<Template>) => editTemplateService(template),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["templates"] });
+      queryClient.invalidateQueries({ queryKey: ["template", templateId] });
     },
   });
 }

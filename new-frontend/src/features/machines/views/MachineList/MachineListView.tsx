@@ -9,6 +9,9 @@ import Button from "@/components/Button";
 import ToggleableSection from "@/components/ToggleableSection/ToggleableSection";
 import AddMachineFormView from "../../componentsMVP/AddMachineFormMVP/AddMachineFormView";
 
+//react
+import react, { useState } from "react";
+
 //ich will die types global definiert haben; nicht hier encapsulated
 //da sie ja  global (frontend) gültig und mit dem backend sprechen und dessen struktur
 // enthalten sollen
@@ -21,6 +24,8 @@ export default function MachineListView() {
   const { machines, handleDelete, addMachineToList } =
     useMachineListPresenter();
 
+  const [showAddMachineForm, setShowAddMachineForm] = useState(false);
+
   return (
     <div>
       {machines.map((machine) => (
@@ -32,7 +37,12 @@ export default function MachineListView() {
           />
         </div>
       ))}
-      <ToggleableSection toggleLabel="Add Machine">
+      <ToggleableSection
+        toggleLabel="Add Machine"
+        open={showAddMachineForm}
+        onOpen={() => setShowAddMachineForm(true)}
+        onClose={() => setShowAddMachineForm(false)}
+      >
         <AddMachineFormView
           onMachineAdded={(newMachine) => {
             console.log("View onMachineAdded", newMachine);

@@ -4,6 +4,9 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 
+//Mein Button
+import Button from "@/components/Button";
+
 // importiere TEmplateCardUi
 import TemplateCardUi from "@/features/templates/components-ui/TemplateCard";
 //ToggleableSection
@@ -17,6 +20,7 @@ import useTemplates from "@/features/templates/hooks/useTemplates";
 
 interface TemplateViewProps {
   templateId?: number;
+  allowEdit?: boolean;
 }
 
 export default function TemplateView(props: TemplateViewProps) {
@@ -24,6 +28,10 @@ export default function TemplateView(props: TemplateViewProps) {
 
   const [showForm, setShowForm] = useState(false);
 
+  //Parameter übergeben? allowEdit and Templat
+  //allowEdit
+  const allowEdit = props.allowEdit ?? true;
+  //templateId
   // Nutze Prop, falls vorhanden, sonst Params
   let templateId = props.templateId;
   if (templateId === undefined) {
@@ -50,15 +58,29 @@ export default function TemplateView(props: TemplateViewProps) {
         key={template.id}
         machineTemplate={template}
         onRemoveAttribute={removeAttributeFromTemplate}
+        allowEdit={allowEdit}
       />
-      <ToggleableSection
-        toggleLabel="Attribute zu Template hinzufügen"
-        onOpen={() => setShowForm(true)}
-        onClose={() => setShowForm(false)}
-        open={showForm}
+      {allowEdit && (
+        <ToggleableSection
+          toggleLabel="Attribute zu Template hinzufügen"
+          onOpen={() => setShowForm(true)}
+          onClose={() => setShowForm(false)}
+          open={showForm}
+        >
+          <AddAttributeFormView templateId={template.id} />
+        </ToggleableSection>
+      )}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.5rem",
+          alignItems: "center",
+        }}
       >
-        <AddAttributeFormView templateId={template.id} />
-      </ToggleableSection>
+        <Button to={`/machine-templates`}>→ Zurück zu den Templates</Button>
+        <Button to={`/`}>→ Zur Startseite</Button>
+      </div>
     </div>
   );
 }

@@ -7,6 +7,9 @@ import { useMachineAttributesPresenter } from "@/features/machines/presenter/use
 //machine id vom route
 import { useParams } from "react-router-dom";
 
+//Components
+import Button from "@/components/Button";
+
 export default function MachineAttributeValuesView() {
   const { id } = useParams();
   const machineId = id ? parseInt(id) : -1;
@@ -25,6 +28,20 @@ export default function MachineAttributeValuesView() {
         attributes={attributes}
         onAttributeValueAdded={handleAddAttributeValue}
       />
+
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.5rem",
+          alignItems: "center", // <-- das sorgt für zentriert!
+        }}
+      >
+        <Button to={`/machines/${machineId}`}>
+          → Maschine #{machineId} Struktur bearbeiten
+        </Button>
+        <Button to="/">→ Zurück zur Startseite</Button>
+      </div>
     </div>
   );
 }

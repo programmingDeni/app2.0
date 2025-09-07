@@ -3,7 +3,11 @@
 //Ui ist eigene Komponente
 //diese View handlet noch löschen und einen Link zur details page
 //importiere den presenter
-import useTemplates from "@/features/templates/hooks/useTemplates";
+//import useTemplates from "@/features/templates/hooks/useTemplates";
+import {
+  useTemplates,
+  useRemoveTemplate,
+} from "@/features/templates/query/useTemplateQueries";
 import { useState } from "react";
 
 //card importieren (UI)
@@ -14,7 +18,11 @@ import MachineTemplateForm from "@/components/MachineTemplate/MachineTemplateFor
 import AddTemplateFormView from "../../components-ui/AddTemplateForm";
 
 export default function TemplateListView() {
-  const { machineTemplates, removeTemplate } = useTemplates();
+  //const { machineTemplates, removeTemplate } = useTemplates();
+  //Query Templates
+  const { data: templates, isLoading, error } = useTemplates();
+  const removeTemplate = useRemoveTemplate();
+
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   //state für showform
@@ -28,7 +36,7 @@ export default function TemplateListView() {
     if (!confirm) return;
     setErrorMsg(null);
     try {
-      await removeTemplate(templateId);
+      await removeTemplate.mutateAsync(templateId);
     } catch (error: any) {
       if (error?.response?.data?.message) {
         setErrorMsg(error.response.data.message);
@@ -40,19 +48,17 @@ export default function TemplateListView() {
     }
   };
 
-  const handleEditTemplate = (templateId: number) => {
-    console.log("templateId", templateId);
-  };
+  if (!templates) return <div>Loading...</div>;
 
   return (
     <div>
-      <h2>Machinen Template Liste [{machineTemplates.length}]</h2>
+      <h2>Machinen Template Liste [{templates?.length}]</h2>
       {errorMsg && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
           {errorMsg}
         </div>
       )}
-      {machineTemplates.map((machineTemplate) => (
+      {templates?.map((machineTemplate) => (
         <div key={machineTemplate.id}>
           <TempalteCardLazyList template={machineTemplate} />
           <Button to={`/machine-templates/${machineTemplate.id}`}>Edit </Button>
@@ -67,7 +73,7 @@ export default function TemplateListView() {
         onOpen={() => setShowForm(true)}
         onClose={() => setShowForm(false)}
       >
-        <AddTemplateFormView />
+        <AddTemplateFormView onSubmit={() => setShowForm(false)} />
       </ToggleableSection>
       <Button to="/">→ Zurück zur Startseite</Button>
     </div>

@@ -13,14 +13,16 @@ interface Props {
     templateId: number,
     attributeId: number
   ) => void | Promise<void>;
+  allowEdit?: boolean;
 }
 
 export default function TemplateCardUI(props: Props) {
+  //props deconstruct
   const machineTemplate = props.machineTemplate;
   const { onRemoveAttribute } = props;
-  const attributeTemplates = machineTemplate.templateAttributes ?? [];
+  const allowEdit = props.allowEdit ?? true;
 
-  console.log("attributeTemplates", attributeTemplates);
+  const attributeTemplates = machineTemplate.templateAttributes ?? [];
 
   return (
     <div>
@@ -36,12 +38,14 @@ export default function TemplateCardUI(props: Props) {
           <div key={attr.id}>
             Attribut Name {attr.templateAttributeName}, Attribut Typ{" "}
             {attr.templateAttributeType}
-            <Button
-              onClick={() => onRemoveAttribute(machineTemplate.id!, attr.id!)}
-            >
-              {" "}
-              Remove Attribute{" "}
-            </Button>
+            {allowEdit && (
+              <Button
+                onClick={() => onRemoveAttribute(machineTemplate.id!, attr.id!)}
+              >
+                {" "}
+                Remove Attribute{" "}
+              </Button>
+            )}
           </div>
         ))
       )}

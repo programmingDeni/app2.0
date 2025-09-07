@@ -14,8 +14,7 @@ import {
 } from "@/features/machines/query/useMachineQueries";
 import {
   useTemplate,
-  useAddAttributesToTemplate,
-  useRemoveAttributeFromTemplate,
+  useTemplates,
 } from "@/features/templates/query/useTemplateQueries";
 
 //UI
@@ -30,8 +29,12 @@ export default function MachineDetailsView() {
   if (machineIdInt === undefined) {
     return <div>Ungültige Maschinen-ID.</div>;
   }
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MACHINEN UND TEMPLATES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Machinen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  // Queries & Mutations
+  // KOMPONENTE BRAUCHT MACHINEN UND TEMPLATES DATEN
+  //  Queries & Mutations
+  //MACHINE
   const { data: machine, isLoading, error } = useMachine(machineIdInt);
   const addCustomAttributeMutation = useAddCustomAttribute(machineIdInt);
   const removeCustomAttributeMutation = useRemoveCustomAttribute(machineIdInt);
@@ -39,26 +42,30 @@ export default function MachineDetailsView() {
   const assignTemplateMutation = useAssignTemplate(machineIdInt);
   const removeTemplateMutation = useRemoveTemplate(machineIdInt);
 
-  // State
-  const [selectedTemplateId, setSelectedTemplateId] = useState<number | null>(
-    null
-  );
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Templates %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   const templateId = machine?.machineTemplate?.id;
   const { data: template } = useTemplate(templateId, { enabled: !!templateId });
+
+  const { data: templates } = useTemplates();
 
   const handleAssignTemplate = async (templateId: number) => {
     await assignTemplateMutation.mutateAsync(templateId);
   };
 
   const handleRemoveTemplate = async (machineId: number) => {
+    setSelectedTemplateId(null);
     await removeTemplateMutation.mutateAsync(machineId);
   };
 
+  // State
+  const [selectedTemplateId, setSelectedTemplateId] = useState<number | null>(
+    null
+  );
   if (!machine) {
     return <div>Maschine nicht gefunden</div>;
   }
-
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Methoden %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Template Operationen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   //template noch nicht implementiert
@@ -67,17 +74,20 @@ export default function MachineDetailsView() {
     return <div>Template nicht gefunden</div>;
   }
     
-
+*/
   //Template change
   const handleTemplateChange = async (templateId: number | null) => {
+    // State aktualisieren
+    //TODO: alert hier dass das weitreichende consequenzen hat
+    setSelectedTemplateId(templateId);
     if (machine.id === undefined) return;
     if (templateId === null) {
-      await removeTemplateFromMachine(machine.id);
+      await removeTemplateMutation.mutateAsync(machine.id);
     } else {
-      await assignTemplateToMachine(machine.id, templateId);
+      await handleAssignTemplate(templateId);
     }
+    console.log("templateChaagne templateId", templateId);
   };
-  */
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Custom Attribute %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   //Create
@@ -93,12 +103,15 @@ export default function MachineDetailsView() {
   };
   //Remove
   const handleRemoveAttribute = async (attributeId: number) => {
+    console.log("remove attribute", attributeId);
     await removeCustomAttributeMutation.mutateAsync(attributeId);
   };
 
   const customAttributes = machine.attributes.filter(
     (attr: MachineAttribute) => attr.fromTemplate === false
   );
+
+  //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Render %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   return (
     <MachineDetailsUI
@@ -107,10 +120,11 @@ export default function MachineDetailsView() {
       customAttributes={customAttributes}
       onCustomAttributeAdded={handleCustomAttributeAdded}
       handleRemoveAttribute={handleRemoveAttribute}
-      selectedTemplateId={selectedTemplateId}
-      setSelectedTemplateId={setSelectedTemplateId}
       handleAssignTemplate={handleAssignTemplate}
       handleRemoveTemplate={handleRemoveTemplate}
+      templates={templates!}
+      selectedTemplateId={selectedTemplateId}
+      setSelectedTemplateId={handleTemplateChange}
     />
   );
 }

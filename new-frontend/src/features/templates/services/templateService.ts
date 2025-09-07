@@ -3,6 +3,7 @@ import type { AxiosResponse } from "axios";
 
 //denk moderneres Model
 import { Template, TemplateAttribute } from "../types/template.types";
+import TemplateCardLazyList from "../components-ui/TemplateCardLazyList";
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Templates  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -31,6 +32,29 @@ export async function fetchTemplateByIdService(
   }
 }
 
+export async function createMachineTemplateService(
+  templateName: string,
+  attributes: TemplateAttribute[]
+): Promise<Template> {
+  try {
+    console.log(
+      "request createMachineTemplateService",
+      templateName,
+      attributes
+    );
+    const response = await axios.post<Template>(`/api/machine-templates`, {
+      templateName,
+      templateAttributes: attributes,
+    });
+    console.log("createMachineTemplateService response", response.data);
+    //TODO: ich bekomme hier ein template ohne attribute returned?
+    return response.data;
+  } catch (error) {
+    console.error("Fehler beim Erstellen des Templates:", error);
+    throw error;
+  }
+}
+
 export async function deleteTemplateService(templateId: number): Promise<void> {
   try {
     await axios.delete(`/api/machine-templates/${templateId}`);
@@ -40,18 +64,17 @@ export async function deleteTemplateService(templateId: number): Promise<void> {
   }
 }
 
-export async function createMachineTemplateService(
-  templateName: string,
-  attributes: TemplateAttribute[]
+export async function editTemplateService(
+  template: Partial<Template>
 ): Promise<Template> {
   try {
-    const response = await axios.post<Template>(`/api/machine-templates`, {
-      templateName,
-      attributes,
-    });
+    const response = await axios.put(
+      `/api/machine-templates/${template.id}`,
+      template
+    );
     return response.data;
   } catch (error) {
-    console.error("Fehler beim Erstellen des Templates:", error);
+    console.error("Fehler beim Editieren des Templates:", error);
     throw error;
   }
 }

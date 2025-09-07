@@ -150,14 +150,29 @@ export async function assignTemplateToMachineService(
   templateId: number
 ): Promise<Machine> {
   //TODO: ist implementiert?
+  console.log("assignTemplateToMachineService", templateId, machineId);
   try {
-    const response = await axios.post(`/api/machines/${machineId}/template`, {
-      templateId,
-    });
+    const response = await axios.put(
+      `/api/machines/${machineId}/template/${templateId}`
+    );
     return response.data;
   } catch (e) {
     throw e;
   }
+  /*
+      @PutMapping("/{id}/template/{templateId}")
+    public ResponseEntity<MachineDto> assignTemplateToMachine(
+            @PathVariable("id") Integer machineId,
+            @PathVariable Integer templateId) {
+        // 1. Validate
+        if (machineId == null || machineId <= 0 || templateId == null || templateId <= 0) {
+            throw new IllegalArgumentException("Invalid update data");
+        }
+
+        return ResponseEntity.ok(MachineMapper.toDto(machineService.assignTemplate(machineId, templateId)));
+    }
+
+  */
 }
 
 export async function removeTemplateFromMachineService(machineId: number) {
