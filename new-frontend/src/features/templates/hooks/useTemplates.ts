@@ -87,7 +87,7 @@ export default function useTemplates() {
     }
   };
   //Update
-  //TODO: Update Template
+  //TODO: Update Template => ist jetzt in query
 
   //Delete
   const removeTemplate = async (templateId: number) => {

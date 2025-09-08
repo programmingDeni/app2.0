@@ -45,27 +45,6 @@ public class MachineTemplateController {
                 .body(MachineTemplateMapper.toDto(created));
     }
 
-    // Create an attribute within an existing template
-    // `/api/machine-templates/${templateId}/attributes`,
-    @PostMapping("/{templateId}/attributes")
-    public ResponseEntity<List<TemplateAttributeDto>> addAttributesToExistingTemplate(@PathVariable Integer templateId,
-            @RequestBody List<CreateTemplateAttributeDTO> attributes) {
-        // Validierung
-        if (templateId == null || templateId <= 0 || attributes == null || attributes.isEmpty()) {
-            throw new IllegalArgumentException("Invalid input");
-        }
-
-        // Service call um das / die attribute zu erstellen
-        List<AttributeInTemplate> created = templateService.addAttributesToTemplate(templateId, attributes);
-
-        // Erstellte Attribute in Dtos umwandeln
-        List<TemplateAttributeDto> dtos = created.stream()
-                .map(TemplateAttributeMapper::toDto)
-                .collect(Collectors.toList());
-        // Zurückgeben
-        return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
-    }
-
     // lazy loading
     @GetMapping("lazy")
     public ResponseEntity<List<MachineTemplateDto>> getAllTemplates() {
@@ -131,6 +110,48 @@ public class MachineTemplateController {
 
         // 3. Return success
         return ResponseEntity.noContent().build();
+    }
+
+    /*
+     * %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TEMPLATE ATTRIBUTES
+     * %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+     */
+
+    // Create an attribute within an existing template
+    // `/api/machine-templates/${templateId}/attributes`,
+    @PostMapping("/{templateId}/attributes")
+    public ResponseEntity<List<TemplateAttributeDto>> addAttributesToExistingTemplate(@PathVariable Integer templateId,
+            @RequestBody List<CreateTemplateAttributeDTO> attributes) {
+        // Validierung
+        if (templateId == null || templateId <= 0 || attributes == null || attributes.isEmpty()) {
+            throw new IllegalArgumentException("Invalid input");
+        }
+
+        // Service call um das / die attribute zu erstellen
+        List<AttributeInTemplate> created = templateService.addAttributesToTemplate(templateId, attributes);
+
+        // Erstellte Attribute in Dtos umwandeln
+        List<TemplateAttributeDto> dtos = created.stream()
+                .map(TemplateAttributeMapper::toDto)
+                .collect(Collectors.toList());
+        // Zurückgeben
+        return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
+    }
+
+    @PutMapping("/{templateId}/attributes/{attributeId}")
+    public ResponseEntity<TemplateAttributeDto> updateTemplateAttribute(@PathVariable Integer templateId,
+            @PathVariable Integer attributeId,
+            @RequestBody TemplateAttributeDto dto) {
+        // Validierung
+        if (templateId == null || templateId <= 0 || attributeId == null || attributeId <= 0 || dto == null) {
+            throw new IllegalArgumentException("Invalid input");
+        }
+
+        // Service call um das / die attribute zu verändern
+        AttributeInTemplate updated = templateService.updateTemplateAttribute(templateId, attributeId, dto);
+
+        // Erstellte Attribute in Dtos umwandeln
+        return ResponseEntity.status(HttpStatus.OK).body(TemplateAttributeMapper.toDto(updated));
     }
 
     @DeleteMapping("/{templateId}/attributes/{attributeId}")

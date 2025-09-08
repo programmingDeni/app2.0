@@ -7,6 +7,7 @@ import {
   addAttributesToExistingTemplateService,
   removeAttributeFromTemplateService,
   editTemplateService,
+  editTemplateAttributeService,
 } from "@/features/templates/services/templateService";
 import {
   Template,
@@ -86,6 +87,19 @@ export function useAddAttributesToTemplate(templateId: number) {
   return useMutation<TemplateAttribute[], unknown, TemplateAttribute[]>({
     mutationFn: (attributes: TemplateAttribute[]) =>
       addAttributesToExistingTemplateService(templateId, attributes),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["templates"] });
+      queryClient.invalidateQueries({ queryKey: ["template", templateId] });
+    },
+  });
+}
+
+//Bestehendes TempalteAttribut bearbeiten
+export function useEditTemplateAttribute(templateId: number) {
+  const queryClient = useQueryClient();
+  return useMutation<TemplateAttribute, unknown, Partial<TemplateAttribute>>({
+    mutationFn: (templateAttribute: Partial<TemplateAttribute>) =>
+      editTemplateAttributeService(templateId, templateAttribute),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["templates"] });
       queryClient.invalidateQueries({ queryKey: ["template", templateId] });

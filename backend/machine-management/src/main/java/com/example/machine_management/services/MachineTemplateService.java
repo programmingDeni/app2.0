@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import com.example.machine_management.dto.AttributeInTemplate.AttributeTemplateDto;
 import com.example.machine_management.dto.AttributeInTemplate.CreateTemplateAttributeDTO;
+import com.example.machine_management.dto.AttributeInTemplate.TemplateAttributeDto;
 import com.example.machine_management.dto.MachineTemplates.CreateMachineTemplateWithAttributesDto;
 import com.example.machine_management.dto.MachineTemplates.MachineTemplateDto;
 import com.example.machine_management.mapper.MachineTemplateMapper;
@@ -91,21 +92,8 @@ public class MachineTemplateService {
         templateRepo.deleteById(id);
     }
 
-    @Transactional
-    public void removeAttributeFromTemplate(Integer templateId, Integer attributeId) {
-        MachineTemplate template = templateRepo.findById(templateId)
-                .orElseThrow(() -> new EntityNotFoundException("Template not found"));
-
-        AttributeInTemplate attribute = template.getAttributeTemplates().stream()
-                .filter(a -> a.getId() == attributeId)
-                .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("Attribut in dem Template nicht gefunden "));
-
-        template.getAttributeTemplates().remove(attribute);
-        // orphan removal sollte das attribut entfernen
-        templateRepo.save(template);
-
-    }
+    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Template Attribute
+    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     @Transactional
     public List<AttributeInTemplate> addAttributesToTemplate(Integer templateId,
@@ -131,6 +119,39 @@ public class MachineTemplateService {
                 .collect(Collectors.toList());
 
         return savedAttributes;
+    }
+
+    @Transactional
+    public AttributeInTemplate updateTemplateAttribute(Integer templateId, Integer attributeId,
+            TemplateAttributeDto dto) {
+        MachineTemplate template = templateRepo.findById(templateId)
+                .orElseThrow(() -> new EntityNotFoundException("Template not found"));
+
+        AttributeInTemplate attribute = template.getAttributeTemplates().stream()
+                .filter(a -> a.getId() == attributeId)
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Attribut in dem Template nicht gefunden "));
+
+        attribute.setAttributeInTemplateName(dto.attributeName);
+        attribute.setType(dto.attributeType);
+        templateRepo.save(template);
+
+        return attribute;
+    }
+
+    @Transactional
+    public void removeAttributeFromTemplate(Integer templateId, Integer attributeId) {
+        MachineTemplate template = templateRepo.findById(templateId)
+                .orElseThrow(() -> new EntityNotFoundException("Template not found"));
+
+        AttributeInTemplate attribute = template.getAttributeTemplates().stream()
+                .filter(a -> a.getId() == attributeId)
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Attribut in dem Template nicht gefunden "));
+
+        template.getAttributeTemplates().remove(attribute);
+        // orphan removal sollte das attribut entfernen
+        templateRepo.save(template);
 
     }
 }

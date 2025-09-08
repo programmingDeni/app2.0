@@ -98,6 +98,29 @@ export async function removeAttributeFromTemplateService(
   }
 }
 
+export async function editTemplateAttributeService(
+  templateId: number,
+  attribute: Partial<TemplateAttribute>
+): Promise<TemplateAttribute> {
+  try {
+    //Mapping zu backend dto
+    const payload = {
+      ...(attribute.id && { id: attribute.id }),
+      attributeName: attribute.templateAttributeName,
+      attributeType: attribute.templateAttributeType,
+    };
+
+    const response = await axios.put<TemplateAttribute>(
+      `/api/machine-templates/${templateId}/attributes/${attribute.id}`,
+      payload
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Fehler beim Bearbeiten des Templateattributs:", error);
+    throw error;
+  }
+}
+
 export async function addAttributesToExistingTemplateService(
   templateId: number,
   attributes: TemplateAttribute[]

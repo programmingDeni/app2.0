@@ -5,3 +5,7 @@ Added functionality:
 
     - add a print summery
     - add a last changed timestamt,
+
+    - machine-templates/:id muss noch bearbeitbar gemacht werden
+
+    - attribute zu tempalte hinzufügen aktuallisiert den state nicht => wird wsl noch ueber alten hook laufen

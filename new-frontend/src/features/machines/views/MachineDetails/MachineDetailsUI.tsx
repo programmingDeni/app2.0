@@ -36,6 +36,7 @@ interface Props {
   templates: Template[];
   selectedTemplateId: number | null;
   setSelectedTemplateId: (id: number | null) => void;
+  showLinks?: boolean;
 }
 
 export default function MachineDetailsUI(props: Props) {
@@ -53,6 +54,7 @@ export default function MachineDetailsUI(props: Props) {
     selectedTemplateId,
     setSelectedTemplateId,
     handleRemoveTemplate,
+    showLinks,
   } = props;
 
   const [showAddAttributeForm, setShowAddAttributeForm] = useState(false);
@@ -64,7 +66,11 @@ export default function MachineDetailsUI(props: Props) {
       {/** Templates zugewiesen? */}
       {template && template.id != null && (
         <div>
-          <TemplateView templateId={template?.id} allowEdit={false} />
+          <TemplateView
+            templateId={template?.id}
+            allowEdit={false}
+            showLinks={showLinks}
+          />
           <Button
             onClick={() => {
               if (
@@ -93,9 +99,11 @@ export default function MachineDetailsUI(props: Props) {
           />
         </div>
       )}
-      <div>
-        <Button to={`/machine-templates`}>→ Zu den Templates</Button>
-      </div>
+      {showLinks && (
+        <div>
+          <Button to={`/machine-templates`}>→ Zu den Templates</Button>
+        </div>
+      )}
 
       {/* Template Wechseln */}
 

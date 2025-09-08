@@ -5,7 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const queryClient = new QueryClient();
 
-import MachineDetailsView from "@/features/machines/componentsMVP/MachineDetails";
+import MachineDetailsView from "@/features/machines/views/MachineDetails";
 //import MachineStructureWrapper from "@/views/MachineStructureView/MachineStrucutreWrapper";
 import MachineListView from "./features/machines/views/MachineList/MachineListView";
 import TemplateListView from "./features/templates/views/TemplateList/TemplateListView";
@@ -23,12 +23,12 @@ function App() {
             <Route path="/" element={<MachineListView />} />
             <Route
               path="/machines/:machineId"
-              element={<MachineDetailsView />}
+              element={<MachineDetailsView showLinks={false} />}
             />
             <Route path="/machine-templates" element={<TemplateListView />} />
             <Route
               path="/machine-templates/:templateId"
-              element={<TemplateDetails />}
+              element={<TemplateDetails showLinks={true} />}
             />
             <Route
               path="/machines/:id/values"

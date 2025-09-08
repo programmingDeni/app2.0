@@ -22,7 +22,14 @@ import MachineDetailsUI from "./MachineDetailsUI";
 import { MachineAttribute } from "../../types/machine.types";
 import { AttributeType } from "@/types/attributeType";
 
-export default function MachineDetailsView() {
+//Props
+interface Props {
+  showLinks?: boolean;
+}
+
+export default function MachineDetailsView(props: Props) {
+  const { showLinks } = props;
+
   const { machineId } = useParams();
   const machineIdInt = machineId ? parseInt(machineId, 10) : undefined;
 
@@ -125,6 +132,7 @@ export default function MachineDetailsView() {
       templates={templates!}
       selectedTemplateId={selectedTemplateId}
       setSelectedTemplateId={handleTemplateChange}
+      showLinks={showLinks}
     />
   );
 }

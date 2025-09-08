@@ -1,53 +1,109 @@
 //style import von der anderne
 import styles from "../../../machines/components-ui/MachineLazyCard/MachineLazyCard.module.css";
+import { useState } from "react";
 
 // Types aus dem neuen Frontend
-import { Template } from "../../types/template.types";
+import { Template, TemplateAttribute } from "../../types/template.types";
 
 //Button Import
 import Button from "@/components/Button";
+import TemplateAttributeRow from "../TemplateAttributeRow";
 
 interface Props {
   machineTemplate: Template;
-  onRemoveAttribute: (
-    templateId: number,
-    attributeId: number
-  ) => void | Promise<void>;
+  onRemoveAttribute: (attributeId: number) => void | Promise<void>;
   allowEdit?: boolean;
+  onEditTemplate?: (template: Partial<Template>) => void | Promise<void>;
+  handleTemplateAttributeChange?: (
+    templateAttribute: TemplateAttribute
+  ) => void;
 }
 
 export default function TemplateCardUI(props: Props) {
-  //props deconstruct
-  const machineTemplate = props.machineTemplate;
-  const { onRemoveAttribute } = props;
-  const allowEdit = props.allowEdit ?? true;
-
+  const {
+    machineTemplate,
+    onRemoveAttribute,
+    allowEdit,
+    onEditTemplate,
+    handleTemplateAttributeChange,
+  } = props;
   const attributeTemplates = machineTemplate.templateAttributes ?? [];
+
+  // Edit-Modus State
+  const [isEditing, setIsEditing] = useState(false);
+  const [templateName, setTemplateName] = useState(
+    machineTemplate.templateName
+  );
+
+  //Edit Modus State Attribute
+  const [editingAttrId, setEditingAttrId] = useState<number | null>(null);
+
+  const handleSave = () => {
+    if (onEditTemplate) {
+      onEditTemplate({ id: machineTemplate.id, templateName });
+    }
+    setIsEditing(false);
+  };
 
   return (
     <div>
-      {/*<h3>Template Id: {machineTemplate.id}</h3>*/}
       <div className={styles.name}>
-        Template Name: {machineTemplate.templateName}
+        <h3>Template Name: {machineTemplate.templateName}</h3>
+        {allowEdit && !isEditing && (
+          <Button
+            onClick={() => setIsEditing(true)}
+            style={{ marginLeft: "0.5rem" }}
+          >
+            Template Name Bearbeiten
+          </Button>
+        )}
+        {allowEdit && isEditing && (
+          <div>
+            <input
+              value={templateName}
+              onChange={(e) => setTemplateName(e.target.value)}
+              style={{ marginBottom: "0.5rem" }}
+            />
+            <Button onClick={handleSave}>Speichern</Button>
+            <Button
+              onClick={() => {
+                setIsEditing(false);
+                setTemplateName(machineTemplate.templateName);
+              }}
+              style={{ marginLeft: "0.5rem" }}
+            >
+              Abbrechen
+            </Button>
+          </div>
+        )}
       </div>
       <h3>Attribute Templates:</h3>
       {attributeTemplates.length === 0 ? (
         <div>Keine Attribute vorhanden</div>
       ) : (
-        attributeTemplates.map((attr) => (
-          <div key={attr.id}>
-            Attribut Name {attr.templateAttributeName}, Attribut Typ{" "}
-            {attr.templateAttributeType}
-            {allowEdit && (
-              <Button
-                onClick={() => onRemoveAttribute(machineTemplate.id!, attr.id!)}
-              >
-                {" "}
-                Remove Attribute{" "}
-              </Button>
-            )}
-          </div>
-        ))
+        <table>
+          <tbody>
+            {attributeTemplates.map((attr) => (
+              <TemplateAttributeRow
+                key={attr.id!}
+                templateAttribute={attr}
+                editable={editingAttrId === attr.id}
+                onChange={(name, type) => {
+                  /* optional live update */
+                }}
+                onSave={(updatedAttr) => {
+                  if (handleTemplateAttributeChange) {
+                    handleTemplateAttributeChange(updatedAttr);
+                    setEditingAttrId(null);
+                  }
+                }}
+                onCancel={() => setEditingAttrId(null)}
+                onEditClick={() => setEditingAttrId(attr.id!)}
+                onDelete={() => onRemoveAttribute(attr.id!)}
+              />
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );
