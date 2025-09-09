@@ -1,3 +1,4 @@
+import Button from "@/components/Button";
 import TemplateSelect from "../../../../components/TemplateSelect/TemplateSelect";
 import { Template } from "@/features/templates/types/template.types";
 
@@ -38,9 +39,9 @@ export default function AddMachineFormUI({
         selectedTemplateId={selectedTemplateId}
         onChange={onTemplateChange}
       />
-      <button onClick={onSubmit} disabled={!name.trim()}>
+      <Button onClick={onSubmit} disabled={!name.trim()}>
         Speichern
-      </button>
+      </Button>
     </div>
   );
 }

@@ -37,7 +37,7 @@ export default function TemplateAttributeRow(props: Props) {
   if (!editable) {
     return (
       <tr>
-        <td style={{ textAlign: "left", width: 180 }}>
+        <td style={{ textAlign: "left", width: 220 }}>
           <strong>Name:</strong> {templateAttribute.templateAttributeName}
         </td>
         <td style={{ textAlign: "left", width: 120 }}>

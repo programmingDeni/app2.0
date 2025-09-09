@@ -6,6 +6,7 @@ Added functionality:
     - add a print summery
     - add a last changed timestamt,
 
-    - machine-templates/:id muss noch bearbeitbar gemacht werden
+    -muss TemplateDetails noch anders machen dass es die sachen wie bei machinedetails alle im ui anzeigen 
+    kann aber von außen gesteuert wird und alle funktionen als optional props uebergeben bekomme
 
-    - attribute zu tempalte hinzufügen aktuallisiert den state nicht => wird wsl noch ueber alten hook laufen
+    -TempalteListe kann schöbner aussehen

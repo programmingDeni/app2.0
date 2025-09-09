@@ -82,11 +82,13 @@ export function useRemoveTemplate() {
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Template Attribute  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 // Attribute zu Template hinzufügen
-export function useAddAttributesToTemplate(templateId: number) {
+export function useAddAttributesToTemplate(templateId?: number) {
   const queryClient = useQueryClient();
   return useMutation<TemplateAttribute[], unknown, TemplateAttribute[]>({
-    mutationFn: (attributes: TemplateAttribute[]) =>
-      addAttributesToExistingTemplateService(templateId, attributes),
+    mutationFn: (attributes: TemplateAttribute[]) => {
+      if (!templateId) throw new Error("templateId fehlt!");
+      return addAttributesToExistingTemplateService(templateId, attributes);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["templates"] });
       queryClient.invalidateQueries({ queryKey: ["template", templateId] });

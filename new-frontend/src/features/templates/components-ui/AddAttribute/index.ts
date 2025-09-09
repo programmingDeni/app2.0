@@ -1,1 +1,1 @@
-export { default } from "./AddAttributeFormView";
+export { default } from "./AddTemplateAttributeFormView";

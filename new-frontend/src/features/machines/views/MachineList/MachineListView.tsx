@@ -16,10 +16,6 @@ import react, { useState } from "react";
 //da sie ja  global (frontend) gültig und mit dem backend sprechen und dessen struktur
 // enthalten sollen
 
-import { MachineLazy } from "@/types/machine";
-
-import { Link } from "react-router-dom";
-
 export default function MachineListView() {
   const { machines, handleDelete, addMachineToList } =
     useMachineListPresenter();

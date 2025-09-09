@@ -2,14 +2,7 @@ import { useState } from "react";
 
 import { TemplateAttribute } from "../../types/template.types";
 
-import { addAttributesToExistingTemplateService } from "@/features/templates/services/templateService";
-
-//global hook holen
-import useTemplates from "@/features/templates/hooks/useTemplates";
-
 export function useAddAttributeFormPresenter() {
-  const { addAttributesToTemplate } = useTemplates();
-
   const [attributes, setAttributes] = useState<TemplateAttribute[]>([
     { templateAttributeName: "", templateAttributeType: "STRING" },
   ]);
@@ -47,27 +40,11 @@ export function useAddAttributeFormPresenter() {
     ]);
   };
 
-  //onSUbmitFunctiopn ruft den globalen useTemplates und resettet die Form felder
-  const onSubmit = async (
-    templateId: number,
-    attributes: TemplateAttribute[]
-  ) => {
-    try {
-      await addAttributesToTemplate(templateId, attributes);
-      setAttributes([
-        { templateAttributeName: "", templateAttributeType: "STRING" },
-      ]);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   return {
     attributes,
     onChangeName,
     onChangeType,
     onDelete,
     onAdd,
-    onSubmit,
   };
 }
