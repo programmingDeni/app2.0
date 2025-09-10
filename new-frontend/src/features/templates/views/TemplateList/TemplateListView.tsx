@@ -14,7 +14,6 @@ import { useState } from "react";
 import TempalteCardLazyList from "@/features/templates/components-ui/TemplateCardLazyList";
 import Button from "@/components/Button";
 import ToggleableSection from "@/components/ToggleableSection/ToggleableSection";
-import MachineTemplateForm from "@/components/MachineTemplate/MachineTemplateForm";
 import AddTemplateFormView from "../../components-ui/AddTemplateForm";
 
 export default function TemplateListView() {

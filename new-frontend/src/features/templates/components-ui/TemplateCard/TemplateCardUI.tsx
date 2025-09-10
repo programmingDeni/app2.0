@@ -87,7 +87,7 @@ export default function TemplateCardUI(props: Props) {
               <TemplateAttributeRow
                 key={attr.id!}
                 templateAttribute={attr}
-                editable={editingAttrId === attr.id}
+                editable={allowEdit && editingAttrId === attr.id}
                 onChange={(name, type) => {
                   /* optional live update */
                 }}

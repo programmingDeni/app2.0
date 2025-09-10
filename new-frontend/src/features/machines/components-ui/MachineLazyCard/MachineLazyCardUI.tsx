@@ -1,9 +1,9 @@
 import styles from "./MachineLazyCard.module.css";
-import { MachineLazy } from "@/types/machine";
+import { Machine } from "@/features/machines/types/machine.types";
 import { Link } from "react-router-dom";
 
 interface Props {
-  machine: MachineLazy;
+  machine: Machine;
   onRemove: (id: number) => void | Promise<void>;
 }
 
@@ -13,7 +13,7 @@ export default function MachineLazyCardUI({ machine, onRemove }: Props) {
       <div className={styles.header}>
         <div className={styles.name}>{machine.machineName}</div>
         <button
-          onClick={() => onRemove(machine.machineId)}
+          onClick={() => onRemove(machine.id!)}
           className={styles.removeButton}
           title="Entfernen"
         >
@@ -22,13 +22,13 @@ export default function MachineLazyCardUI({ machine, onRemove }: Props) {
       </div>
 
       <div className={styles.template}>
-        Template: {machine.templateName ?? "Kein Template"}
+        Template: {machine?.machineTemplate?.templateName ?? "Kein Template"}
       </div>
 
       <div className={styles.links}>
-        <Link to={`/machines/${machine.machineId}`}>Struktur anzeigen</Link>
+        <Link to={`/machines/${machine.id}`}>Struktur anzeigen</Link>
         <span>|</span>
-        <Link to={`/machines/${machine.machineId}/values`}>Werte anzeigen</Link>
+        <Link to={`/machines/${machine.id}/values`}>Werte anzeigen</Link>
       </div>
     </li>
   );

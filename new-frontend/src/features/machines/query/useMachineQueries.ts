@@ -10,6 +10,7 @@ import {
   removeCustomAttributeFromMachineService,
   assignTemplateToMachineService,
   removeTemplateFromMachineService,
+  editMachineAttributeService,
 } from "../services/machineService";
 //Types
 import {
@@ -100,6 +101,17 @@ export function useAddCustomAttribute(machineId: number) {
       attributeType: string;
     }) =>
       createMachineAttributeService(machineId, attributeName, attributeType),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["machine", machineId] });
+    },
+  });
+}
+
+export function useEditCustomAttribute(machineId: number) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (attribute: Partial<MachineAttribute>) =>
+      editMachineAttributeService(attribute),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["machine", machineId] });
     },

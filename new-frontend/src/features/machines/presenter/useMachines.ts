@@ -17,7 +17,7 @@ import {
   fetchMachineByIdService,
   removeCustomAttributeFromMachineService,
 } from "../services/machineService";
-import { AttributeType } from "@/types/attributeType";
+import { AttributeType } from "@/features/machines/types/machine.types";
 
 export function useMachines() {
   const [machines, setMachines] = useState<Machine[]>([]);
@@ -131,18 +131,16 @@ export function useMachines() {
         attributeId
       );
       //TODO: state update
-      if (response.status >= 200 && response.status < 300) {
-        setMachines((prev) =>
-          prev.map((m) =>
-            m.id !== machineId
-              ? m
-              : {
-                  ...m,
-                  attributes: m.attributes?.filter((a) => a.id !== attributeId),
-                }
-          )
-        );
-      }
+      setMachines((prev) =>
+        prev.map((m) =>
+          m.id !== machineId
+            ? m
+            : {
+                ...m,
+                attributes: m.attributes?.filter((a) => a.id !== attributeId),
+              }
+        )
+      );
     } catch (e) {
       throw e;
     }

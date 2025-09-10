@@ -251,6 +251,23 @@ public class MachineController {
         return ResponseEntity.ok(MachineMapper.toDto(updated));
     }
 
+    @PutMapping("/{id}/attributes/{attributeId}")
+    public ResponseEntity<MachineDto> editMachineAttribute(
+            @PathVariable("id") Integer machineId,
+            @PathVariable Integer attributeId,
+            @RequestBody MachineAttributeDto dto) {
+        // 1. Validate
+        if (machineId == null || machineId <= 0 || attributeId == null || attributeId <= 0) {
+            throw new IllegalArgumentException("Invalid update data");
+        }
+
+        // 2. Update via service & get entity
+        Machine updated = machineService.editMachineAttribute(machineId, attributeId, dto);
+
+        // 3. Map to DTO and return
+        return ResponseEntity.ok(MachineMapper.toDto(updated));
+    }
+
     @PutMapping("/{id}/template/{templateId}")
     public ResponseEntity<MachineDto> assignTemplateToMachine(
             @PathVariable("id") Integer machineId,
@@ -286,6 +303,21 @@ public class MachineController {
 
         machineService.removeTemplateFromMachine(machineId);
 
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}/attributes/{attributeId}")
+    public ResponseEntity<Void> removeMachineAttribute(@PathVariable Integer id,
+            @PathVariable Integer attributeId) {
+        // 1. Validate
+        if (id == null || id <= 0 || attributeId == null || attributeId <= 0) {
+            throw new IllegalArgumentException("Invalid update data");
+        }
+
+        // 2. Delete via service
+        machineService.removeMachineAttribute(id, attributeId);
+
+        // 3. Return success response
         return ResponseEntity.noContent().build();
     }
 

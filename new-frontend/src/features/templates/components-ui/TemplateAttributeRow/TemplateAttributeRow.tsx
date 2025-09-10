@@ -4,7 +4,7 @@
 //types
 import Button from "@/components/Button";
 import { TemplateAttribute } from "../../types/template.types";
-import { AttributeType } from "@/types/attributeType";
+import { AttributeType } from "@/features/machines/types/machine.types";
 import { useState } from "react";
 
 interface Props {
@@ -20,7 +20,7 @@ interface Props {
 export default function TemplateAttributeRow(props: Props) {
   const {
     templateAttribute,
-    editable = false,
+    editable,
     onChange,
     onSave,
     onCancel,
@@ -43,16 +43,13 @@ export default function TemplateAttributeRow(props: Props) {
         <td style={{ textAlign: "left", width: 120 }}>
           <strong>Typ:</strong> {templateAttribute.templateAttributeType}
         </td>
-        <td>
-          {onEditClick && <Button onClick={onEditClick}>Bearbeiten</Button>}
-        </td>
       </tr>
     );
   }
 
   return (
     <tr>
-      <td style={{ textAlign: "left", width: 180 }}>
+      <td style={{ textAlign: "left", width: 220 }}>
         <input
           style={{ width: "100%" }}
           value={localName}

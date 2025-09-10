@@ -11,16 +11,18 @@ import {
 import MachineAttributeCard from "@/features/machines/components-ui/MachineAttributeCard";
 import Button from "@/components/Button";
 import ToggleableSection from "@/components/ToggleableSection/ToggleableSection";
+
 import TemplateSelect from "@/components/TemplateSelect/TemplateSelect";
 import AddAttributeForm from "@/features/machines/components-ui/AddAttributeForm/AddAttributeForm";
 import TemplateView from "@/features/templates/views/TempalteDetails";
-import { AttributeType } from "@/types/attributeType";
+import { AttributeType } from "@/features/machines/types/machine.types";
+import TemplateAttributeRow from "@/features/templates/components-ui/TemplateAttributeRow";
 
 interface Props {
   //Machine(s)
   machine: Machine;
   customAttributes: MachineAttribute[];
-  handleRemoveAttribute: (machineId: number, attributeId: number) => void;
+  handleRemoveAttribute: (attributeId: number) => void;
   refetch?: () => void;
   loading?: boolean;
   error?: string | null;
@@ -28,6 +30,7 @@ interface Props {
     attributeName: string,
     attributeType: AttributeType
   ) => void;
+  onCustomAttributeEdited: (attribute: Partial<MachineAttribute>) => void;
   //tempaltes
   template: Template | undefined;
   handleAssignTemplate: (templateId: number) => void;
@@ -37,6 +40,8 @@ interface Props {
   selectedTemplateId: number | null;
   setSelectedTemplateId: (id: number | null) => void;
   showLinks?: boolean;
+  editingCustomAttributeId?: number | null;
+  setEditingCustomAttributeId?: (id: number | null) => void;
 }
 
 export default function MachineDetailsUI(props: Props) {
@@ -49,6 +54,7 @@ export default function MachineDetailsUI(props: Props) {
     loading,
     error,
     onCustomAttributeAdded,
+    onCustomAttributeEdited,
     //temnplates
     templates,
     selectedTemplateId,
@@ -58,6 +64,9 @@ export default function MachineDetailsUI(props: Props) {
   } = props;
 
   const [showAddAttributeForm, setShowAddAttributeForm] = useState(false);
+  const [editingCustomAttributeId, setEditingCustomAttributeId] = useState<
+    number | null
+  >(null);
 
   return (
     <div>
@@ -113,12 +122,20 @@ export default function MachineDetailsUI(props: Props) {
         <div>
           {customAttributes.map((attribute) => (
             <div key={attribute.id} className="flex  gap-4 mb-2">
-              <MachineAttributeCard key={attribute.id} attribute={attribute} />
-              <Button
-                onClick={() => handleRemoveAttribute(machine.id!, attribute.id)}
-              >
-                Attribut entfernen
-              </Button>
+              <MachineAttributeCard
+                key={attribute.id}
+                attribute={attribute}
+                editable={attribute.id === editingCustomAttributeId}
+                onEditClick={() => setEditingCustomAttributeId(attribute.id)}
+                onSave={(updated) => {
+                  onCustomAttributeEdited(updated);
+                  setEditingCustomAttributeId(null);
+                }}
+                onCancel={() => setEditingCustomAttributeId(null)}
+                onDelete={() => {
+                  handleRemoveAttribute(attribute.id);
+                }}
+              />
             </div>
           ))}
         </div>

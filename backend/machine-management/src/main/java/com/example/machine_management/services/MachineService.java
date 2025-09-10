@@ -2,9 +2,11 @@ package com.example.machine_management.services;
 
 import com.example.machine_management.dto.Machine.CreateMachineFromTemplateDto;
 import com.example.machine_management.dto.Machine.MachineDto;
+import com.example.machine_management.dto.MachineAttributes.MachineAttributeDto;
 import com.example.machine_management.exceptions.NotFoundException;
 import com.example.machine_management.mapper.MachineMapper;
 import com.example.machine_management.models.AttributeInTemplate;
+import com.example.machine_management.models.AttributeType;
 import com.example.machine_management.models.Machine;
 import com.example.machine_management.models.MachineAttribute;
 import com.example.machine_management.models.MachineTemplate;
@@ -129,6 +131,42 @@ public class MachineService {
 
     public List<Machine> findByTemplate(MachineTemplate template) {
         return machineRepository.findByMachineTemplate(template);
+    }
+
+    public void removeMachineAttribute(Integer machineId, Integer attributeId) {
+        Machine machine = machineRepository.findById(machineId)
+                .orElseThrow(() -> new NotFoundException("Maschine mit ID " + machineId + " nicht gefunden."));
+
+        boolean found = machine.getMachineAttributes()
+                .stream()
+                .anyMatch(attr -> attr.getId().equals(attributeId));
+
+        if (!found) {
+            throw new NotFoundException("Maschineattribut mit ID " + attributeId + " nicht gefunden.");
+        }
+
+        // Attribut entfernen
+        machine.getMachineAttributes().removeIf(attr -> attr.getId().equals(attributeId));
+        machineRepository.save(machine);
+    }
+
+    public Machine editMachineAttribute(Integer machineId, Integer attributeId, MachineAttributeDto dto) {
+        Machine machine = machineRepository.findById(machineId)
+                .orElseThrow(() -> new NotFoundException("Maschine mit ID " + machineId + " nicht gefunden."));
+
+        MachineAttribute attribute = machine.getMachineAttributes()
+                .stream()
+                .filter(attr -> attr.getId().equals(attributeId))
+                .findFirst()
+                .orElseThrow(
+                        () -> new NotFoundException("Maschineattribut mit ID " + attributeId + " nicht gefunden."));
+
+        attribute.setAttributeName(dto.attributeName);
+        attribute.setType(AttributeType.valueOf(dto.attributeType));
+        // attribute.setAttributeValues(dto.attributeValues);
+        // TODO: attribute values fromDTO implementieren
+
+        return machineRepository.save(machine);
     }
 
 }

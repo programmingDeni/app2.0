@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import {
   useMachine,
   useAddCustomAttribute,
+  useEditCustomAttribute,
   useRemoveCustomAttribute,
   useAssignTemplate,
   useRemoveTemplate,
@@ -20,7 +21,7 @@ import {
 //UI
 import MachineDetailsUI from "./MachineDetailsUI";
 import { MachineAttribute } from "../../types/machine.types";
-import { AttributeType } from "@/types/attributeType";
+import { AttributeType } from "@/features/machines/types/machine.types";
 
 //Props
 interface Props {
@@ -44,6 +45,7 @@ export default function MachineDetailsView(props: Props) {
   //MACHINE
   const { data: machine, isLoading, error } = useMachine(machineIdInt);
   const addCustomAttributeMutation = useAddCustomAttribute(machineIdInt);
+  const editCustomAttributeMutation = useEditCustomAttribute(machineIdInt);
   const removeCustomAttributeMutation = useRemoveCustomAttribute(machineIdInt);
 
   const assignTemplateMutation = useAssignTemplate(machineIdInt);
@@ -110,8 +112,13 @@ export default function MachineDetailsView(props: Props) {
   };
   //Remove
   const handleRemoveAttribute = async (attributeId: number) => {
-    console.log("remove attribute", attributeId);
     await removeCustomAttributeMutation.mutateAsync(attributeId);
+  };
+
+  const handleCustomAttributeEdited = async (
+    attribute: Partial<MachineAttribute>
+  ) => {
+    await editCustomAttributeMutation.mutateAsync(attribute);
   };
 
   const customAttributes = machine.attributes.filter(
@@ -126,6 +133,7 @@ export default function MachineDetailsView(props: Props) {
       template={template}
       customAttributes={customAttributes}
       onCustomAttributeAdded={handleCustomAttributeAdded}
+      onCustomAttributeEdited={handleCustomAttributeEdited}
       handleRemoveAttribute={handleRemoveAttribute}
       handleAssignTemplate={handleAssignTemplate}
       handleRemoveTemplate={handleRemoveTemplate}

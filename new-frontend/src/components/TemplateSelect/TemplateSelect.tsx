@@ -16,8 +16,6 @@
  * />
  */
 
-import React from "react";
-import { MachineTemplateDto } from "@/types/machineTemplate";
 import { Template } from "@/features/templates/types/template.types";
 
 interface Props {

@@ -1,6 +1,6 @@
 import Button from "@/components/Button";
 import { MachineAttribute } from "@/features/machines/types/machine.types";
-import { AttributeType } from "@/types/attributeType";
+import { AttributeType } from "@/features/machines/types/machine.types";
 import { useState } from "react";
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 export default function MachineAttributeCard(props: Props) {
   const {
     attribute,
-    editable = false,
+    editable,
     onChange,
     onSave,
     onCancel,
@@ -32,7 +32,7 @@ export default function MachineAttributeCard(props: Props) {
   if (!editable) {
     return (
       <tr>
-        <td style={{ textAlign: "left", width: 180 }}>
+        <td style={{ textAlign: "left", width: 220 }}>
           <strong>Name:</strong> {attribute.attributeName}
         </td>
         <td style={{ textAlign: "left", width: 120 }}>
@@ -47,7 +47,7 @@ export default function MachineAttributeCard(props: Props) {
 
   return (
     <tr>
-      <td style={{ textAlign: "left", width: 180 }}>
+      <td style={{ textAlign: "left", width: 220 }}>
         <input
           style={{ width: "100%" }}
           value={localName}

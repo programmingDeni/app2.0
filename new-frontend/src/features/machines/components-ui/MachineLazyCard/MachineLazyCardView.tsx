@@ -1,8 +1,8 @@
-import { MachineLazy } from "@/types/machine";
+import { Machine } from "@/features/machines/types/machine.types";
 import MachineLazyCardUI from "./MachineLazyCardUI";
 
 interface Props {
-  machine: MachineLazy;
+  machine: Machine;
   onDelete: (id: number) => void | Promise<void>;
 }
 

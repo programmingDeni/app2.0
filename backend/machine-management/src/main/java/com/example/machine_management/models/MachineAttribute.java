@@ -71,7 +71,7 @@ public class MachineAttribute {
 
     // Getter + Setter
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

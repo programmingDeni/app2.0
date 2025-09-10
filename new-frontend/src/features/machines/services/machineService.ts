@@ -1,12 +1,11 @@
 import axios from "@/services/axios";
+import { AxiosResponse } from "axios";
 //Machinen Typ holen
 import {
   MachineLazy,
   CreateMachineByName,
   CreateMachineFromTemplate,
-  MachineStructureDto,
-  MachineListElement,
-} from "@/types/machine";
+} from "@/features/machines/types/machine.types";
 
 export function fetchMachinesLazy() {
   return axios.get<MachineLazy[]>("/api/machines/lazy");
@@ -22,7 +21,7 @@ export async function createMachineByName(payload: CreateMachineByName) {
       machineId: responseData.id,
       machineName: responseData.machineName,
       templateName: responseData.machineTemplateDto,
-    } as MachineLazy;
+    } as Partial<Machine>;
   } catch (e) {
     throw new Error(
       "Service Function wirft Fehler beim erstellen einer Machine ohne Template"
@@ -48,7 +47,7 @@ export async function addMachineFromTemplate(
       machineId: responseData.id,
       machineName: responseData.machineName,
       machineTempalteName: responseData.machineTemplateDto.templateName,
-    } as MachineListElement;
+    } as Partial<Machine>;
   } catch (e) {
     throw new Error(
       "Service Function wirft Fehler beim erstellen einer Machine mit Template"
@@ -102,7 +101,33 @@ export async function createMachineService(
   machine: Partial<Machine>
 ): Promise<Machine> {
   try {
-    const response = await axios.post("/api/machines", machine);
+    console.log("sending machine ", machine);
+    let response: AxiosResponse<Machine>;
+
+    if (machine.machineTemplate?.id) {
+      // Backend erwartet:
+      // public String machineName;
+      // public Integer machineTemplateId;
+      const payload = {
+        machineName: machine.machineName,
+        machineTemplateId: machine.machineTemplate.id,
+      };
+      response = await axios.post("/api/machines/from-template", payload);
+    } else {
+      // Backend erwartet:
+      // public Integer id;
+      // public String machineName;
+      // public List<MachineAttributeDto> attributes;
+      // public MachineTemplateDto machineTemplateDto;
+      const { machineTemplate, ...rest } = machine;
+      const payload = {
+        ...rest,
+        machineTemplateDto: machineTemplate,
+      };
+      response = await axios.post("/api/machines", payload);
+    }
+
+    console.log("createMachineService response", response.data);
     return response.data as Machine;
   } catch (e) {
     throw e;
@@ -112,10 +137,14 @@ export async function createMachineService(
 //all machines
 export async function fetchMachinesService(): Promise<Machine[]> {
   const response = await axios.get("/api/machines");
-  const machines: Machine[] = response.data.map((dto: any) => ({
-    ...dto,
-    machineTemplate: dto.machineTemplateDto,
-  }));
+  const machines: Machine[] = response.data.map((dto: any) => {
+    const { machineTemplateDto, ...rest } = dto;
+    return {
+      ...rest,
+      machineTemplate: machineTemplateDto,
+    };
+  });
+  console.log("fetchMachinesService", machines);
   return machines;
 }
 //one machine
@@ -123,11 +152,11 @@ export async function fetchMachineByIdService(
   machineId: number
 ): Promise<Machine> {
   const response = await axios.get(`/api/machines/${machineId}`);
-  const dto = response.data;
+  const { machineTemplateDto, ...rest } = response.data;
   // mapping auf "schöne" frontend datenstruktur
   const machine: Machine = {
-    ...dto,
-    machineTemplate: dto.machineTemplateDto,
+    ...rest,
+    machineTemplate: machineTemplateDto,
   };
   return machine;
 }
@@ -203,15 +232,39 @@ export async function createMachineAttributeService(
   }
 }
 
+export async function editMachineAttributeService(
+  machineAttribute: Partial<MachineAttribute>
+) {
+  try {
+    const payload = {
+      id: machineAttribute.id,
+      attributeName: machineAttribute.attributeName,
+      attributeType: machineAttribute.attributeType,
+      // attributeValues: machineAttribute.attributeValues,
+      machineId: machineAttribute.machineId,
+      fromTemplate: false,
+    };
+    const response = await axios.put(
+      `/api/machines/${machineAttribute.machineId}/attributes/${machineAttribute.id}`,
+      payload
+    );
+    return response.data;
+  } catch (e) {
+    throw e;
+  }
+}
+
 export async function removeCustomAttributeFromMachineService(
   machineId: number,
   attributeId: number
 ) {
   try {
-    const response = await axios.delete(
-      `/api/machines/${machineId}/attributes/${attributeId}`
+    console.log(
+      "removeCustomAttributeFromMachineService",
+      machineId,
+      attributeId
     );
-    return response.data;
+    await axios.delete(`/api/machines/${machineId}/attributes/${attributeId}`);
   } catch (e) {
     throw e;
   }

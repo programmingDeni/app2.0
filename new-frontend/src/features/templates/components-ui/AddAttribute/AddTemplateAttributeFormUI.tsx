@@ -12,7 +12,7 @@ type Props = {
   onSubmit: (attributes: TemplateAttribute[]) => void;
 };
 
-export default function AddAttributeFormUI({
+export default function AddTemplateAttributeFormUI({
   attributes,
   onChangeName,
   onChangeType,

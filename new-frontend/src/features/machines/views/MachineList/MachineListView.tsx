@@ -1,6 +1,12 @@
 // List View
-// wird von presenter versorgt
-import useMachineListPresenter from "../../presenter/useMachineListPresenter";
+// wird von query versorgt
+import {
+  useMachines,
+  useAddMachine,
+  useRemoveMachine,
+} from "../../query/useMachineQueries";
+//Machine Type
+import { Machine } from "@/features/machines/types/machine.types";
 // UI der Listenelemente ist in MachineCard
 import MachineCard from "../../components-ui/MachineLazyCard";
 
@@ -17,21 +23,30 @@ import react, { useState } from "react";
 // enthalten sollen
 
 export default function MachineListView() {
-  const { machines, handleDelete, addMachineToList } =
-    useMachineListPresenter();
+  const { data: machines = [], refetch } = useMachines();
+  const deleteMachineMutation = useRemoveMachine();
+  const addMachineMutation = useAddMachine();
+
+  const handleDeleteMachine = async (machineId: number) => {
+    await deleteMachineMutation.mutateAsync(machineId);
+    refetch();
+  };
+
+  const handleAddMachine = async (machine: Partial<Machine>) => {
+    addMachineMutation.mutateAsync(machine);
+    refetch();
+  };
 
   const [showAddMachineForm, setShowAddMachineForm] = useState(false);
 
   return (
     <div>
       {machines.map((machine) => (
-        <div>
-          <MachineCard
-            key={machine.machineId}
-            machine={machine}
-            onDelete={handleDelete}
-          />
-        </div>
+        <MachineCard
+          key={machine.id}
+          machine={machine}
+          onDelete={handleDeleteMachine}
+        />
       ))}
       <ToggleableSection
         toggleLabel="Add Machine"
@@ -39,12 +54,7 @@ export default function MachineListView() {
         onOpen={() => setShowAddMachineForm(true)}
         onClose={() => setShowAddMachineForm(false)}
       >
-        <AddMachineFormView
-          onMachineAdded={(newMachine) => {
-            console.log("View onMachineAdded", newMachine);
-            addMachineToList(newMachine);
-          }}
-        />
+        <AddMachineFormView />
       </ToggleableSection>
       <Button to="/machine-templates">→ Zu den Machine Templates</Button>
     </div>
