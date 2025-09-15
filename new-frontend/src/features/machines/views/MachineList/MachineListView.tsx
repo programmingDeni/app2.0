@@ -56,7 +56,15 @@ export default function MachineListView() {
       >
         <AddMachineFormView />
       </ToggleableSection>
-      <Button to="/machine-templates">→ Zu den Machine Templates</Button>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Button to="/machine-templates">→ Zu den Machine Templates</Button>
+        <Button to="/print">→ Drucken</Button>
+      </div>
     </div>
   );
 }

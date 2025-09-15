@@ -23,6 +23,12 @@ public class DataInitializer {
             AttributeTemplateRepository attrTemplateRepo, MachineRepository machineRepo,
             MachineService machineService) {
         return args -> {
+
+            if (machineRepo.count() > 0 || templateRepo.count() > 0) {
+                System.out.println("DB enthält bereits Daten: Initialisierung übersprungen.");
+                return;
+            }
+
             System.out.println("Initialisiere Test-Templates...");
 
             // Template erstellen

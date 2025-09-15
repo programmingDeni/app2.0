@@ -13,6 +13,7 @@ import TemplateListView from "./features/templates/views/TemplateList/TemplateLi
 import MachinenAttributeValuesView from "./features/machines/views/MachineAttributeValuesView";
 
 import TemplateDetails from "./features/templates/views/TempalteDetails";
+import PrintMachinesView from "./features/machines/views/PrintView";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<MachineListView />} />
+            <Route path="/print" element={<PrintMachinesView />} />
             <Route
               path="/machines/:machineId"
               element={<MachineDetailsView showLinks={false} />}
