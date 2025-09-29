@@ -28,6 +28,9 @@ The backend is a layered Spring Boot application that handles all core business 
 
 The frontend is organized by **features** (e.g. machines and templates), and components follow the **Model-View-Presenter (MVP)** pattern.
 
+React Query handles all data fetching and caching.  
+No local state is stored in components – the UI updates reactively based on server state.
+
 ## 📦 Tech Stack
 
 - **Backend**: Java, Spring Boot, PostgreSQL
