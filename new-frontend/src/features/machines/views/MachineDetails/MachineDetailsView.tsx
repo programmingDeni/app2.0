@@ -87,7 +87,6 @@ export default function MachineDetailsView(props: Props) {
   //Template change
   const handleTemplateChange = async (templateId: number | null) => {
     // State aktualisieren
-    //TODO: alert hier dass das weitreichende consequenzen hat
     setSelectedTemplateId(templateId);
     if (machine.id === undefined) return;
     if (templateId === null) {
@@ -108,7 +107,6 @@ export default function MachineDetailsView(props: Props) {
       attributeName,
       attributeType,
     });
-    //TODO: funktioniert nicht, warum? bekomme richtige backend antwort
   };
   //Remove
   const handleRemoveAttribute = async (attributeId: number) => {
@@ -126,6 +124,9 @@ export default function MachineDetailsView(props: Props) {
   );
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Render %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error</div>;
 
   return (
     <MachineDetailsUI

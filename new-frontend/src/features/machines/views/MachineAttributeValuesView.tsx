@@ -45,5 +45,3 @@ export default function MachineAttributeValuesView() {
     </div>
   );
 }
-
-//TODO: refactoring: das view Struktur bearbeiten muss hier ins feature, mitsamt neuem presenter und maybe service and types

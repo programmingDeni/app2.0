@@ -17,7 +17,6 @@ export function useMachineAttributes(machineId: number) {
   }, []);
 
   const fetch = useCallback(async () => {
-    //TODO:
     setLoading(true);
     try {
       const res = await getMachineAttributes(machineId);
@@ -41,7 +40,6 @@ export function useMachineAttributes(machineId: number) {
   };
 
   const removeAttributeFromMachine = async (attributeId: number) => {
-    //TODO:
     try {
       await removeAttributeFromMachineService(attributeId);
       fetch();

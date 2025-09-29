@@ -162,7 +162,7 @@ export async function fetchMachineByIdService(
 }
 
 //Update
-//TODO: Update Machine
+//TODO: Update Machine name
 
 //Delete
 export async function removeMachineService(machineId: number) {
@@ -178,7 +178,6 @@ export async function assignTemplateToMachineService(
   machineId: number,
   templateId: number
 ): Promise<Machine> {
-  //TODO: ist implementiert?
   console.log("assignTemplateToMachineService", templateId, machineId);
   try {
     const response = await axios.put(
@@ -205,7 +204,6 @@ export async function assignTemplateToMachineService(
 }
 
 export async function removeTemplateFromMachineService(machineId: number) {
-  //TODO ist implementiert?
   try {
     await axios.delete(`/api/machines/${machineId}/template`);
   } catch (e) {

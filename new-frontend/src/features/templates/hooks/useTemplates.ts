@@ -87,13 +87,12 @@ export default function useTemplates() {
     }
   };
   //Update
-  //TODO: Update Template => ist jetzt in query
 
   //Delete
   const removeTemplate = async (templateId: number) => {
     try {
       const response = await deleteTemplateService(templateId);
-      //TODO: state update
+      //state update
       setMachineTemplates((prev) => prev.filter((t) => t.id !== templateId));
     } catch (e) {
       console.error("error in removeTemplate", e);

@@ -23,7 +23,7 @@ import react, { useState } from "react";
 // enthalten sollen
 
 export default function MachineListView() {
-  const { data: machines = [], refetch } = useMachines();
+  const { data: machines = [], refetch, isLoading, error } = useMachines();
   const deleteMachineMutation = useRemoveMachine();
   const addMachineMutation = useAddMachine();
 
@@ -39,8 +39,12 @@ export default function MachineListView() {
 
   const [showAddMachineForm, setShowAddMachineForm] = useState(false);
 
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error</div>;
+  if (machines.length === 0) return <div>No Machines</div>;
+
   return (
-    <div>
+    <div style={{ textAlign: "center", width: "100%" }}>
       {machines.map((machine) => (
         <MachineCard
           key={machine.id}

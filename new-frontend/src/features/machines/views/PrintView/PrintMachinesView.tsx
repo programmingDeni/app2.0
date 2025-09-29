@@ -27,6 +27,8 @@ export default function PrintMachinesView() {
   );
 
   // group machines by tempalte
+  //TODO: custom attributes werden noch nicht gedruckt,
+  //TODO: export funktionen evtl in utils ausgliedern
   function groupMachinesByTemplate(machines: Machine[]) {
     const uniqueTemplates = Array.from(
       new Map(

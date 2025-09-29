@@ -23,7 +23,6 @@ export default function AddTemplateAttributeFormView({
   templateId,
   onSubmit,
 }: Props) {
-  //TODO: das sollte ueber das query laufen
   //1. Query für backend state communication
   const addAttributesMutation = useAddAttributesToTemplate(templateId);
   //2. Presenter für den localen state

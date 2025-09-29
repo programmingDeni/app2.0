@@ -1,0 +1,31 @@
+big todo im backend: aber das ist warhscheinlich nur kosmetik
+die rückgabetypen ans frontend schön bennen =>
+
+Features To Do:
+
+    - add a print summary
+    - make machines/id attribute: breiter
+    - add a last changed timestamt,
+
+    -muss TemplateDetails noch anders machen dass es die sachen wie bei machinedetails alle im ui anzeigen
+    kann aber von außen gesteuert wird und alle funktionen als optional props uebergeben bekomme
+
+    -TempalteListe kann schöbner aussehen
+
+Überlegungen UI/UX:
+Am PC wäre ein Excel like ansatz als Tabelle denke ich gut.
+Zusammenfassen von MachineDetails/Struktur und AttributWerten
+
+    Auf dem Smartphone / Tablet wäre die aktuelle implementierung mit zwei
+    getrennten views leichter zu bedienen.
+
+Wie sieht das print aus wenn man die realen daten von max nutzt
+
+Für realen Applaunch:
+Wär krass die Attribute mit OCR einlesen und dann in die DB schreiben
+Eingabemaske Tempalate erstellen => wie sieht das bei andern apps aus ? splitwise?
+
+wenn die namen lang sind sieht /machine-templates ass aus
+![alt text](image.png)
+
+Muss eine Navbar machen // Startseite neu anordnen

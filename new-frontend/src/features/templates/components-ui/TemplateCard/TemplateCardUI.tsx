@@ -1,5 +1,4 @@
 //style import von der anderne
-import styles from "../../../machines/components-ui/MachineLazyCard/MachineLazyCard.module.css";
 import { useState } from "react";
 
 // Types aus dem neuen Frontend
@@ -47,8 +46,10 @@ export default function TemplateCardUI(props: Props) {
 
   return (
     <div>
-      <div className={styles.name}>
-        <h3>Template Name: {machineTemplate.templateName}</h3>
+      <h3 className="w-full text-left sm:!text-left">
+        Template Name: {machineTemplate.templateName}
+      </h3>
+      <div>
         {allowEdit && !isEditing && (
           <Button
             onClick={() => setIsEditing(true)}
@@ -81,7 +82,12 @@ export default function TemplateCardUI(props: Props) {
       {attributeTemplates.length === 0 ? (
         <div>Keine Attribute vorhanden</div>
       ) : (
-        <table>
+        <table style={{ width: "100%" }}>
+          <colgroup>
+            <col style={{ width: "40%" }} />
+            <col style={{ width: "25%" }} />
+            <col style={{ width: "35%" }} />
+          </colgroup>
           <tbody>
             {attributeTemplates.map((attr) => (
               <TemplateAttributeRow

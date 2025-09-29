@@ -1,7 +1,11 @@
-#root {
+.root {
+  height: 100vh; /* Fallback */
+  height: 100dvh; /* modern, wenn verfügbar */
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
   text-align: center;
 }
 

@@ -97,7 +97,7 @@ export default function MachineDetailsUI(props: Props) {
       )}
       {/** //TODO: Templates zugewiesen aber keine attribute? */}
 
-      {/** //TODO: kein template zugewiesen*/}
+      {/** kein template zugewiesen*/}
       {!template && (
         <div>
           <div>Kein Template zugewiesen</div>

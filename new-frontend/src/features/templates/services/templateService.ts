@@ -47,7 +47,6 @@ export async function createMachineTemplateService(
       templateAttributes: attributes,
     });
     console.log("createMachineTemplateService response", response.data);
-    //TODO: ich bekomme hier ein template ohne attribute returned?
     return response.data;
   } catch (error) {
     console.error("Fehler beim Erstellen des Templates:", error);

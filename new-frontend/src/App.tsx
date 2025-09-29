@@ -17,7 +17,7 @@ import PrintMachinesView from "./features/machines/views/PrintView";
 
 function App() {
   return (
-    <>
+    <div className="root">
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
@@ -39,7 +39,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>
-    </>
+    </div>
   );
 }
 

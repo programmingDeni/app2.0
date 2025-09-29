@@ -40,7 +40,7 @@ export function useMachines() {
     try {
       const response = await fetchMachineByIdService(machineId);
 
-      //TODO: state der machine updaten
+      //TODO: useMachines komplett entfernen, wurde ersetzt
       /*
       setMachines((prev) =>
         prev.map((m) => (m.id === machineId ? response.data : m))
@@ -90,7 +90,6 @@ export function useMachines() {
 
   // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Machine Attributes  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  //TODO: attribut verwaltung innerhalb der machinen
   const addCustomAttribute = async (
     machineId: number,
     attributeName: string,
@@ -130,7 +129,6 @@ export function useMachines() {
         machineId,
         attributeId
       );
-      //TODO: state update
       setMachines((prev) =>
         prev.map((m) =>
           m.id !== machineId
