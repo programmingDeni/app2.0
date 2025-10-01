@@ -1,4 +1,4 @@
-# Machine Management App
+# Machine Management App (Work in progress)
 
 This application enables the structured management and documentation of machines and their attributes, with a focus on maintenance and inspection tracking.
 
