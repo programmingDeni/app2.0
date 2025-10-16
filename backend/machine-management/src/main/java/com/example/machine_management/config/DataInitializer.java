@@ -11,7 +11,7 @@ import com.example.machine_management.dto.Machine.CreateMachineFromTemplateDto;
 import com.example.machine_management.dto.Machine.MachineDto;
 import com.example.machine_management.models.*;
 import com.example.machine_management.repository.*;
-import com.example.machine_management.services.MachineService;
+import com.example.machine_management.services.machine.MachineService;
 
 @Configuration
 @Profile("dev")

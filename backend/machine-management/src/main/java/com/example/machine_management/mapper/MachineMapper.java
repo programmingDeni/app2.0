@@ -8,11 +8,29 @@ import com.example.machine_management.models.Machine;
 import com.example.machine_management.models.MachineAttribute;
 import com.example.machine_management.models.MachineTemplate;
 
-import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
 
-public class MachineMapper {
+@Component
+public class MachineMapper implements EntityMapper<Machine, MachineDto> {
 
-    public static MachineDto toDto(Machine machine) {
+    @Override
+    public Machine fromDto(MachineDto dto) {
+        if (dto.machineName == null || dto.machineName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Maschinenname darf nicht leer sein.");
+        }
+        
+        Machine machine = new Machine(dto.machineName);
+        if (dto.attributes != null) {
+            for (MachineAttributeDto attrDto : dto.attributes) {
+                MachineAttribute attr = MachineAttributeMapper.toEntity(attrDto, dto.id);
+                machine.addAttribute(attr);
+            }
+        }
+        return machine;
+    }
+
+    @Override
+    public MachineDto toDto(Machine machine) {
         MachineTemplateDto templateDto = machine.getMachineTemplate() != null
                 ? MachineTemplateMapper.toDto(machine.getMachineTemplate())
                 : null;
@@ -24,30 +42,13 @@ public class MachineMapper {
                 templateDto);
     }
 
-    // Nur falls du auch Entities aus Dtos erstellen willst (z. B. beim POST):
-    public static Machine fromDto(MachineDto dto) {
-        Machine machine = new Machine(dto.machineName);
-        if (dto.attributes != null) {
-            for (MachineAttributeDto attrDto : dto.attributes) {
-                MachineAttribute attr = MachineAttributeMapper.toEntity(attrDto, dto.id);
-                machine.addAttribute(attr); // bidirektional
-            }
-        }
-        return machine;
-    }
-
-    public static Machine fromTemplate(String name, MachineTemplate template) {
+    /**
+     * Erstellt neue Machine aus Template.
+     * Helper-Methode für createMachineFromTemplate.
+     */
+    public Machine fromTemplate(String name, MachineTemplate template) {
         Machine machine = new Machine(name);
         machine.setMachineTemplate(template);
-        /*
-         * 
-         * for (AttributeInTemplate t : template.getAttributeTemplates()) {
-         * MachineAttribute attr = new MachineAttribute(machine,
-         * t.getAttributeInTemplateName());
-         * attr.setType(t.getType());
-         * machine.addAttribute(attr);
-         * }
-         */
         return machine;
     }
 

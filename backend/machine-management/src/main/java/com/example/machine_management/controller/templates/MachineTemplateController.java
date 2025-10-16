@@ -1,5 +1,5 @@
 // MachineTemplateController.java
-package com.example.machine_management.controller;
+package com.example.machine_management.controller.templates;
 
 import com.example.machine_management.dto.*;
 import com.example.machine_management.dto.AttributeInTemplate.CreateTemplateAttributeDTO;

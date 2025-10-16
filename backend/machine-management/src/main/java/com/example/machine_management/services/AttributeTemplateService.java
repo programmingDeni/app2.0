@@ -3,15 +3,11 @@ package com.example.machine_management.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import com.example.machine_management.models.AttributeInTemplate;
 import com.example.machine_management.models.MachineTemplate;
 import com.example.machine_management.repository.AttributeTemplateRepository;
-import com.example.machine_management.models.AttributeType;
 import com.example.machine_management.repository.MachineTemplateRepository;
-import com.fasterxml.jackson.databind.annotation.JsonAppend.Attr;
 import com.example.machine_management.dto.AttributeInTemplate.AttributeTemplateDto;
 import com.example.machine_management.exceptions.NotFoundException;
 import com.example.machine_management.mapper.AttributeTemplateMapper;

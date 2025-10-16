@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MachineRepository extends JpaRepository<Machine, Integer> {
     Optional<Machine> findByMachineName(String name);
 
+    //TODO: muss ich auch die values laden ?, muss ich auch die TemplateAttributes laden? 
     @EntityGraph(attributePaths = {
             "machineAttributes", // Machine → MachineAttributes
             "machineTemplate" // Wenn Attribute selbst Werte haben

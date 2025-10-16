@@ -33,6 +33,9 @@ class MachineMapperTest {
     @Autowired
     MachineTemplateRepository machineTemplateRepository;
 
+    @Autowired
+    MachineMapper machineMapper;
+
     @Test
     void testToDto() {
         // der test soll die volle funktionalität des mappers testen
@@ -64,7 +67,7 @@ class MachineMapperTest {
         machineRepository.save(machine);
 
         // Act
-        MachineDto dto = MachineMapper.toDto(machine);
+        MachineDto dto = machineMapper.toDto(machine);
 
         // Assert
         assertEquals("Testmaschine", dto.machineName);

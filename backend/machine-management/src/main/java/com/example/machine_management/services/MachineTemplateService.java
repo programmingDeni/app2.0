@@ -12,15 +12,12 @@ import java.util.stream.Collectors;
 import com.example.machine_management.dto.AttributeInTemplate.AttributeTemplateDto;
 import com.example.machine_management.dto.AttributeInTemplate.CreateTemplateAttributeDTO;
 import com.example.machine_management.dto.AttributeInTemplate.TemplateAttributeDto;
-import com.example.machine_management.dto.MachineTemplates.CreateMachineTemplateWithAttributesDto;
 import com.example.machine_management.dto.MachineTemplates.MachineTemplateDto;
-import com.example.machine_management.mapper.MachineTemplateMapper;
 import com.example.machine_management.models.AttributeInTemplate;
-import com.example.machine_management.models.AttributeType;
 import com.example.machine_management.models.Machine;
 import com.example.machine_management.models.MachineTemplate;
 import com.example.machine_management.repository.MachineTemplateRepository;
-import com.fasterxml.jackson.databind.annotation.JsonAppend.Attr;
+import com.example.machine_management.services.machine.MachineService;
 import com.example.machine_management.exceptions.NotFoundException;
 import com.example.machine_management.exceptions.TemplateInUseException;
 

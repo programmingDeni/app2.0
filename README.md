@@ -2,6 +2,11 @@
 
 This application enables the structured management and documentation of machines and their attributes, with a focus on maintenance and inspection tracking.
 
+## 📖 Documentation
+
+- [Architecture Documentation](docs/architecture/README.md)
+  - [Architecture Decisions](docs/architecture/decisions/)
+
 ## ✨ Key Features
 
 - Manage machines and associated attributes
@@ -14,10 +19,10 @@ This application enables the structured management and documentation of machines
 The backend is a layered Spring Boot application that handles all core business logic related to machine and template management.
 
 **Structure:**
-- `Controller` – Exposes RESTful endpoints
+- `Controller` – Exposes RESTful endpoints, entities converted to json by mappers here 
   - `MachineController`: Manage machines and their attributes
   - `TemplateController`: Manage machine templates and attribute templates
-- `Service` – Business logic
+- `Service` – Business logic, works with entities 
 - `Repository` – Data access (JPA)
 - `Model` – Domain entities
 - `DTO` – Data transfer objects
