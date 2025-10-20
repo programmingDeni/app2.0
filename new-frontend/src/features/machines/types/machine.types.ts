@@ -43,6 +43,9 @@ export interface MachineAttribute {
   attributeType: string;
   attributeValues: AttributeValue[];
   fromTemplate: boolean;
+  pruefungsIntervall?: number;
+  zuletztGeprueft?: string;
+  zuletztGetauscht?: string;
 }
 
 export type AttributeType = "STRING" | "INTEGER" | "FLOAT" | "BOOLEAN";

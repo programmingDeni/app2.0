@@ -57,10 +57,13 @@ export async function addMachineFromTemplate(
 
 export async function getMachineAttributesWithYearlyValues(machineId: number) {
   try {
-    const response = await axios.get(`/api/machines/${machineId}`);
+    // brauche auch die machinen attribute nicht nur die attribute values 
+    console.log("getMachineAttributesWithYearlyValues for machineId", machineId);
+    const response = await axios.get(`/api/machines/${machineId}/attribute-values`);
+    console.log("response in service", response.data);
     return response.data;
   } catch (e) {
-    throw new Error("Service Function wirft Fehler");
+    throw new Error("Service Function wirft Fehler" + e);
   }
 }
 

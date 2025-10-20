@@ -5,7 +5,11 @@ import com.example.machine_management.dto.Machine.Attributes.CreateMachineAttrib
 import com.example.machine_management.dto.MachineAttributes.MachineAttributeDto;
 import com.example.machine_management.mapper.MachineAttributeMapper;
 import com.example.machine_management.models.MachineAttribute;
+import com.example.machine_management.services.machine.MachineAttributeOperationsService;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +17,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/machines")
 public class MachineAttributeOperationsController extends AbstractMachineBaseController {
+
+    private final MachineAttributeOperationsService machineAttributeOperationsService;
+
+    @Autowired
+    public MachineAttributeOperationsController(MachineAttributeOperationsService machineAttributeOperationsService) {
+        this.machineAttributeOperationsService = machineAttributeOperationsService;
+    }
 
     @PostMapping("/{id}/attributes")
     public ResponseEntity<MachineAttributeDto> createAttribute(
@@ -25,7 +36,7 @@ public class MachineAttributeOperationsController extends AbstractMachineBaseCon
             throw new IllegalArgumentException("Invalid ID");
         }
 
-        MachineAttribute created = machineService.addMachineAttribute(id, dto);
+        MachineAttribute created = machineAttributeOperationsService.addMachineAttribute(id, dto);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(MachineAttributeMapper.toDto(created));
     }
@@ -54,4 +65,21 @@ public class MachineAttributeOperationsController extends AbstractMachineBaseCon
         machineService.removeMachineAttribute(id, attributeId);
         return ResponseEntity.noContent().build();
     }
+
+    //lazy loading der attribute einer maschine
+    @GetMapping("/{machineId}/attributes")
+    public ResponseEntity<List<MachineAttributeDto>> getMachineAttributes(@PathVariable
+    Integer machineId){
+        //check ob id korrekt uebergeben wurde
+        if( machineId == null || machineId <= 0){
+            throw new IllegalArgumentException("Invalid ID");
+        }
+        //calle den service, lass die attribute holen 
+        List<MachineAttribute> attributes = machineAttributeOperationsService.getMachineAttributes(machineId);
+        //returne die gemappten dtos
+        return ResponseEntity.ok(MachineAttributeMapper.toDtoList(attributes));
+    }
+    
+
+
 }

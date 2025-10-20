@@ -10,7 +10,7 @@ import com.example.machine_management.models.AttributeType;
 
 public class MachineAttributeMapper {
 
-    public static MachineAttributeDto toDto(MachineAttribute attr) {
+    public static MachineAttributeDto toDtoEager(MachineAttribute attr) {
         return new MachineAttributeDto(
                 attr.getId(),
                 attr.getAttributeName(),
@@ -22,11 +22,21 @@ public class MachineAttributeMapper {
                 attr.getFromTemplate());
     }
 
+    public static MachineAttributeDto toDtoLazy(MachineAttribute attr) {
+        return new MachineAttributeDto(
+                attr.getId(),
+                attr.getAttributeName(),
+                attr.getType().toString(),
+                null,
+                attr.getMachineId(),
+                attr.getFromTemplate());
+    }
+
     public static List<MachineAttributeDto> toDtoList(List<MachineAttribute> attributes) {
         if (attributes == null)
             return null;
         return attributes.stream()
-                .map(MachineAttributeMapper::toDto)
+                .map(MachineAttributeMapper::toDtoLazy)
                 .collect(Collectors.toList());
     }
 

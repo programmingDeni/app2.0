@@ -3,6 +3,7 @@ package com.example.machine_management.services.machine;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.example.machine_management.dto.Machine.CreateMachineFromTemplateDto;
 import com.example.machine_management.exceptions.NotFoundException;
@@ -15,6 +16,7 @@ import com.example.machine_management.models.MachineTemplate;
 import com.example.machine_management.repository.MachineRepository;
 import com.example.machine_management.repository.MachineTemplateRepository;
 
+@Service
 public class MachineTemplateOperationsService {
 
     private final MachineRepository machineRepo;

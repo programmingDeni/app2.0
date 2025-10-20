@@ -49,6 +49,10 @@ public class AttributeValueService {
         return attributeValueRepository.findAllByAttributeValueYear(year);
     }
 
+    public List<AttributeValue> getAttributeValuesByMachineId(Integer machineId) {
+        return attributeValueRepository.findByMachineAttributeMachineId(machineId);
+    }
+
     public AttributeValue createAttributeValue(CreateAttributeValueDto createAttributeValueDto) {
         // 1. existenz prüfung
         Machine machine = machineRepository.findById(createAttributeValueDto.machineId)
@@ -67,7 +71,7 @@ public class AttributeValueService {
         }
 
         AttributeValue toSave = new AttributeValue(attribute, createAttributeValueDto.attributeValueYear,
-                createAttributeValueDto.attributeValue);
+                createAttributeValueDto.attributeValue, createAttributeValueDto.pruefungsIntervall);
 
         // 2. Speichern
         AttributeValue saved = attributeValueRepository.save(toSave);

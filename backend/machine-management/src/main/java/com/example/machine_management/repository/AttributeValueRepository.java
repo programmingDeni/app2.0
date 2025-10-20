@@ -14,5 +14,5 @@ public interface AttributeValueRepository extends JpaRepository<AttributeValue, 
     Optional<AttributeValue> findByMachineAttributeAndAttributeValueYear(MachineAttribute machineAttribute, int year);
 
     List<AttributeValue>findByMachineAttributeId(Integer machineAttributeId);
-
+    List<AttributeValue> findByMachineAttributeMachineId(Integer machineId);
 }

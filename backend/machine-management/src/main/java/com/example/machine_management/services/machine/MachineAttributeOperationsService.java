@@ -1,6 +1,10 @@
 package com.example.machine_management.services.machine;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 //dtos
 import com.example.machine_management.dto.Machine.Attributes.CreateMachineAttributeDto;
 import com.example.machine_management.dto.MachineAttributes.MachineAttributeDto;
@@ -10,16 +14,21 @@ import com.example.machine_management.exceptions.NotFoundException;
 import com.example.machine_management.models.Machine;
 import com.example.machine_management.models.MachineAttribute;
 import com.example.machine_management.models.AttributeType;
+import com.example.machine_management.repository.MachineAttributeRepository;
 //repo
 import com.example.machine_management.repository.MachineRepository;
 
+@Service
 public class MachineAttributeOperationsService {
 
     private final MachineRepository machineRepo;
 
+    private final MachineAttributeRepository machineAttributeRepo;
+
     @Autowired
-    public MachineAttributeOperationsService(MachineRepository machineRepo) {
+    public MachineAttributeOperationsService(MachineRepository machineRepo, MachineAttributeRepository machineAttributeRepo) {
         this.machineRepo = machineRepo;
+        this.machineAttributeRepo = machineAttributeRepo;
     }
 
     /*
@@ -38,6 +47,22 @@ public class MachineAttributeOperationsService {
                 .filter(attr -> attr.getId().equals(attributeId))
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("Maschineattribut mit ID " + attributeId + " nicht gefunden."));
+    }
+
+    //helper to find machineAttributes lazy
+    private List<MachineAttribute> findMachineAttributesLazy(Integer machineId) {
+        List<MachineAttribute> machineAttributes = 
+           machineAttributeRepo.findByMachineId(machineId);
+        
+        return machineAttributes;
+    }
+
+    //helper to find machineAttributes eager
+    private List<MachineAttribute> findMachineAttributesEager(Integer machineId) {
+        List<MachineAttribute> machineAttributes = 
+           machineAttributeRepo.findAttributesWithValues(machineId);
+        
+        return machineAttributes;
     }
 
     /**
@@ -91,4 +116,14 @@ public class MachineAttributeOperationsService {
         ((MachineRepository)machineRepo).save(machine);
         return newAttribute;
     }
+
+    //lazy get - nur die attribute ohne values
+    public List<MachineAttribute> getMachineAttributesLazy(Integer machineId){
+        return findMachineAttributesLazy(machineId);
+    }
+
+    //eager get - mit values
+    public List<MachineAttribute> getMachineAttributesEager(Integer machineId){
+        return findMachineAttributesEager(machineId);
+    }   
 }

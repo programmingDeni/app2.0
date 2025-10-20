@@ -49,10 +49,10 @@ public class MachineAttributeController {
     public ResponseEntity<List<MachineAttributeDto>> getAllAttributes() {
         // 1. Get entities
         List<MachineAttribute> attributes = attributeService.getAllAttributes();
-
+        //TODO: eager und lazy
         // 2. Map and return
         return ResponseEntity.ok(attributes.stream()
-                .map(MachineAttributeMapper::toDto)
+                .map(MachineAttributeMapper::toDtoLazy)
                 .collect(Collectors.toList()));
     }
 
@@ -67,7 +67,7 @@ public class MachineAttributeController {
         MachineAttribute attribute = attributeService.getAttributeById(id);
 
         // 3. Map and return
-        return ResponseEntity.ok(MachineAttributeMapper.toDto(attribute));
+        return ResponseEntity.ok(MachineAttributeMapper.toDtoEager(attribute));
     }
 
     @PutMapping("/{id}")
@@ -83,7 +83,7 @@ public class MachineAttributeController {
         MachineAttribute updated = attributeService.updateAttribute(id, dto);
 
         // 3. Map and return
-        return ResponseEntity.ok(MachineAttributeMapper.toDto(updated));
+        return ResponseEntity.ok(MachineAttributeMapper.toDtoLazy(updated));
     }
 
     @DeleteMapping("/{id}")
