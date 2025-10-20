@@ -35,12 +35,8 @@ public class AttributeValue {
     @JoinColumn(name = "machine_attribute_id", nullable = false)
     private MachineAttribute machineAttribute;
 
-    @NotNull
-    @Column(nullable = false, name = "pruefungs_intervall")
-    private Integer pruefungsIntervall = 365; // Default 
-
-    //pastorpresent von wo importieren?
-    @PastOrPresent 
+    // pastorpresent von wo importieren?
+    @PastOrPresent
     @Column(name = "zuletzt_geprueft")
     private LocalDateTime zuletztGeprueft;
 
@@ -51,35 +47,35 @@ public class AttributeValue {
     @PrePersist
     public void initTimestamps() {
         LocalDateTime now = LocalDateTime.now();
-        if (zuletztGeprueft == null) zuletztGeprueft = now;
-        if (zuletztGetauscht == null) zuletztGetauscht = now;
+        if (zuletztGeprueft == null)
+            zuletztGeprueft = now;
+        if (zuletztGetauscht == null)
+            zuletztGetauscht = now;
     }
 
+    protected AttributeValue() {
+    }
 
-
-
-
-    protected AttributeValue() {}
-
-    //Konstruktor mit Jahr
-    public AttributeValue(MachineAttribute machineAttribute, int year){
+    // Konstruktor mit Jahr
+    public AttributeValue(MachineAttribute machineAttribute, int year) {
         this.machineAttribute = machineAttribute;
         this.attributeValueYear = year;
         machineAttribute.getAttributeValues().add(this);
         attributeValue = "";
     }
 
-    //Initialisuerung mit Wert 
-    public AttributeValue (MachineAttribute machineAttribute, int year, String value, Integer pruefungsIntervall){
+    // Initialisuerung mit Wert
+    public AttributeValue(MachineAttribute machineAttribute, int year, String value, LocalDateTime zuletztGeprueft,
+            LocalDateTime zuletztGetauscht) {
         this(machineAttribute, year);
         this.attributeValue = value;
-        this.pruefungsIntervall = pruefungsIntervall;
+        this.zuletztGeprueft = zuletztGeprueft;
+        this.zuletztGetauscht = zuletztGetauscht;
     }
 
     public void setAttributeValue(String value) {
         this.attributeValue = value;
     }
-
 
     public void setAttributeValueYear(int year) {
         this.attributeValueYear = year;

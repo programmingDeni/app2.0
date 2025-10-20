@@ -1,6 +1,7 @@
 package com.example.machine_management.mapper;
 
 import java.util.stream.Collectors;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.machine_management.models.Machine;
@@ -19,7 +20,8 @@ public class MachineAttributeMapper {
                         .map(AttributeValueMapper::toDto)
                         .collect(Collectors.toList()),
                 attr.getMachineId(),
-                attr.getFromTemplate());
+                attr.isFromTemplate(),
+                attr.getPruefungsIntervall());
     }
 
     public static MachineAttributeDto toDtoLazy(MachineAttribute attr) {
@@ -27,16 +29,25 @@ public class MachineAttributeMapper {
                 attr.getId(),
                 attr.getAttributeName(),
                 attr.getType().toString(),
-                null,
+                new ArrayList<>(),
                 attr.getMachineId(),
-                attr.getFromTemplate());
+                attr.isFromTemplate(),
+                attr.getPruefungsIntervall());
     }
 
-    public static List<MachineAttributeDto> toDtoList(List<MachineAttribute> attributes) {
+    public static List<MachineAttributeDto> toDtoListLazy(List<MachineAttribute> attributes) {
         if (attributes == null)
             return null;
         return attributes.stream()
                 .map(MachineAttributeMapper::toDtoLazy)
+                .collect(Collectors.toList());
+    }
+
+    public static List<MachineAttributeDto> toDtoListEager(List<MachineAttribute> attributes) {
+        if (attributes == null)
+            return null;
+        return attributes.stream()
+                .map(MachineAttributeMapper::toDtoEager)
                 .collect(Collectors.toList());
     }
 

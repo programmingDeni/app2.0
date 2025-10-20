@@ -24,7 +24,8 @@ public class MachineTemplateOperationsService {
     private final MachineTemplateRepository machineTemplateRepository;
 
     @Autowired
-    public MachineTemplateOperationsService(MachineRepository machineRepo, MachineTemplateRepository machineTemplateRepository) {
+    public MachineTemplateOperationsService(MachineRepository machineRepo,
+            MachineTemplateRepository machineTemplateRepository) {
         this.machineRepo = machineRepo;
         this.machineTemplateRepository = machineTemplateRepository;
     }
@@ -37,51 +38,51 @@ public class MachineTemplateOperationsService {
      * 
      * @param dto CreateMachineFromTemplateDto mit machineName und machineTemplateId
      * @return Erstellte Machine mit Template und Attributen
-     * @throws NotFoundException wenn Template nicht gefunden
+     * @throws NotFoundException        wenn Template nicht gefunden
      * @throws IllegalArgumentException bei invaliden Daten
      */
     public Machine createMachineFromTemplate(CreateMachineFromTemplateDto dto) {
         Machine newMachine = new Machine(dto.machineName);
-        Machine saved = ((MachineRepository)machineRepo).save(newMachine);
+        Machine saved = ((MachineRepository) machineRepo).save(newMachine);
         return assignTemplate(saved.getId(), dto.machineTemplateId);
     }
 
-     /**
+    /**
      * Entfernt Template von einer Maschine.
      * Löscht auch alle Template-basierten Attribute.
      * 
      * @param machineId ID der Maschine
-     * @throws NotFoundException wenn Maschine nicht gefunden
+     * @throws NotFoundException        wenn Maschine nicht gefunden
      * @throws IllegalArgumentException wenn Maschine kein Template hat
      */
     public void removeTemplateFromMachine(Integer machineId) {
         // machine suchen sonst fehler werfen
-        Machine machine = ((MachineRepository)machineRepo).findById(machineId)
+        Machine machine = ((MachineRepository) machineRepo).findById(machineId)
                 .orElseThrow(() -> new NotFoundException("Maschine mit ID " + machineId + " nicht gefunden."));
-        // template? sonst fehler 
+        // template? sonst fehler
         if (machine.getMachineTemplate() == null) {
             throw new IllegalArgumentException("Maschine hat kein Template zugewiesen");
         }
-        //machine existiert und hat ein template
-        //setze template = null und entferne die tempalte attribute 
+        // machine existiert und hat ein template
+        // setze template = null und entferne die tempalte attribute
         machine.setMachineTemplate(null);
-        machine.getMachineAttributes().removeIf(attr -> attr.getFromTemplate());
+        machine.getMachineAttributes().removeIf(attr -> attr.isFromTemplate());
         // save
-        ((MachineRepository)machineRepo).save(machine);
+        ((MachineRepository) machineRepo).save(machine);
     }
 
     /**
      * Weist einer Maschine ein Template zu und kopiert dessen Attribute.
      * Lädt Maschine und Template mit allen notwendigen Relations.
      * 
-     * @param machineId ID der Maschine
+     * @param machineId  ID der Maschine
      * @param templateId ID des Templates
      * @return Aktualisierte Machine mit Template und kopierten Attributen
      * @throws NotFoundException wenn Machine oder Template nicht gefunden
      */
     public Machine assignTemplate(Integer machineId, Integer templateId) {
         // eager load
-        Machine machine = ((MachineRepository)machineRepo).findWithAllDataById(machineId)
+        Machine machine = ((MachineRepository) machineRepo).findWithAllDataById(machineId)
                 .orElseThrow(() -> new NotFoundException(
                         "[MachineService] assignTemplate(): Maschine mit ID " + machineId + " nicht gefunden."));
 
@@ -101,7 +102,7 @@ public class MachineTemplateOperationsService {
             machine.getMachineAttributes().add(machineAttr);
         }
 
-        return ((MachineRepository)machineRepo).save(machine);
+        return ((MachineRepository) machineRepo).save(machine);
     }
 
     /**
@@ -111,6 +112,6 @@ public class MachineTemplateOperationsService {
      * @return Liste der Maschinen mit diesem Template
      */
     public List<Machine> findByTemplate(MachineTemplate template) {
-        return ((MachineRepository)machineRepo).findByMachineTemplate(template);
+        return ((MachineRepository) machineRepo).findByMachineTemplate(template);
     }
 }

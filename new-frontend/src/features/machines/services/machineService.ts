@@ -57,33 +57,18 @@ export async function addMachineFromTemplate(
 
 export async function getMachineAttributesWithYearlyValues(machineId: number) {
   try {
-    // brauche auch die machinen attribute nicht nur die attribute values 
-    console.log("getMachineAttributesWithYearlyValues for machineId", machineId);
-    const response = await axios.get(`/api/machines/${machineId}/attribute-values`);
+    // brauche auch die machinen attribute nicht nur die attribute values
+    console.log(
+      "getMachineAttributesWithYearlyValues for machineId",
+      machineId
+    );
+    const response = await axios.get(
+      `/api/machines/${machineId}/attribute-values`
+    );
     console.log("response in service", response.data);
     return response.data;
   } catch (e) {
     throw new Error("Service Function wirft Fehler" + e);
-  }
-}
-
-export async function addMachineAttributeValue(
-  machineId: number,
-  attributeId: number,
-  attributeValue: string,
-  year: number
-) {
-  try {
-    console.log("addMachineAttributeValue");
-    const response = await axios.post(`/api/attribute-values`, {
-      machineId,
-      attributeId,
-      attributeValue,
-      attributeValueYear: year,
-    });
-    return response.data;
-  } catch (e) {
-    throw new Error("Service Function wirft Fehler");
   }
 }
 
@@ -243,12 +228,15 @@ export async function editMachineAttributeService(
       attributeType: machineAttribute.attributeType,
       // attributeValues: machineAttribute.attributeValues,
       machineId: machineAttribute.machineId,
-      fromTemplate: false,
+      fromTemplate: machineAttribute.fromTemplate,
+      pruefungsIntervall: machineAttribute.pruefungsIntervall,
     };
+    console.log("editMachineAttributeService payload", payload);
     const response = await axios.put(
       `/api/machines/${machineAttribute.machineId}/attributes/${machineAttribute.id}`,
       payload
     );
+    console.log("editMachineAttributeService response", response.data);
     return response.data;
   } catch (e) {
     throw e;

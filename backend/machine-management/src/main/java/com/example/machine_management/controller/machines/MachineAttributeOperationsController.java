@@ -38,7 +38,7 @@ public class MachineAttributeOperationsController extends AbstractMachineBaseCon
 
         MachineAttribute created = machineAttributeOperationsService.addMachineAttribute(id, dto);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(MachineAttributeMapper.toDto(created));
+                .body(MachineAttributeMapper.toDtoLazy(created));
     }
 
     @PutMapping("/{id}/attributes/{attributeId}")
@@ -51,7 +51,7 @@ public class MachineAttributeOperationsController extends AbstractMachineBaseCon
         }
 
         MachineAttribute updated = machineService.editMachineAttribute(machineId, attributeId, dto);
-        return ResponseEntity.ok(MachineAttributeMapper.toDto(updated));
+        return ResponseEntity.ok(MachineAttributeMapper.toDtoLazy(updated));
     }
 
     @DeleteMapping("/{id}/attributes/{attributeId}")
@@ -66,20 +66,29 @@ public class MachineAttributeOperationsController extends AbstractMachineBaseCon
         return ResponseEntity.noContent().build();
     }
 
-    //lazy loading der attribute einer maschine
+    // lazy loading der attribute einer maschine
     @GetMapping("/{machineId}/attributes")
-    public ResponseEntity<List<MachineAttributeDto>> getMachineAttributes(@PathVariable
-    Integer machineId){
-        //check ob id korrekt uebergeben wurde
-        if( machineId == null || machineId <= 0){
+    public ResponseEntity<List<MachineAttributeDto>> getMachineAttributes(@PathVariable Integer machineId) {
+        // check ob id korrekt uebergeben wurde
+        if (machineId == null || machineId <= 0) {
             throw new IllegalArgumentException("Invalid ID");
         }
-        //calle den service, lass die attribute holen 
-        List<MachineAttribute> attributes = machineAttributeOperationsService.getMachineAttributes(machineId);
-        //returne die gemappten dtos
-        return ResponseEntity.ok(MachineAttributeMapper.toDtoList(attributes));
+        // calle den service, lass die attribute holen
+        List<MachineAttribute> attributes = machineAttributeOperationsService.getMachineAttributesLazy(machineId);
+        // returne die gemappten dtos
+        return ResponseEntity.ok(MachineAttributeMapper.toDtoListLazy(attributes));
     }
-    
 
+    @GetMapping("/{machineId}/attributes/eager")
+    public ResponseEntity<List<MachineAttributeDto>> getMachineAttributesEager(@PathVariable Integer machineId) {
+        // check ob id korrekt uebergeben wurde
+        if (machineId == null || machineId <= 0) {
+            throw new IllegalArgumentException("Invalid ID");
+        }
+        // calle den service, lass die attribute holen
+        List<MachineAttribute> attributes = machineAttributeOperationsService.getMachineAttributesEager(machineId);
+        // returne die gemappten dtos
+        return ResponseEntity.ok(MachineAttributeMapper.toDtoListEager(attributes));
+    }
 
 }

@@ -18,14 +18,6 @@ export interface MachineAttributesAndYearlyValues {
   attributes: MachineAttribute[];
 }
 
-export interface AttributeValue {
-  id: number;
-  machineAttributeId: number;
-  machineId: number;
-  attributeValue: string;
-  attributeValueYear: number;
-}
-
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Machine Types (new)  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 import { Template } from "@/features/templates/types/template.types";
 
@@ -44,6 +36,16 @@ export interface MachineAttribute {
   attributeValues: AttributeValue[];
   fromTemplate: boolean;
   pruefungsIntervall?: number;
+  zuletztGeprueft?: string;
+  zuletztGetauscht?: string;
+}
+
+export interface AttributeValue {
+  id: number;
+  machineAttributeId: number;
+  machineId: number;
+  attributeValue: string;
+  attributeValueYear: number;
   zuletztGeprueft?: string;
   zuletztGetauscht?: string;
 }

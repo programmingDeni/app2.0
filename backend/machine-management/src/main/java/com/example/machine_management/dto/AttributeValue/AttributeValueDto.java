@@ -10,7 +10,6 @@ public class AttributeValueDto {
     public int attributeValueYear;
     public Integer machineAttributeId;
     public String attributeValue;
-    public Integer pruefungsIntervall;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     public LocalDateTime zuletztGeprueft;
 
@@ -27,14 +26,13 @@ public class AttributeValueDto {
         this.attributeValue = "";
     }
 
-    public AttributeValueDto(Integer id, int year, Integer machineAttributeId, 
-    String attributeValue, Integer pruefungsIntervall, 
-    LocalDateTime zuletztGeprueft, LocalDateTime zuletztGetauscht) {
+    public AttributeValueDto(Integer id, int year, Integer machineAttributeId,
+            String attributeValue,
+            LocalDateTime zuletztGeprueft, LocalDateTime zuletztGetauscht) {
         this.id = id;
         this.attributeValueYear = year;
         this.machineAttributeId = machineAttributeId;
         this.attributeValue = attributeValue;
-        this.pruefungsIntervall = pruefungsIntervall;
         this.zuletztGeprueft = zuletztGeprueft;
         this.zuletztGetauscht = zuletztGetauscht;
     }

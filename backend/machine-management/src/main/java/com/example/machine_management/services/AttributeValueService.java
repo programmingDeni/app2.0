@@ -3,6 +3,7 @@ package com.example.machine_management.services;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.text.AttributedCharacterIterator.Attribute;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,7 @@ public class AttributeValueService {
         return attributeValueRepository.findByMachineAttributeMachineId(machineId);
     }
 
+    // Attribute Value wird heir erstellt
     public AttributeValue createAttributeValue(CreateAttributeValueDto createAttributeValueDto) {
         // 1. existenz prüfung
         Machine machine = machineRepository.findById(createAttributeValueDto.machineId)
@@ -71,7 +73,7 @@ public class AttributeValueService {
         }
 
         AttributeValue toSave = new AttributeValue(attribute, createAttributeValueDto.attributeValueYear,
-                createAttributeValueDto.attributeValue, createAttributeValueDto.pruefungsIntervall);
+                createAttributeValueDto.attributeValue, LocalDateTime.now(), LocalDateTime.now());
 
         // 2. Speichern
         AttributeValue saved = attributeValueRepository.save(toSave);

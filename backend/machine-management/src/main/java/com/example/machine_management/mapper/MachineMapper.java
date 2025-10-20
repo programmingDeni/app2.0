@@ -18,7 +18,7 @@ public class MachineMapper implements EntityMapper<Machine, MachineDto> {
         if (dto.machineName == null || dto.machineName.trim().isEmpty()) {
             throw new IllegalArgumentException("Maschinenname darf nicht leer sein.");
         }
-        
+
         Machine machine = new Machine(dto.machineName);
         if (dto.attributes != null) {
             for (MachineAttributeDto attrDto : dto.attributes) {
@@ -38,7 +38,7 @@ public class MachineMapper implements EntityMapper<Machine, MachineDto> {
         return new MachineDto(
                 machine.getId(),
                 machine.getMachineName(),
-                MachineAttributeMapper.toDtoList(machine.getMachineAttributes()),
+                MachineAttributeMapper.toDtoListLazy(machine.getMachineAttributes()),
                 templateDto);
     }
 

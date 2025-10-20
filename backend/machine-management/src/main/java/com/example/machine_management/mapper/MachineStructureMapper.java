@@ -6,13 +6,12 @@ import com.example.machine_management.models.Machine;
 public class MachineStructureMapper {
 
     public static MachineStructureDto toDto(Machine machine) {
-        
+
         return new MachineStructureDto(
-            machine.getId(),
-            machine.getMachineName(),
-            machine.getMachineTemplate() != null ? machine.getMachineTemplate().getId() : null,
-            MachineAttributeMapper.toDtoList(machine.getMachineAttributes())
-        );
+                machine.getId(),
+                machine.getMachineName(),
+                machine.getMachineTemplate() != null ? machine.getMachineTemplate().getId() : null,
+                MachineAttributeMapper.toDtoListEager(machine.getMachineAttributes()));
     }
-    
+
 }

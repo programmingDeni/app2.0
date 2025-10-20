@@ -6,8 +6,11 @@ import java.util.List;
 import com.fasterxml.jackson.databind.annotation.JsonAppend.Attr;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class MachineAttribute {
 
     @Id
@@ -25,6 +28,10 @@ public class MachineAttribute {
     private Integer machineId;
 
     private boolean fromTemplate = false;
+
+    @NotNull
+    @Column(nullable = false, name = "pruefungs_intervall")
+    private Integer pruefungsIntervall = 365; // Default
 
     // Constructors
 
@@ -69,25 +76,13 @@ public class MachineAttribute {
         this.fromTemplate = fromTemplate;
     }
 
-    // Getter + Setter
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getAttributeName() {
-        return attributeName;
-    }
+    // Setter
 
     public void setAttributeName(String attributeName) {
         if (attributeName == null || attributeName.trim().isEmpty()) {
             throw new IllegalArgumentException("AttributeName darf nicht null oder leer sein");
         }
         this.attributeName = attributeName;
-    }
-
-    public Integer getMachineId() {
-        return machineId;
     }
 
     public void setMachineId(Integer newMachine) {
@@ -100,19 +95,11 @@ public class MachineAttribute {
         this.machineId = newMachine;
     }
 
-    public AttributeType getType() {
-        return type;
-    }
-
     public void setType(AttributeType type) {
         if (type == null) {
             throw new IllegalArgumentException("Type darf nicht null sein");
         }
         this.type = type;
-    }
-
-    public List<AttributeValue> getAttributeValues() {
-        return attributeValues;
     }
 
     public void setAttributeValues(List<AttributeValue> attributeValues) {
@@ -132,10 +119,6 @@ public class MachineAttribute {
             throw new IllegalArgumentException("AttributeValue darf nicht leer sein");
         }
         this.attributeValues.add(attributeValue);
-    }
-
-    public boolean getFromTemplate() {
-        return fromTemplate;
     }
 
     public void setFromTemplate(boolean fromTemplate) {
@@ -163,6 +146,10 @@ public class MachineAttribute {
             throw new IllegalArgumentException(
                     "Wert '" + value + "' ist nicht valid für Typ " + type);
         }
+    }
+
+    public void setPruefungsIntervall(Integer pruefungsIntervall) {
+        this.pruefungsIntervall = pruefungsIntervall;
     }
 
 }

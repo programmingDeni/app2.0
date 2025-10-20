@@ -2,11 +2,39 @@
 import axios from "@/services/axios";
 import { MachineAttribute } from "../types/machine.types";
 
-export async function getMachineAttributes(machineId: number) {
-    try {
-        const response = await axios.get<MachineAttribute[]>(`/api/machines/${machineId}/attributes`);
-        return response.data;
-    } catch (e) {
-        throw e;
-    }
+export async function getMachineAttributesLazy(machineId: number) {
+  try {
+    const response = await axios.get<MachineAttribute[]>(
+      `/api/machines/${machineId}/attributes`
+    );
+    return response.data;
+  } catch (e) {
+    throw e;
+  }
+}
+
+export async function getMachineAttributesEager(machineId: number) {
+  try {
+    const response = await axios.get<MachineAttribute[]>(
+      `/api/machines/${machineId}/attributes/eager`
+    );
+    return response.data;
+  } catch (e) {
+    throw e;
+  }
+}
+
+export async function addMachineAttributeService(
+  attribute: Partial<MachineAttribute>
+) {
+  try {
+    const machineId = attribute.machineId;
+    const response = await axios.post(
+      `/api/machines/${machineId}/attributes`,
+      attribute
+    );
+    return response.data;
+  } catch (e) {
+    throw e;
+  }
 }

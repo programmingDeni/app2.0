@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { MachineAttribute } from "../types/machine.types";
-import {
-  getMachineAttributesWithYearlyValues,
-  addMachineAttributeValue,
-} from "../services/machineService";
+import { getMachineAttributesWithYearlyValues } from "../services/machineService";
+
+import { addAttributeValue } from "../services/attributeValueService";
 
 export function useMachineAttributesPresenter(machineId: number) {
   const [machineName, setMachineName] = useState<string>("");
@@ -35,12 +34,12 @@ export function useMachineAttributesPresenter(machineId: number) {
     year: number
   ) => {
     //api call
-    const newAttributeValueYear = await addMachineAttributeValue(
+    const newAttributeValueYear = await addAttributeValue({
       machineId,
-      attributeId,
+      machineAttributeId: attributeId,
       attributeValue,
-      year
-    );
+      attributeValueYear: year,
+    });
     //state update
     const attr = attributes.find((attr) => attr.id === attributeId);
     if (!attr) return;
