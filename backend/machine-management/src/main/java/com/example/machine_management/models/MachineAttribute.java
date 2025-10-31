@@ -25,6 +25,7 @@ public class MachineAttribute {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "machineAttribute")
     private List<AttributeValue> attributeValues = new ArrayList<>();
 
+    // TODO: hier auf iene machine verweisen nicht auf die ID
     private Integer machineId;
 
     private boolean fromTemplate = false;

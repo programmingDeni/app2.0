@@ -23,6 +23,9 @@ public class Machine {
     @JoinColumn(name = "template_id")
     private MachineTemplate machineTemplate;
 
+    // TODO hier user
+    User user;
+
     // Constructors
     public Machine() {
     }

@@ -28,8 +28,14 @@ export default function MachineListView() {
   const addMachineMutation = useAddMachine();
 
   const handleDeleteMachine = async (machineId: number) => {
-    await deleteMachineMutation.mutateAsync(machineId);
-    refetch();
+    const isConfirmed = window.confirm(
+      "Sind Sie sicher, dass Sie diese Maschine löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+    );
+
+    if (isConfirmed) {
+      await deleteMachineMutation.mutateAsync(machineId);
+      refetch();
+    }
   };
 
   const handleAddMachine = async (machine: Partial<Machine>) => {
