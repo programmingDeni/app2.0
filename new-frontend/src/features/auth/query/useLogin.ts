@@ -43,7 +43,7 @@ export function useLogin() {
   return useMutation({
     mutationFn: ({ email, password }: LoginInput) => login(email, password),
 
-    onSuccess: (response) => {
+    onSuccess: () => {
       // Update React Query cache with user data
       // Token is already stored by authService.login()
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
