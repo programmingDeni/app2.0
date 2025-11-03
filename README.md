@@ -11,7 +11,7 @@ cd app2.0
 
 # Umgebungsvariablen einrichten
 cp .env.example .env
-# .env bearbeiten: POSTGRES_PASSWORD und JWT_SECRET anpassen
+# .env bearbeiten: POSTGRES_USER, POSTGRES_PASSWORD und JWT_SECRET anpassen
 
 # Starten
 docker-compose up
@@ -32,9 +32,9 @@ docker-compose up
 
 ## ✨ Key Features
 
-- Manage machines and associated attributes
-- Track last maintenance and inspection dates
-- Initialize machines from reusable templates (e.g., multiple hoists with predefined attributes)
+- JWT-based Authentication & Authorization
+- Machine Management with Templates
+- Audit Trail (created/modified tracking)
 - Maintain machine history and status in a structured, scalable way
 
 ## 🛠️ Backend
@@ -43,15 +43,18 @@ The backend is a layered Spring Boot application that handles all core business 
 
 **Structure:**
 
+- `Config` – Application configuration
 - `Controller` – Exposes RESTful endpoints, entities converted to json by mappers here
   - `MachineController`: Manage machines and their attributes
   - `TemplateController`: Manage machine templates and attribute templates
-- `Service` – Business logic, works with entities
-- `Repository` – Data access (JPA)
-- `Model` – Domain entities
 - `DTO` – Data transfer objects
+- `Exception` – Custom exceptions
 - `Mapper` – DTO ↔ Entity mapping
-- `DB` – PostgreSQL schema
+- `Model` – Domain entities
+- `Repository` – Data access (JPA)
+- `Security` - JWT Authentication
+- `Service` – Business logic, works with entities
+- `Util`
 
 ## 🖥️ Frontend
 
