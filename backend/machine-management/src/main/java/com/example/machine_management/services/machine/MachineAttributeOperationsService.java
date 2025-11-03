@@ -1,6 +1,7 @@
 package com.example.machine_management.services.machine;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import com.example.machine_management.dto.MachineAttributes.MachineAttributeDto;
 //Exception
 import com.example.machine_management.exceptions.NotFoundException;
 import com.example.machine_management.mapper.AttributeValueMapper;
+import com.example.machine_management.mapper.MachineAttributeMapper;
 //models
 import com.example.machine_management.models.Machine;
 import com.example.machine_management.models.MachineAttribute;
@@ -20,6 +22,9 @@ import com.example.machine_management.models.AttributeValue;
 import com.example.machine_management.repository.MachineAttributeRepository;
 //repo
 import com.example.machine_management.repository.MachineRepository;
+import com.example.machine_management.services.GenericCrudService;
+
+import com.example.machine_management.util.SecurityUtils;
 
 @Service
 public class MachineAttributeOperationsService {
@@ -30,47 +35,43 @@ public class MachineAttributeOperationsService {
 
     @Autowired
     public MachineAttributeOperationsService(MachineRepository machineRepo,
-            MachineAttributeRepository machineAttributeRepo) {
+            MachineAttributeRepository machineAttributeRepo, MachineAttributeMapper mapper) {
         this.machineRepo = machineRepo;
         this.machineAttributeRepo = machineAttributeRepo;
     }
 
-    /*
-     * Attribute-bezogene Operationen
+    // ============= Cross-Entity Operations (Machine + Attribute) =============
+
+    /**
+     * Fügt ein neues Attribut zu einer Maschine hinzu.
+     * Prüft userId-Ownership der Maschine.
+     *
+     * @param machineId ID der Maschine
+     * @param dto       DTO mit Attributdaten
+     * @return Neu erstelltes MachineAttribute
+     * @throws NotFoundException wenn Maschine nicht gefunden
      */
-    // Helper method to find machine and validate
-    private Machine findMachineWithAttributes(Integer machineId) {
-        return ((MachineRepository) machineRepo).findWithAllDataById(machineId)
-                .orElseThrow(() -> new NotFoundException("Maschine mit ID " + machineId + " nicht gefunden."));
-    }
+    public MachineAttribute addMachineAttribute(Integer machineId, CreateMachineAttributeDto dto) {
+        Integer userId = SecurityUtils.getCurrentUserId();
+        Machine machine = findMachineWithAttributes(machineId);
 
-    // Helper method to find attribute in machine
-    private MachineAttribute findAttributeInMachine(Machine machine, Integer attributeId) {
-        return machine.getMachineAttributes()
-                .stream()
-                .filter(attr -> attr.getId().equals(attributeId))
-                .findFirst()
-                .orElseThrow(
-                        () -> new NotFoundException("Maschineattribut mit ID " + attributeId + " nicht gefunden."));
-    }
+        MachineAttribute newAttribute = new MachineAttribute(
+                machineId,
+                dto.attributeName,
+                AttributeType.valueOf(dto.attributeType),
+                false); // not from template
 
-    // helper to find machineAttributes lazy
-    private List<MachineAttribute> findMachineAttributesLazy(Integer machineId) {
-        List<MachineAttribute> machineAttributes = machineAttributeRepo.findByMachineId(machineId);
+        newAttribute.setUserId(userId); // Set userId on new attribute
 
-        return machineAttributes;
-    }
-
-    // helper to find machineAttributes eager
-    private List<MachineAttribute> findMachineAttributesEager(Integer machineId) {
-        List<MachineAttribute> machineAttributes = machineAttributeRepo.findAttributesWithValues(machineId);
-
-        return machineAttributes;
+        machine.getMachineAttributes().add(newAttribute);
+        machineRepo.save(machine);
+        return newAttribute;
     }
 
     /**
      * Entfernt ein Attribut von einer Maschine.
-     * 
+     * Prüft userId-Ownership.
+     *
      * @param machineId   ID der Maschine
      * @param attributeId ID des zu löschenden Attributs
      * @throws NotFoundException wenn Maschine oder Attribut nicht gefunden
@@ -80,22 +81,24 @@ public class MachineAttributeOperationsService {
         findAttributeInMachine(machine, attributeId); // Verify attribute exists
 
         machine.getMachineAttributes().removeIf(attr -> attr.getId().equals(attributeId));
-        ((MachineRepository) machineRepo).save(machine);
+        machineRepo.save(machine);
     }
 
     /**
      * Bearbeitet ein Attribut einer Maschine.
-     * 
+     * Prüft userId-Ownership.
+     *
      * @param machineId   ID der Maschine
      * @param attributeId ID des zu bearbeitenden Attributs
      * @param dto         DTO mit den neuen Attributwerten
-     * @return Aktualisierte Machine
+     * @return Aktualisiertes MachineAttribute
      * @throws NotFoundException        wenn Maschine oder Attribut nicht gefunden
      * @throws IllegalArgumentException bei invaliden Attributdaten
      */
     public MachineAttribute editMachineAttribute(Integer machineId, Integer attributeId, MachineAttributeDto dto) {
         Machine machine = findMachineWithAttributes(machineId);
         MachineAttribute attribute = findAttributeInMachine(machine, attributeId);
+
         if (dto.attributeName != null) {
             attribute.setAttributeName(dto.attributeName);
         }
@@ -116,34 +119,56 @@ public class MachineAttributeOperationsService {
              * attribute.setAttributeValues(mappedValues);
              */
         }
-        // ((MachineRepository) machineRepo).save(machine);
+
         machineAttributeRepo.save(attribute);
         return attribute;
     }
 
-    // Add attribute to machine
-    public MachineAttribute addMachineAttribute(Integer machineId, CreateMachineAttributeDto dto) {
-        Machine machine = findMachineWithAttributes(machineId);
-
-        MachineAttribute newAttribute = new MachineAttribute(
-                machineId,
-                dto.attributeName,
-                AttributeType.valueOf(dto.attributeType),
-                false // not from template
-        );
-
-        machine.getMachineAttributes().add(newAttribute);
-        ((MachineRepository) machineRepo).save(machine);
-        return newAttribute;
-    }
-
-    // lazy get - nur die attribute ohne values
+    /**
+     * Lädt Attribute einer Maschine (lazy - ohne AttributeValues).
+     * Filtert nach userId.
+     *
+     * @param machineId ID der Maschine
+     * @return Liste der MachineAttributes ohne Values
+     */
     public List<MachineAttribute> getMachineAttributesLazy(Integer machineId) {
-        return findMachineAttributesLazy(machineId);
+        Integer userId = SecurityUtils.getCurrentUserId();
+        return machineAttributeRepo.findByMachineIdAndUserId(machineId, userId);
     }
 
-    // eager get - mit values
+    /**
+     * Lädt Attribute einer Maschine (eager - mit AttributeValues).
+     * Filtert nach userId.
+     *
+     * @param machineId ID der Maschine
+     * @return Liste der MachineAttributes mit Values
+     */
     public List<MachineAttribute> getMachineAttributesEager(Integer machineId) {
-        return findMachineAttributesEager(machineId);
+        Integer userId = SecurityUtils.getCurrentUserId();
+        return machineAttributeRepo.findAttributesWithValuesByMachineIdAndUserId(machineId, userId);
     }
+
+    // ============= Helper Methods =============
+
+    /**
+     * Helper method to find machine with attributes and validate userId ownership.
+     */
+    private Machine findMachineWithAttributes(Integer machineId) {
+        Integer userId = SecurityUtils.getCurrentUserId();
+        return machineRepo.findWithAllDataByIdAndUserId(machineId, userId)
+                .orElseThrow(() -> new NotFoundException("Maschine mit ID " + machineId + " nicht gefunden."));
+    }
+
+    /**
+     * Helper method to find attribute in machine.
+     */
+    private MachineAttribute findAttributeInMachine(Machine machine, Integer attributeId) {
+        return machine.getMachineAttributes()
+                .stream()
+                .filter(attr -> attr.getId().equals(attributeId))
+                .findFirst()
+                .orElseThrow(
+                        () -> new NotFoundException("Maschineattribut mit ID " + attributeId + " nicht gefunden."));
+    }
+
 }

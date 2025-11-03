@@ -11,11 +11,14 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class MachineAttribute {
+public class MachineAttribute extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(name = "user_id", nullable = false)
+    private Integer userId;
 
     private String attributeName;
 
@@ -153,4 +156,7 @@ public class MachineAttribute {
         this.pruefungsIntervall = pruefungsIntervall;
     }
 
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
 }

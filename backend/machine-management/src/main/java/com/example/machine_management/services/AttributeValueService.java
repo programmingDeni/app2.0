@@ -1,8 +1,6 @@
 package com.example.machine_management.services;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.text.AttributedCharacterIterator.Attribute;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,53 +17,45 @@ import com.example.machine_management.mapper.AttributeValueMapper;
 import com.example.machine_management.models.Machine;
 import com.example.machine_management.models.MachineAttribute;
 import com.example.machine_management.models.AttributeValue;
+import com.example.machine_management.util.SecurityUtils;
 
 @Service
-public class AttributeValueService {
+public class AttributeValueService extends GenericCrudService<AttributeValue, Integer, AttributeValueDto> {
+
+    private final AttributeValueRepository attributeValueRepository;
+    private final MachineAttributeRepository machineAttributeRepository;
+    private final MachineRepository machineRepository;
 
     @Autowired
-    private AttributeValueRepository attributeValueRepository;
-
-    @Autowired
-    private MachineAttributeRepository machineAttributeRepository;
-
-    @Autowired
-    private MachineRepository machineRepository;
-
-    // CRUD
-    public List<AttributeValue> getAllAttributeValues() {
-        return attributeValueRepository.findAll();
+    public AttributeValueService(
+            AttributeValueRepository attributeValueRepository,
+            AttributeValueMapper mapper,
+            MachineAttributeRepository machineAttributeRepository,
+            MachineRepository machineRepository) {
+        super(attributeValueRepository, mapper);
+        this.attributeValueRepository = attributeValueRepository;
+        this.machineAttributeRepository = machineAttributeRepository;
+        this.machineRepository = machineRepository;
     }
 
-    public AttributeValue getAttributeValueById(Integer id) {
-        return attributeValueRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Attributwert mit ID " + id + " nicht gefunden."));
-    }
+    // ============= Specialized Methods =============
 
-    public List<AttributeValue> getAttributeValuesByMachineAttributeId(Integer attributeId) {
-        return attributeValueRepository.findByMachineAttributeId(attributeId);
-    }
-
-    public List<AttributeValue> getAttributeValuesByYear(Integer year) {
-        return attributeValueRepository.findAllByAttributeValueYear(year);
-    }
-
-    public List<AttributeValue> getAttributeValuesByMachineId(Integer machineId) {
-        return attributeValueRepository.findByMachineAttributeMachineId(machineId);
-    }
-
-    // Attribute Value wird heir erstellt
+    // Attribute Value wird hier erstellt - mit ownership checks
     public AttributeValue createAttributeValue(CreateAttributeValueDto createAttributeValueDto) {
-        // 1. existenz prüfung
-        Machine machine = machineRepository.findById(createAttributeValueDto.machineId)
+        Integer userId = SecurityUtils.getCurrentUserId();
+
+        // 1. Verify machine ownership
+        Machine machine = machineRepository.findByIdAndUserId(createAttributeValueDto.machineId, userId)
                 .orElseThrow(() -> new NotFoundException(
                         "Maschine mit ID " + createAttributeValueDto.machineId + " nicht gefunden."));
 
-        MachineAttribute attribute = machineAttributeRepository.findById(createAttributeValueDto.attributeId)
+        // 2. Verify attribute ownership
+        MachineAttribute attribute = machineAttributeRepository
+                .findByIdAndUserId(createAttributeValueDto.attributeId, userId)
                 .orElseThrow(() -> new NotFoundException(
                         "Attribut mit ID " + createAttributeValueDto.attributeId + " nicht gefunden."));
 
-        // Optional: Prüfen, ob das Attribut zur Maschine gehört
+        // 3. Prüfen, ob das Attribut zur Maschine gehört
         if (!attribute.getMachineId().equals(machine.getId())) {
             throw new IllegalArgumentException(
                     "Attribut mit ID " + createAttributeValueDto.attributeId + " gehört nicht zur Maschine mit ID "
@@ -74,19 +64,21 @@ public class AttributeValueService {
 
         AttributeValue toSave = new AttributeValue(attribute, createAttributeValueDto.attributeValueYear,
                 createAttributeValueDto.attributeValue, LocalDateTime.now(), LocalDateTime.now());
+        toSave.setUserId(userId);
 
-        // 2. Speichern
+        // 4. Speichern
         AttributeValue saved = attributeValueRepository.save(toSave);
         return saved;
     }
 
+    // Specialized update logic for year-based values
     public AttributeValue updateAttributeValue(AttributeValueDto attributeValueDto) {
-        // MachineAttribute attribute = machineAttributeRepository.findBy
-        // attributeValueDto.machineAttributeId;
+        Integer userId = SecurityUtils.getCurrentUserId();
 
-        // 1. Existenzprüfung
-        MachineAttribute existingAttribute = machineAttributeRepository.findById(attributeValueDto.machineAttributeId)
-                .orElseThrow(() -> new IllegalArgumentException("MachineAttribute not found"));
+        // 1. Verify attribute ownership
+        MachineAttribute existingAttribute = machineAttributeRepository
+                .findByIdAndUserId(attributeValueDto.machineAttributeId, userId)
+                .orElseThrow(() -> new NotFoundException("MachineAttribute not found"));
 
         int year = attributeValueDto.attributeValueYear;
         String value = attributeValueDto.attributeValue;
@@ -98,14 +90,23 @@ public class AttributeValueService {
         AttributeValue toSave;
 
         if (existingValueOpt.isPresent()) {
-            // 3. Wert aktualisieren
             AttributeValue existingValue = existingValueOpt.get();
+            // Verify ownership
+            if (!existingValue.getUserId().equals(userId)) {
+                throw new NotFoundException("AttributeValue not found");
+            }
+            // 3. Wert aktualisieren
             existingValue.setAttributeValue(value);
+            existingValue.setZuletztGeprueft(attributeValueDto.zuletztGeprueft);
+            existingValue.setZuletztGetauscht(attributeValueDto.zuletztGetauscht);
             toSave = existingValue;
         } else {
             // 4. Neuer Wert
             toSave = new AttributeValue(existingAttribute, year);
             toSave.setAttributeValue(value);
+            toSave.setZuletztGeprueft(attributeValueDto.zuletztGeprueft);
+            toSave.setZuletztGetauscht(attributeValueDto.zuletztGetauscht);
+            toSave.setUserId(userId);
         }
 
         // 5. Speichern
@@ -113,10 +114,36 @@ public class AttributeValueService {
         return saved;
     }
 
-    public void deleteAttributeValue(Integer id) {
-        if (!attributeValueRepository.existsById(id)) {
-            new NotFoundException("Attributwert mit ID " + id + " nicht gefunden.");
-        }
-        attributeValueRepository.deleteById(id);
+    // ============= Implementierung der abstrakten Methoden aus GenericCrudService
+    // =============
+
+    @Override
+    protected AttributeValue updateEntity(AttributeValue existingEntity, AttributeValueDto dto) {
+        existingEntity.setAttributeValueYear(dto.attributeValueYear);
+        existingEntity.setAttributeValue(dto.attributeValue);
+        existingEntity.setZuletztGeprueft(dto.zuletztGeprueft);
+        existingEntity.setZuletztGetauscht(dto.zuletztGetauscht);
+        return existingEntity;
     }
+
+    @Override
+    protected List<AttributeValue> findAllByUserId(Integer userId) {
+        return attributeValueRepository.findByUserId(userId);
+    }
+
+    @Override
+    protected Optional<AttributeValue> findByIdAndUserId(Integer id, Integer userId) {
+        return attributeValueRepository.findByIdAndUserId(id, userId);
+    }
+
+    @Override
+    protected void setUserId(AttributeValue entity, Integer userId) {
+        entity.setUserId(userId);
+    }
+
+    public List<AttributeValue> getAttributeValuesByMachineId(Integer machineId) {
+        Integer userId = SecurityUtils.getCurrentUserId();
+        return attributeValueRepository.findByMachineAttributeMachineIdAndUserId(machineId, userId);
+    }
+
 }

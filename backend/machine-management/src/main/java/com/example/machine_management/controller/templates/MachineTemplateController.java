@@ -15,7 +15,7 @@ import org.springframework.http.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.example.machine_management.models.AttributeInTemplate;
+import com.example.machine_management.models.TemplateAttribute;
 import com.example.machine_management.models.MachineTemplate;
 import com.example.machine_management.mapper.AttributeTemplateMapper;
 import com.example.machine_management.mapper.MachineStructureMapper;
@@ -27,8 +27,18 @@ import com.example.machine_management.mapper.TemplateAttributes.TemplateAttribut
 @CrossOrigin(origins = "http://localhost:3000")
 public class MachineTemplateController {
 
+    private final MachineTemplateService templateService;
+    private final MachineTemplateMapper machineTemplateMapper;
+    private final TemplateAttributeMapper templateAttributeMapper;
+
     @Autowired
-    private MachineTemplateService templateService;
+    public MachineTemplateController(
+            MachineTemplateService templateService,
+            MachineTemplateMapper machineTemplateMapper, TemplateAttributeMapper templateAttributeMapper) {
+        this.templateService = templateService;
+        this.machineTemplateMapper = machineTemplateMapper;
+        this.templateAttributeMapper = templateAttributeMapper;
+    }
 
     @PostMapping
     public ResponseEntity<MachineTemplateDto> createTemplate(@RequestBody MachineTemplateDto dto) {
@@ -42,7 +52,7 @@ public class MachineTemplateController {
 
         // 3. Map and return
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(MachineTemplateMapper.toDto(created));
+                .body(machineTemplateMapper.toDto(created));
     }
 
     // lazy loading
@@ -53,7 +63,7 @@ public class MachineTemplateController {
 
         // 2. Map and return
         return ResponseEntity.ok(templates.stream()
-                .map(MachineTemplateMapper::toDtoLazy)
+                .map(machineTemplateMapper::toDtoLazy)
                 .collect(Collectors.toList()));
     }
 
@@ -64,7 +74,7 @@ public class MachineTemplateController {
 
         // 2. Map and return
         return ResponseEntity.ok(templates.stream()
-                .map(MachineTemplateMapper::toDto)
+                .map(machineTemplateMapper::toDto)
                 .collect(Collectors.toList()));
     }
 
@@ -79,7 +89,7 @@ public class MachineTemplateController {
         MachineTemplate template = templateService.getTemplateById(id);
 
         // 3. Map and return
-        return ResponseEntity.ok(MachineTemplateMapper.toDto(template));
+        return ResponseEntity.ok(machineTemplateMapper.toDto(template));
     }
 
     @PutMapping("/{id}")
@@ -95,7 +105,7 @@ public class MachineTemplateController {
         MachineTemplate updated = templateService.updateTemplate(id, dto);
 
         // 3. Map and return
-        return ResponseEntity.ok(MachineTemplateMapper.toDto(updated));
+        return ResponseEntity.ok(machineTemplateMapper.toDto(updated));
     }
 
     @DeleteMapping("/{id}")
@@ -128,11 +138,11 @@ public class MachineTemplateController {
         }
 
         // Service call um das / die attribute zu erstellen
-        List<AttributeInTemplate> created = templateService.addAttributesToTemplate(templateId, attributes);
+        List<TemplateAttribute> created = templateService.addAttributesToTemplate(templateId, attributes);
 
         // Erstellte Attribute in Dtos umwandeln
         List<TemplateAttributeDto> dtos = created.stream()
-                .map(TemplateAttributeMapper::toDto)
+                .map(templateAttributeMapper::toDto)
                 .collect(Collectors.toList());
         // Zurückgeben
         return ResponseEntity.status(HttpStatus.CREATED).body(dtos);
@@ -148,10 +158,10 @@ public class MachineTemplateController {
         }
 
         // Service call um das / die attribute zu verändern
-        AttributeInTemplate updated = templateService.updateTemplateAttribute(templateId, attributeId, dto);
+        TemplateAttribute updated = templateService.updateTemplateAttribute(templateId, attributeId, dto);
 
         // Erstellte Attribute in Dtos umwandeln
-        return ResponseEntity.status(HttpStatus.OK).body(TemplateAttributeMapper.toDto(updated));
+        return ResponseEntity.status(HttpStatus.OK).body(templateAttributeMapper.toDto(updated));
     }
 
     @DeleteMapping("/{templateId}/attributes/{attributeId}")

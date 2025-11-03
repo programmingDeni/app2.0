@@ -47,17 +47,22 @@ export default function MachineListView() {
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error</div>;
-  if (machines.length === 0) return <div>No Machines</div>;
+  //if (machines.length === 0) return <div>No Machines</div>;
 
   return (
     <div style={{ textAlign: "center", width: "100%" }}>
-      {machines.map((machine) => (
-        <MachineCard
-          key={machine.id}
-          machine={machine}
-          onDelete={handleDeleteMachine}
-        />
-      ))}
+      {machines.length === 0 ? (
+        <div>Keine Maschinen vorhanden</div>
+      ) : (
+        machines.map((machine) => (
+          <MachineCard
+            key={machine.id}
+            machine={machine}
+            onDelete={handleDeleteMachine}
+          />
+        ))
+      )}
+
       <ToggleableSection
         toggleLabel="Add Machine"
         open={showAddMachineForm}

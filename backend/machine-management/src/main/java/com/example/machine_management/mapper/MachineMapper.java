@@ -3,15 +3,27 @@ package com.example.machine_management.mapper;
 import com.example.machine_management.dto.Machine.MachineDto;
 import com.example.machine_management.dto.MachineAttributes.MachineAttributeDto;
 import com.example.machine_management.dto.MachineTemplates.MachineTemplateDto;
-import com.example.machine_management.models.AttributeInTemplate;
+import com.example.machine_management.models.TemplateAttribute;
 import com.example.machine_management.models.Machine;
 import com.example.machine_management.models.MachineAttribute;
 import com.example.machine_management.models.MachineTemplate;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MachineMapper implements EntityMapper<Machine, MachineDto> {
+
+    private final MachineTemplateMapper machineTemplateMapper;
+    private final MachineAttributeMapper machineAttributeMapper;
+
+    @Autowired
+    public MachineMapper(
+            MachineTemplateMapper machineTemplateMapper,
+            MachineAttributeMapper machineAttributeMapper) {
+        this.machineTemplateMapper = machineTemplateMapper;
+        this.machineAttributeMapper = machineAttributeMapper;
+    }
 
     @Override
     public Machine fromDto(MachineDto dto) {
@@ -22,7 +34,7 @@ public class MachineMapper implements EntityMapper<Machine, MachineDto> {
         Machine machine = new Machine(dto.machineName);
         if (dto.attributes != null) {
             for (MachineAttributeDto attrDto : dto.attributes) {
-                MachineAttribute attr = MachineAttributeMapper.toEntity(attrDto, dto.id);
+                MachineAttribute attr = machineAttributeMapper.toEntity(attrDto, dto.id);
                 machine.addAttribute(attr);
             }
         }
@@ -32,13 +44,13 @@ public class MachineMapper implements EntityMapper<Machine, MachineDto> {
     @Override
     public MachineDto toDto(Machine machine) {
         MachineTemplateDto templateDto = machine.getMachineTemplate() != null
-                ? MachineTemplateMapper.toDto(machine.getMachineTemplate())
+                ? machineTemplateMapper.toDto(machine.getMachineTemplate())
                 : null;
 
         return new MachineDto(
                 machine.getId(),
                 machine.getMachineName(),
-                MachineAttributeMapper.toDtoListLazy(machine.getMachineAttributes()),
+                machineAttributeMapper.toDtoListLazy(machine.getMachineAttributes()),
                 templateDto);
     }
 

@@ -6,9 +6,12 @@ import com.example.machine_management.dto.Machine.LazyMachineDto;
 import com.example.machine_management.dto.Machine.MachineDto;
 import com.example.machine_management.dto.MachineStructureDto;
 import com.example.machine_management.mapper.LazyMachineMapper;
+import com.example.machine_management.mapper.MachineMapper;
 import com.example.machine_management.mapper.MachineStructureMapper;
 import com.example.machine_management.models.Machine;
+import com.example.machine_management.services.machine.MachineService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +19,18 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/machines")
 public class MachineTemplateOperationsController extends AbstractMachineBaseController {
+
+    private final MachineService machineService;
+    private final MachineMapper machineMapper;
+    private final MachineStructureMapper machineStructureMapper;
+
+    @Autowired
+    public MachineTemplateOperationsController(MachineService machineService, MachineMapper machineMapper,
+            MachineStructureMapper machineStructureMapper) {
+        this.machineService = machineService;
+        this.machineMapper = machineMapper;
+        this.machineStructureMapper = machineStructureMapper;
+    }
 
     @PostMapping("/from-template")
     public ResponseEntity<LazyMachineDto> createMachineFromTemplate(
@@ -36,7 +51,7 @@ public class MachineTemplateOperationsController extends AbstractMachineBaseCont
         }
 
         Machine machine = machineService.findById(id);
-        return ResponseEntity.ok(MachineStructureMapper.toDto(machine));
+        return ResponseEntity.ok(machineStructureMapper.toDto(machine));
     }
 
     @PutMapping("/{id}/template/{templateId}")

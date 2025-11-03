@@ -9,6 +9,7 @@ import { addAttributeValue } from "../services/attributeValueService";
 // query hook
 export const useAttributeValuesQuery = (machineId: string) => {
   // return useQuery(["attributeValues", machineId], () => getAttributeValues(machineId));
+  //TODO: getAttributeValuesByMachineId
 };
 
 export const useAddAttributeValue = () => {

@@ -28,7 +28,12 @@ public class UserService {
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // created bby setzen
+        savedUser.setCreatedBy(savedUser.getId());
+
+        return savedUser;
     }
 
     // User nach email suchen

@@ -18,14 +18,22 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:3000")
 public class AttributeValueController {
 
+    private final AttributeValueService attributeValueService;
+    private final AttributeValueMapper attributeValueMapper;
+
     @Autowired
-    private AttributeValueService attributeValueService;
+    public AttributeValueController(
+            AttributeValueService attributeValueService,
+            AttributeValueMapper attributeValueMapper) {
+        this.attributeValueService = attributeValueService;
+        this.attributeValueMapper = attributeValueMapper;
+    }
 
     @PostMapping
     public ResponseEntity<AttributeValueDto> createAttributeValue(@RequestBody CreateAttributeValueDto dto) {
         // Attribute Values werden nur aus einem bestehenden Attribut heraus erstellt.
 
-        // 1. Validate // mehr valiudation?
+        // 1. Validate
         if (dto == null) {
             throw new IllegalArgumentException("Invalid attribute value data");
         }
@@ -35,18 +43,18 @@ public class AttributeValueController {
 
         // 3. Map to DTO and return
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(AttributeValueMapper.toDto(created));
+                .body(attributeValueMapper.toDto(created));
 
     }
 
     @GetMapping
     public ResponseEntity<List<AttributeValueDto>> getAllAttributeValues() {
-        // 1. Get entities
-        List<AttributeValue> values = attributeValueService.getAllAttributeValues();
+        // 1. Get entities (uses inherited method with userId filtering)
+        List<AttributeValue> values = attributeValueService.findAll();
 
         // 2. Map and return
         return ResponseEntity.ok(values.stream()
-                .map(AttributeValueMapper::toDto)
+                .map(attributeValueMapper::toDto)
                 .collect(Collectors.toList()));
     }
 
@@ -57,27 +65,11 @@ public class AttributeValueController {
             throw new IllegalArgumentException("Invalid ID");
         }
 
-        // 2. Get entity
-        AttributeValue value = attributeValueService.getAttributeValueById(id);
+        // 2. Get entity (uses inherited method with userId filtering)
+        AttributeValue value = attributeValueService.findById(id);
 
         // 3. Map and return
-        return ResponseEntity.ok(AttributeValueMapper.toDto(value));
-    }
-
-    @GetMapping("/by-attribute/{attributeId}")
-    public ResponseEntity<List<AttributeValueDto>> getByAttributeId(@PathVariable Integer attributeId) {
-        // 1. Validate
-        if (attributeId == null || attributeId <= 0) {
-            throw new IllegalArgumentException("Invalid attribute ID");
-        }
-
-        // 2. Get entities
-        List<AttributeValue> values = attributeValueService.getAttributeValuesByMachineAttributeId(attributeId);
-
-        // 3. Map and return
-        return ResponseEntity.ok(values.stream()
-                .map(AttributeValueMapper::toDto)
-                .collect(Collectors.toList()));
+        return ResponseEntity.ok(attributeValueMapper.toDto(value));
     }
 
     @PutMapping("/{id}")
@@ -89,11 +81,11 @@ public class AttributeValueController {
             throw new IllegalArgumentException("Invalid update data");
         }
 
-        // 2. Update and get entity
+        // 2. Update using specialized method (has year-based logic)
         AttributeValue updated = attributeValueService.updateAttributeValue(dto);
 
         // 3. Map and return
-        return ResponseEntity.ok(AttributeValueMapper.toDto(updated));
+        return ResponseEntity.ok(attributeValueMapper.toDto(updated));
     }
 
     @DeleteMapping("/{id}")
@@ -103,8 +95,8 @@ public class AttributeValueController {
             throw new IllegalArgumentException("Invalid ID");
         }
 
-        // 2. Delete
-        attributeValueService.deleteAttributeValue(id);
+        // 2. Delete (uses inherited method with userId filtering)
+        attributeValueService.delete(id);
 
         // 3. Return success
         return ResponseEntity.noContent().build();

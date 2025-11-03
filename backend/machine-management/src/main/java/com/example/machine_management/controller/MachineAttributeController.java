@@ -22,8 +22,15 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "http://localhost:3000")
 public class MachineAttributeController {
 
+    private final MachineAttributeService attributeService;
+    private final MachineAttributeMapper machineAttributeMapper;
+
     @Autowired
-    private MachineAttributeService attributeService;
+    public MachineAttributeController(MachineAttributeService attributeService,
+            MachineAttributeMapper machineAttributeMapper) {
+        this.attributeService = attributeService;
+        this.machineAttributeMapper = machineAttributeMapper;
+    }
 
     // POST fügt Machine ein Attribute hinzu
     // jetzt in machine controller
@@ -48,20 +55,20 @@ public class MachineAttributeController {
     @GetMapping
     public ResponseEntity<List<MachineAttributeDto>> getAllAttributesLazy() {
         // 1. Get entities
-        List<MachineAttribute> attributes = attributeService.getAllAttributes();
+        List<MachineAttribute> attributes = attributeService.findAll();
         // 2. Map and return
         return ResponseEntity.ok(attributes.stream()
-                .map(MachineAttributeMapper::toDtoLazy)
+                .map(machineAttributeMapper::toDtoLazy)
                 .collect(Collectors.toList()));
     }
 
     @GetMapping("/eager")
     public ResponseEntity<List<MachineAttributeDto>> getAllAttributesEager() {
         // 1. Get entities
-        List<MachineAttribute> attributes = attributeService.getAllAttributes();
+        List<MachineAttribute> attributes = attributeService.findAll();
         // 2. Map and return
         return ResponseEntity.ok(attributes.stream()
-                .map(MachineAttributeMapper::toDtoEager)
+                .map(machineAttributeMapper::toDtoEager)
                 .collect(Collectors.toList()));
     }
 
@@ -73,10 +80,10 @@ public class MachineAttributeController {
         }
 
         // 2. Get entity
-        MachineAttribute attribute = attributeService.getAttributeById(id);
+        MachineAttribute attribute = attributeService.findById(id);
 
         // 3. Map and return
-        return ResponseEntity.ok(MachineAttributeMapper.toDtoEager(attribute));
+        return ResponseEntity.ok(machineAttributeMapper.toDtoEager(attribute));
     }
 
     @PutMapping("/{id}")
@@ -89,10 +96,10 @@ public class MachineAttributeController {
         }
 
         // 2. Update entity
-        MachineAttribute updated = attributeService.updateAttribute(id, dto);
+        MachineAttribute updated = attributeService.update(id, dto);
 
         // 3. Map and return
-        return ResponseEntity.ok(MachineAttributeMapper.toDtoLazy(updated));
+        return ResponseEntity.ok(machineAttributeMapper.toDtoLazy(updated));
     }
 
     @DeleteMapping("/{id}")
@@ -103,7 +110,7 @@ public class MachineAttributeController {
         }
 
         // 2. Delete
-        attributeService.deleteAttribute(id);
+        attributeService.delete(id);
 
         // 3. Return success
         return ResponseEntity.noContent().build();
@@ -117,10 +124,10 @@ public class MachineAttributeController {
         }
 
         // 2. Get entities
-        List<MachineAttribute> attributes = attributeService.getAttributesByMachineId(machineId);
+        List<MachineAttribute> attributes = attributeService.findByMachineId(machineId);
 
         // 3. Map and return
-        return ResponseEntity.ok(MachineAttributeMapper.toDtoListLazy(attributes));
+        return ResponseEntity.ok(machineAttributeMapper.toDtoListLazy(attributes));
 
     }
 

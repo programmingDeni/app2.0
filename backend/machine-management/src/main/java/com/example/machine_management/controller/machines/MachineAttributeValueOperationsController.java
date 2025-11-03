@@ -25,25 +25,28 @@ import com.example.machine_management.controller.base.AbstractMachineBaseControl
 public class MachineAttributeValueOperationsController extends AbstractMachineBaseController {
 
     private final AttributeValueService attributeValueService;
+    private final AttributeValueMapper attributeValueMapper;
 
     @Autowired
-    public MachineAttributeValueOperationsController(AttributeValueService attributeValueService) {
+    public MachineAttributeValueOperationsController(AttributeValueService attributeValueService,
+            AttributeValueMapper attributeValueMapper) {
         this.attributeValueService = attributeValueService;
+        this.attributeValueMapper = attributeValueMapper;
     }
 
-        @GetMapping("/{machineId}/attribute-values")
+    @GetMapping("/{machineId}/attribute-values")
     public ResponseEntity<List<AttributeValueDto>> getMachineAttributes(
             @PathVariable Integer machineId) {
         if (machineId == null || machineId <= 0) {
             throw new IllegalArgumentException("Invalid ID");
         }
 
-        //TEST 
+        // TEST
         Machine machine = machineService.findById(machineId);
 
         List<AttributeValue> attributeValues = attributeValueService.getAttributeValuesByMachineId(machineId);
         List<AttributeValueDto> attributeValueDtos = attributeValues.stream()
-                .map(AttributeValueMapper::toDto)
+                .map(attributeValueMapper::toDto)
                 .toList();
 
         // Implementation for fetching machine attributes can be added here

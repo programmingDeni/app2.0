@@ -5,6 +5,7 @@ import com.example.machine_management.dto.Auth.AuthRequest;
 import com.example.machine_management.dto.Auth.AuthResponse;
 import com.example.machine_management.dto.Auth.RefreshTokenRequest;
 import com.example.machine_management.models.User;
+import com.example.machine_management.security.UserPrincipal;
 import com.example.machine_management.services.AuthService;
 import com.example.machine_management.services.UserService;
 
@@ -77,7 +78,7 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<AuthResponse> getCurrentUser() {
         try {
-            // 1. Email aus SecurityContext holen (wurde vom JwtAuthenticationFilter
+            // 1. UserPrincipal aus SecurityContext holen (wurde vom JwtAuthenticationFilter
             // gesetzt)
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -85,10 +86,18 @@ public class AuthController {
                 return ResponseEntity.status(401).build();
             }
 
-            String email = authentication.getName(); // Email ist der "Principal"
+            // 2. Principal holen und zu UserPrincipal casten
+            Object principal = authentication.getPrincipal();
 
-            // 2. User aus DB holen
-            User user = userService.findByEmail(email);
+            if (!(principal instanceof UserPrincipal)) {
+                // Fallback: Falls noch kein UserPrincipal
+                return ResponseEntity.status(401).build();
+            }
+
+            UserPrincipal userPrincipal = (UserPrincipal) principal;
+
+            // 3. User aus DB holen
+            User user = userService.findByEmail(userPrincipal.getEmail());
 
             if (user == null) {
                 return ResponseEntity.status(401).build();

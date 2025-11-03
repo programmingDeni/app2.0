@@ -37,8 +37,8 @@ public class DataInitializer {
             template1 = templateRepo.save(template1);
 
             // AttributeInTempalte
-            AttributeInTemplate attr1 = new AttributeInTemplate("Attribute Boolean", AttributeType.BOOLEAN, template1);
-            AttributeInTemplate attr2 = new AttributeInTemplate("Attribute String", AttributeType.STRING, template1);
+            TemplateAttribute attr1 = new TemplateAttribute("Attribute Boolean", AttributeType.BOOLEAN, template1);
+            TemplateAttribute attr2 = new TemplateAttribute("Attribute String", AttributeType.STRING, template1);
             attrTemplateRepo.save((attr2));
             attrTemplateRepo.save(attr1);
 
@@ -70,7 +70,7 @@ public class DataInitializer {
             MachineTemplate template,
             String name,
             AttributeType type) {
-        AttributeInTemplate attr = new AttributeInTemplate(name, type, template);
+        TemplateAttribute attr = new TemplateAttribute(name, type, template);
         repo.save(attr);
     }
 }

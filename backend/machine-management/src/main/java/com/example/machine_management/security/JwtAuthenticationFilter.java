@@ -39,9 +39,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String email = jwtUtils.getEmailFromToken(token);
                 Integer userId = jwtUtils.getUserIdFromToken(token);
 
+                // 3.1. userprincipal aus user info (email und password) erstellen
+                UserPrincipal userPrincipal = new UserPrincipal(userId, email);
+
                 // 4. Authentication Object erstellen
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        email, // Principal (User-Identität)
+                        userPrincipal, // Principal (User-Identität)
                         null, // Credentials (nicht nötig bei JWT)
                         new ArrayList<>() // Authorities (Rollen, später)
                 );

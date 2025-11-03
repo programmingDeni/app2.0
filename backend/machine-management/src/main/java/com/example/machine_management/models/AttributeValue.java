@@ -21,10 +21,13 @@ import jakarta.persistence.Table;
 @Entity
 @Getter
 @Table(name = "attribute_value")
-public class AttributeValue {
+public class AttributeValue extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(name = "user_id", nullable = false)
+    private Integer userId;
 
     private String attributeValue;
 
@@ -88,4 +91,21 @@ public class AttributeValue {
     public void setMachineAttribute(MachineAttribute machineAttribute) {
         this.machineAttribute = machineAttribute;
     }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public void setAttributeValueYear(Integer attributeValueYear) {
+        this.attributeValueYear = attributeValueYear;
+    }
+
+    public void setZuletztGeprueft(LocalDateTime zuletztGeprueft) {
+        this.zuletztGeprueft = zuletztGeprueft;
+    }
+
+    public void setZuletztGetauscht(LocalDateTime zuletztGetauscht) {
+        this.zuletztGetauscht = zuletztGetauscht;
+    }
+
 }

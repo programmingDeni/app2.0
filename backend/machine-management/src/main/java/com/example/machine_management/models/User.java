@@ -1,9 +1,13 @@
 package com.example.machine_management.models;
 
+import org.springframework.data.annotation.CreatedBy;
+
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
-@Table(name = "user")
+@Table(name = "\"user\"")
+@Getter
 public class User extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,11 +25,11 @@ public class User extends AuditableEntity {
     @Column(name = "last_name")
     private String lastName;
 
-    // TODO: add organizationId
+    @CreatedBy
+    @Column(name = "created_by", nullable = true, updatable = false)
+    private Integer createdBy;
 
-    public Integer getId() {
-        return id;
-    }
+    // TODO: add organizationId
 
     public void setEmail(String email) {
         this.email = email;
@@ -43,19 +47,7 @@ public class User extends AuditableEntity {
         this.lastName = lastName;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
+    public void setCreatedBy(Integer createdBy) {
+        this.createdBy = createdBy;
     }
 }

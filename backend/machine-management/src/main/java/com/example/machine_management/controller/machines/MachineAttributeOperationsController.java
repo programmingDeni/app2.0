@@ -20,9 +20,13 @@ public class MachineAttributeOperationsController extends AbstractMachineBaseCon
 
     private final MachineAttributeOperationsService machineAttributeOperationsService;
 
+    private final MachineAttributeMapper machineAttributeMapper;
+
     @Autowired
-    public MachineAttributeOperationsController(MachineAttributeOperationsService machineAttributeOperationsService) {
+    public MachineAttributeOperationsController(MachineAttributeOperationsService machineAttributeOperationsService,
+            MachineAttributeMapper machineAttributeMapper) {
         this.machineAttributeOperationsService = machineAttributeOperationsService;
+        this.machineAttributeMapper = machineAttributeMapper;
     }
 
     @PostMapping("/{id}/attributes")
@@ -38,7 +42,7 @@ public class MachineAttributeOperationsController extends AbstractMachineBaseCon
 
         MachineAttribute created = machineAttributeOperationsService.addMachineAttribute(id, dto);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(MachineAttributeMapper.toDtoLazy(created));
+                .body(machineAttributeMapper.toDtoLazy(created));
     }
 
     @PutMapping("/{id}/attributes/{attributeId}")
@@ -51,7 +55,7 @@ public class MachineAttributeOperationsController extends AbstractMachineBaseCon
         }
 
         MachineAttribute updated = machineService.editMachineAttribute(machineId, attributeId, dto);
-        return ResponseEntity.ok(MachineAttributeMapper.toDtoLazy(updated));
+        return ResponseEntity.ok(machineAttributeMapper.toDtoLazy(updated));
     }
 
     @DeleteMapping("/{id}/attributes/{attributeId}")
@@ -76,7 +80,7 @@ public class MachineAttributeOperationsController extends AbstractMachineBaseCon
         // calle den service, lass die attribute holen
         List<MachineAttribute> attributes = machineAttributeOperationsService.getMachineAttributesLazy(machineId);
         // returne die gemappten dtos
-        return ResponseEntity.ok(MachineAttributeMapper.toDtoListLazy(attributes));
+        return ResponseEntity.ok(machineAttributeMapper.toDtoListLazy(attributes));
     }
 
     @GetMapping("/{machineId}/attributes/eager")
@@ -88,7 +92,7 @@ public class MachineAttributeOperationsController extends AbstractMachineBaseCon
         // calle den service, lass die attribute holen
         List<MachineAttribute> attributes = machineAttributeOperationsService.getMachineAttributesEager(machineId);
         // returne die gemappten dtos
-        return ResponseEntity.ok(MachineAttributeMapper.toDtoListEager(attributes));
+        return ResponseEntity.ok(machineAttributeMapper.toDtoListEager(attributes));
     }
 
 }
