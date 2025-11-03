@@ -8,6 +8,7 @@ import lombok.Getter;
 @Entity
 @Table(name = "\"user\"")
 @Getter
+@AttributeOverride(name = "createdBy", column = @Column(name = "created_by", nullable = true, updatable = false))
 public class User extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,10 +25,6 @@ public class User extends AuditableEntity {
 
     @Column(name = "last_name")
     private String lastName;
-
-    @CreatedBy
-    @Column(name = "created_by", nullable = true, updatable = false)
-    private Integer createdBy;
 
     // TODO: add organizationId
 
@@ -47,7 +44,4 @@ public class User extends AuditableEntity {
         this.lastName = lastName;
     }
 
-    public void setCreatedBy(Integer createdBy) {
-        this.createdBy = createdBy;
-    }
 }

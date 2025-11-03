@@ -2,6 +2,29 @@
 
 This application enables the structured management and documentation of machines and their attributes, with a focus on maintenance and inspection tracking.
 
+## Quick Start mit Docker
+
+```bash
+# Repository klonen
+git clone <repository-url>
+cd app2.0
+
+# Umgebungsvariablen einrichten
+cp .env.example .env
+# .env bearbeiten: POSTGRES_PASSWORD und JWT_SECRET anpassen
+
+# Starten
+docker-compose up
+```
+
+# Zugriff
+
+# Frontend: http://localhost:5173
+
+# Backend: http://localhost:8080
+
+# Login: admin@example.com / admin123
+
 ## 📖 Documentation
 
 - [Architecture Documentation](docs/architecture/README.md)
@@ -19,10 +42,11 @@ This application enables the structured management and documentation of machines
 The backend is a layered Spring Boot application that handles all core business logic related to machine and template management.
 
 **Structure:**
-- `Controller` – Exposes RESTful endpoints, entities converted to json by mappers here 
+
+- `Controller` – Exposes RESTful endpoints, entities converted to json by mappers here
   - `MachineController`: Manage machines and their attributes
   - `TemplateController`: Manage machine templates and attribute templates
-- `Service` – Business logic, works with entities 
+- `Service` – Business logic, works with entities
 - `Repository` – Data access (JPA)
 - `Model` – Domain entities
 - `DTO` – Data transfer objects
@@ -33,7 +57,7 @@ The backend is a layered Spring Boot application that handles all core business 
 
 The frontend is organized by **features** (e.g. machines and templates), and components follow the **Model-View-Presenter (MVP)** pattern.
 
-React Query handles all data fetching and caching.  
+React Query handles all data fetching and caching.
 No local state is stored in components – the UI updates reactively based on server state.
 
 ## 📦 Tech Stack
@@ -41,3 +65,7 @@ No local state is stored in components – the UI updates reactively based on se
 - **Backend**: Java, Spring Boot, PostgreSQL
 - **Frontend**: Typescript, Vite
 - **Architecture**: Layered backend, feature-based frontend
+
+```
+
+```

@@ -1,0 +1,21 @@
+# Maven + JDK für Development
+FROM maven:3.9-eclipse-temurin-21
+
+# Arbeitsverzeichnis
+WORKDIR /app
+
+# pom.xml zuerst kopieren (für Docker Layer Caching)
+COPY pom.xml .
+
+# Dependencies vorab downloaden (wird gecached, solange pom.xml gleich bleibt)
+RUN mvn dependency:go-offline -B
+
+# Source Code wird via Volume gemountet (nicht kopiert!)
+# Dadurch sind Änderungen sofort sichtbar
+
+# Ports
+EXPOSE 8080
+EXPOSE 5005
+
+# Maven mit Spring Boot DevTools (Hot-Reload) und Debug-Port
+CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.jvmArguments=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"]

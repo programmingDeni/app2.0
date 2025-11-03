@@ -31,7 +31,7 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         // created bby setzen
-        savedUser.setCreatedBy(savedUser.getId());
+        // savedUser.setCreatedBy(savedUser.getId());
 
         return savedUser;
     }
