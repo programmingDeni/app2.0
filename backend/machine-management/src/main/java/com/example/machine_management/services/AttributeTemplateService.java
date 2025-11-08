@@ -3,88 +3,133 @@ package com.example.machine_management.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
-import com.example.machine_management.models.AttributeInTemplate;
+import com.example.machine_management.models.TemplateAttribute;
+import com.example.machine_management.models.AttributeType;
 import com.example.machine_management.models.MachineTemplate;
 import com.example.machine_management.repository.AttributeTemplateRepository;
-import com.example.machine_management.models.AttributeType;
 import com.example.machine_management.repository.MachineTemplateRepository;
-import com.fasterxml.jackson.databind.annotation.JsonAppend.Attr;
+import com.example.machine_management.util.SecurityUtils;
 import com.example.machine_management.dto.AttributeInTemplate.AttributeTemplateDto;
 import com.example.machine_management.exceptions.NotFoundException;
 import com.example.machine_management.mapper.AttributeTemplateMapper;
+import com.example.machine_management.mapper.TemplateAttributes.TemplateAttributeMapper;
 
 @Service
-public class AttributeTemplateService {
+public class AttributeTemplateService extends GenericCrudService<TemplateAttribute, Integer, AttributeTemplateDto> {
+
+    private final AttributeTemplateRepository attributeTemplateRepository;
+
+    private final MachineTemplateRepository templateRepos;
+
+    private final AttributeTemplateMapper attributeTemplateMapper;
 
     @Autowired
-    private AttributeTemplateRepository attributeTemplateRepository;
+    public AttributeTemplateService(AttributeTemplateRepository attributeTemplateRepository,
+            MachineTemplateRepository templateRepos, AttributeTemplateMapper attributeTemplateMapper) {
+        super(attributeTemplateRepository, attributeTemplateMapper);
+        this.attributeTemplateMapper = attributeTemplateMapper;
+        this.attributeTemplateRepository = attributeTemplateRepository;
+        this.templateRepos = templateRepos;
+    }
 
-    @Autowired
-    private MachineTemplateRepository templateRepos;
-
-    public List<AttributeInTemplate> getAllAttributeTemplates() {
-        // hole attributes aus repo
-        List<AttributeInTemplate> attributes = attributeTemplateRepository.findAll();
-        // konvertiere zu dtos und return
+    public List<TemplateAttribute> getByMachineTemplateId(Integer templateId) {
+        Integer userId = SecurityUtils.getCurrentUserId();
+        List<TemplateAttribute> attributes = attributeTemplateRepository.findAllByMachineTemplateIdAndUserId(templateId,
+                userId);
         return attributes;
     }
 
-    public AttributeInTemplate getById(Integer id) {
-        AttributeInTemplate template = attributeTemplateRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Attribute-Template mit ID " + id + " nicht gefunden."));
-        return template;
-    }
+    public TemplateAttribute createOneForTemplate(AttributeTemplateDto dto) {
+        Integer userId = SecurityUtils.getCurrentUserId();
 
-    public List<AttributeInTemplate> getByMachineTemplateId(Integer templateId) {
-        List<AttributeInTemplate> attributes = attributeTemplateRepository.findAllByMachineTemplateId(templateId);
-        return attributes;
-    }
-
-    public AttributeInTemplate createOneForTemplate(AttributeTemplateDto dto) {
-        MachineTemplate template = templateRepos.findByIdWithAttributes(dto.machineTemplateId)
+        MachineTemplate template = templateRepos.findByIdWithAttributesAndUserId(dto.machineTemplateId, userId)
                 .orElseThrow(
                         () -> new NotFoundException("Template mit ID " + dto.machineTemplateId + " nicht gefunden."));
 
-        AttributeInTemplate fromDto = AttributeTemplateMapper.fromDto(dto, template);
+        TemplateAttribute fromDto = attributeTemplateMapper.fromDto(dto, template);
+        fromDto.setUserId(userId);
+        if (fromDto.getUserId() == null) {
+            throw new IllegalArgumentException("AttributeTemplateService: UserId darf nicht null sein");
+        }
 
-        AttributeInTemplate saved = attributeTemplateRepository.save(fromDto);
+        TemplateAttribute saved = attributeTemplateRepository.save(fromDto);
         return (saved);
     }
 
-    public AttributeInTemplate updateAttributeTemplate(Integer id, AttributeTemplateDto dto) {
+    public TemplateAttribute updateAttributeTemplate(Integer id, AttributeTemplateDto dto) {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("Invalid ID");
+        }
         // AttributInTemplate finden oder fehler werfen
-        AttributeInTemplate template = attributeTemplateRepository.findById(id)
+        TemplateAttribute template = attributeTemplateRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Attribute-Template mit ID " + id + " nicht gefunden."));
 
         // template updaten
-        AttributeTemplateMapper.updateFromDto(template, dto);
+        attributeTemplateMapper.updateFromDto(template, dto);
 
         // speichern
-        AttributeInTemplate updated = attributeTemplateRepository.save(template);
+        if (template.getMachineTemplate() == null) {
+            throw new IllegalArgumentException("Template darf nicht null sein");
+        }
+        TemplateAttribute updated = attributeTemplateRepository.save(template);
 
         // dto returnen
         return (updated);
     }
 
-    public void deleteAttributeTemplate(Integer id) {
-        if (!attributeTemplateRepository.existsById(id)) {
-            throw new NotFoundException("Attribute-Template mit ID " + id + " nicht gefunden.");
-        }
-        attributeTemplateRepository.deleteById(id);
-    }
-
     public void deleteAllForTemplate(Integer templateId) {
-        attributeTemplateRepository.deleteAllByMachineTemplateId(templateId);
+        Integer userId = SecurityUtils.getCurrentUserId();
+        List<TemplateAttribute> attributes = attributeTemplateRepository.findAllByMachineTemplateIdAndUserId(templateId,
+                userId);
+        if (attributes.isEmpty()) {
+            throw new NotFoundException("Template mit ID " + templateId + " nicht gefunden.");
+        }
+        attributeTemplateRepository.deleteAll(attributes);
     }
 
-    public List<AttributeInTemplate> saveAllForTemplate(List<AttributeTemplateDto> attributeTemplates,
+    public List<TemplateAttribute> saveAllForTemplate(List<AttributeTemplateDto> attributeTemplates,
             MachineTemplate template) {
-        List<AttributeInTemplate> savedAttributeTemplates = AttributeTemplateMapper.fromDtoList(attributeTemplates,
+        Integer userId = SecurityUtils.getCurrentUserId();
+
+        List<TemplateAttribute> savedAttributeTemplates = attributeTemplateMapper.fromDtoList(attributeTemplates,
                 template);
+        if (savedAttributeTemplates.isEmpty()) {
+            throw new IllegalArgumentException("Template darf nicht null sein");
+        }
+
+        // Set userId for all attributes
+        for (TemplateAttribute attr : savedAttributeTemplates) {
+            attr.setUserId(userId);
+        }
 
         return attributeTemplateRepository.saveAll(savedAttributeTemplates);
+    }
+
+    // ============= Implementierung der abstrakten Methoden aus GenericCrudService
+    // =============
+
+    @Override
+    protected TemplateAttribute updateEntity(TemplateAttribute existingEntity, AttributeTemplateDto dto) {
+        existingEntity.setAttributeInTemplateName(dto.templateAttributeName);
+        existingEntity.setType(AttributeType.valueOf(dto.templateAttributeType));
+        return existingEntity;
+    }
+
+    @Override
+    protected List<TemplateAttribute> findAllByUserId(Integer userId) {
+        return attributeTemplateRepository.findByUserId(userId);
+    }
+
+    @Override
+    protected Optional<TemplateAttribute> findByIdAndUserId(Integer id, Integer userId) {
+        return attributeTemplateRepository.findByIdAndUserId(id, userId);
+
+    }
+
+    @Override
+    protected void setUserId(TemplateAttribute entity, Integer userId) {
+        entity.setUserId(userId);
     }
 }

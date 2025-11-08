@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.example.machine_management.dto.Machine.LazyMachineDto;
 import com.example.machine_management.dto.Machine.MachineDto;
 import com.example.machine_management.mapper.MachineMapper;
-import com.example.machine_management.models.AttributeInTemplate;
+import com.example.machine_management.models.TemplateAttribute;
 import com.example.machine_management.models.AttributeType;
 import com.example.machine_management.models.Machine;
 import com.example.machine_management.models.MachineAttribute;
@@ -33,6 +33,9 @@ class MachineMapperTest {
     @Autowired
     MachineTemplateRepository machineTemplateRepository;
 
+    @Autowired
+    MachineMapper machineMapper;
+
     @Test
     void testToDto() {
         // der test soll die volle funktionalität des mappers testen
@@ -53,7 +56,7 @@ class MachineMapperTest {
          */
         // repo import
         MachineTemplate template = new MachineTemplate("Testtemplate");
-        AttributeInTemplate attr = new AttributeInTemplate("TestAttribute", AttributeType.STRING, template);
+        TemplateAttribute attr = new TemplateAttribute("TestAttribute", AttributeType.STRING, template);
         template.setAttributeTemplates(List.of(attr));
 
         machineTemplateRepository.save(template);
@@ -64,7 +67,7 @@ class MachineMapperTest {
         machineRepository.save(machine);
 
         // Act
-        MachineDto dto = MachineMapper.toDto(machine);
+        MachineDto dto = machineMapper.toDto(machine);
 
         // Assert
         assertEquals("Testmaschine", dto.machineName);

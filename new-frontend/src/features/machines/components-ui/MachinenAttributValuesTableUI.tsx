@@ -7,8 +7,10 @@ import {
   useGridApiContext,
   GridRenderEditCellParams,
   GridValueFormatter,
+  GridCellParams,
 } from "@mui/x-data-grid";
-import { TextField, Checkbox } from "@mui/material";
+import { TextField, Checkbox, MenuItem, Select } from "@mui/material";
+import { SelectChangeEvent } from "@mui/material/Select";
 
 // ---- Types aus deinem Projekt ----
 import { MachineAttribute } from "../types/machine.types";
@@ -19,6 +21,10 @@ interface Props {
     attributeId: number,
     attributeValue: string,
     year: number
+  ) => void;
+  onPruefungsIntervallChanged: (
+    attributeId: number,
+    pruefungsIntervall: number
   ) => void;
 }
 
@@ -117,6 +123,7 @@ function YearEditCell(params: GridRenderEditCellParams) {
 export default function MachinenAttributValuesTableUI({
   attributes,
   onAttributeValueAdded,
+  onPruefungsIntervallChanged,
 }: Props) {
   const [years, setYears] = useState<string[]>([]);
   const [rows, setRows] = useState<GridRowsProp>([]);
@@ -140,6 +147,7 @@ export default function MachinenAttributValuesTableUI({
         id: attr.id,
         attributeName: attr.attributeName,
         attributeType: attr.attributeType, // wichtig für YearEditCell
+        pruefungsIntervall: attr.pruefungsIntervall,
       };
       attr.attributeValues.forEach((v) => {
         row[v.attributeValueYear] = v.attributeValue;
@@ -184,13 +192,51 @@ export default function MachinenAttributValuesTableUI({
     return value ?? "";
   };
 
+  //PrüfunsIntervall Code
+  const intervallOptions = [
+    { label: "1 Monat", value: 30 },
+    { label: "2 Monate", value: 60 },
+    { label: "3 Monate", value: 90 },
+    { label: "4 Monate", value: 120 },
+    { label: "6 Monate", value: 180 },
+    { label: "1 Jahr", value: 365 },
+    { label: "2 Jahre", value: 730 },
+  ];
+
+  function IntervallEditCell(params: GridRenderEditCellParams) {
+    const apiRef = useGridApiContext();
+    const { id, field, value } = params;
+
+    const handleChange = (event: SelectChangeEvent<any>) => {
+      const newValue = event.target.value;
+      apiRef.current.setEditCellValue({ id, field, value: newValue }, event);
+    };
+
+    return (
+      <Select
+        value={value ?? ""}
+        onChange={handleChange}
+        autoFocus
+        variant="standard"
+        fullWidth
+      >
+        {intervallOptions.map((option) => (
+          <MenuItem key={option.value} value={option.value}>
+            {option.label}
+          </MenuItem>
+        ))}
+      </Select>
+    );
+  }
+
   // Spalten
   const columns: GridColDef[] = useMemo(
     () => [
       {
         field: "attributeName",
         headerName: "Attributname",
-        width: 220,
+        flex: 1,
+        minWidth: 400,
         editable: false,
       },
       {
@@ -198,6 +244,19 @@ export default function MachinenAttributValuesTableUI({
         headerName: "Typ",
         width: 120,
         editable: false,
+      },
+      {
+        field: "pruefungsIntervall",
+        headerName: "Prüfungsintervall",
+        width: 120,
+        editable: true,
+        renderEditCell: (params) => <IntervallEditCell {...params} />,
+        valueFormatter: (params: GridCellParams) => {
+          const match = intervallOptions.find(
+            (opt) => opt.value === params.value
+          );
+          return match ? match.label : params.value;
+        },
       },
       ...years.map((year) => ({
         field: year,
@@ -223,26 +282,44 @@ export default function MachinenAttributValuesTableUI({
     );
     if (!changedField) return newRow;
 
-    // Nur echte Jahresfelder berücksichtigen
-    if (!/^\d{4}$/.test(changedField)) return newRow;
-
-    const year = parseInt(changedField, 10);
-    let value = newRow[changedField];
-
-    // Wert konsistent als STRING an den Callback geben
-    if (typeof value === "boolean") value = value ? "true" : "false";
-    else if (typeof value === "number") value = String(value);
-    else if (value == null) value = ""; // leeres Feld
-
     const id = newRow.id as number;
 
-    // Optimistisch UI updaten
-    setRows((prev: GridRowsProp) =>
-      prev.map((r: GridRowModel) => (r.id === id ? newRow : r))
-    );
+    // Nur echte Jahresfelder berücksichtigen
+    if (/^\d{4}$/.test(changedField)) {
+      const year = parseInt(changedField, 10);
+      let value = newRow[changedField];
 
-    // Presenter/API anstoßen
-    onAttributeValueAdded(id, value as string, year);
+      // Wert konsistent als STRING an den Callback geben
+      if (typeof value === "boolean") value = value ? "true" : "false";
+      else if (typeof value === "number") value = String(value);
+      else if (value == null) value = ""; // leeres Feld
+
+      // Optimistisch UI updaten
+      setRows((prev: GridRowsProp) =>
+        prev.map((r: GridRowModel) => (r.id === id ? newRow : r))
+      );
+
+      // Presenter/API anstoßen
+      onAttributeValueAdded(id, value as string, year);
+
+      return newRow;
+    }
+    // ✅ Behandlung für pruefungsIntervall
+    if (changedField === "pruefungsIntervall") {
+      // Hier müsstest du ggf. einen eigenen Callback anbieten, z.B. `onPruefungsIntervallChanged`
+      console.log(
+        `Prüfungsintervall geändert für Attribut-ID ${id}:`,
+        newRow[changedField]
+      );
+      setRows((prev: GridRowsProp) =>
+        prev.map((r: GridRowModel) => (r.id === id ? newRow : r))
+      );
+
+      //backend call to update pruefungsIntervall
+      onPruefungsIntervallChanged(id, newRow[changedField]);
+
+      return newRow;
+    }
 
     return newRow;
   };

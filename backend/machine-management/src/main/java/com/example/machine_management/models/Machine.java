@@ -2,12 +2,15 @@ package com.example.machine_management.models;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.example.machine_management.util.SecurityUtils;
+
 import jakarta.persistence.*;
 
 //import com.example.machine_management.models.MachineAttributes;
 
 @Entity
-public class Machine {
+public class Machine extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -22,6 +25,9 @@ public class Machine {
     @ManyToOne
     @JoinColumn(name = "template_id")
     private MachineTemplate machineTemplate;
+
+    @Column(name = "user_id", nullable = false)
+    private Integer userId;
 
     // Constructors
     public Machine() {
@@ -77,6 +83,30 @@ public class Machine {
 
     public MachineTemplate getMachineTemplate() {
         return machineTemplate;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    /**
+     * JPA Lifecycle Hook: Automatically set userId before persisting
+     * Gets userId from SecurityContext
+     */
+    @PrePersist
+    protected void setUserIdFromSecurityContext() {
+        if (this.userId == null) {
+            try {
+                this.userId = SecurityUtils.getCurrentUserId();
+            } catch (Exception e) {
+                // If no user is authenticated (e.g., system operations),
+                // userId must be set manually
+            }
+        }
     }
 
     // TODO: Templates add / remove

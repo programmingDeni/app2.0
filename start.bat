@@ -1,6 +1,0 @@
-@echo off
-echo Starte Backend...
-start cmd /k "cd backend && cd machine-management && mvn spring-boot:run"
-
-echo Starte Frontend...
-start cmd /k "cd new-frontend && pnpm dev" 

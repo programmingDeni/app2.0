@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat \"/c/Users/edihi/Documents/0000Aktuell/app2.0/backend/machine-management/src/main/java/com/example/machine_management/models/Machine.java\")",
+      "Bash(cat \"/c/Users/edihi/Documents/0000Aktuell/app2.0/backend/machine-management/src/main/java/com/example/machine_management/models/MachineTemplate.java\")",
+      "Bash(cat \"/c/Users/edihi/Documents/0000Aktuell/app2.0/backend/machine-management/src/main/java/com/example/machine_management/models/MachineAttribute.java\")",
+      "Bash(cat \"/c/Users/edihi/Documents/0000Aktuell/app2.0/backend/machine-management/src/main/java/com/example/machine_management/config/DataInitializer.java\")",
+      "Bash(cat \"/c/Users/edihi/Documents/0000Aktuell/app2.0/backend/machine-management/src/main/java/com/example/machine_management/controller/machines/MachineController.java\")",
+      "Bash(cat \"/c/Users/edihi/Documents/0000Aktuell/app2.0/README.md\")",
+      "Bash(cat \"/c/Users/edihi/Documents/0000Aktuell/app2.0/backend/machine-management/machine_management_architektur.md\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

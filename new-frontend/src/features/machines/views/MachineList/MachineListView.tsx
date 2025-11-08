@@ -28,30 +28,36 @@ export default function MachineListView() {
   const addMachineMutation = useAddMachine();
 
   const handleDeleteMachine = async (machineId: number) => {
-    await deleteMachineMutation.mutateAsync(machineId);
-    refetch();
-  };
+    const isConfirmed = window.confirm(
+      "Sind Sie sicher, dass Sie diese Maschine löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+    );
 
-  const handleAddMachine = async (machine: Partial<Machine>) => {
-    addMachineMutation.mutateAsync(machine);
-    refetch();
+    if (isConfirmed) {
+      await deleteMachineMutation.mutateAsync(machineId);
+      refetch();
+    }
   };
 
   const [showAddMachineForm, setShowAddMachineForm] = useState(false);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error</div>;
-  if (machines.length === 0) return <div>No Machines</div>;
+  //if (machines.length === 0) return <div>No Machines</div>;
 
   return (
     <div style={{ textAlign: "center", width: "100%" }}>
-      {machines.map((machine) => (
-        <MachineCard
-          key={machine.id}
-          machine={machine}
-          onDelete={handleDeleteMachine}
-        />
-      ))}
+      {machines.length === 0 ? (
+        <div>Keine Maschinen vorhanden</div>
+      ) : (
+        machines.map((machine) => (
+          <MachineCard
+            key={machine.id}
+            machine={machine}
+            onDelete={handleDeleteMachine}
+          />
+        ))
+      )}
+
       <ToggleableSection
         toggleLabel="Add Machine"
         open={showAddMachineForm}

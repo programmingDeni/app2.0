@@ -1,0 +1,23 @@
+# Node.js 20 (LTS)
+FROM node:20-alpine
+
+# Arbeitsverzeichnis
+WORKDIR /app
+
+# pnpm installieren (global)
+RUN npm install -g pnpm
+
+# package.json und pnpm-lock.yaml zuerst (für Layer Caching)
+COPY package.json pnpm-lock.yaml ./
+
+# Dependencies installieren
+RUN pnpm install --frozen-lockfile
+
+# Source Code wird via Volume gemountet (nicht kopiert!)
+# Dadurch sind Änderungen sofort sichtbar
+
+# Port für Vite Dev Server
+EXPOSE 5173
+
+# Vite mit --host (damit von außerhalb des Containers erreichbar)
+CMD ["pnpm", "run", "dev", "--host", "0.0.0.0", "--port", "5173"]

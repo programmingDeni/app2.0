@@ -15,13 +15,21 @@ import MachinenAttributeValuesView from "./features/machines/views/MachineAttrib
 import TemplateDetails from "./features/templates/views/TempalteDetails";
 import PrintMachinesView from "./features/machines/views/PrintView";
 
+import { LoginView } from "./features/auth/views/LoginView";
+import { RegisterView } from "./features/auth/views/RegisterView";
+import { RootRedirect } from "./features/auth/components/RootRedirect";
+
+import Navbar from "./components/Navbar/Navbar";
+
 function App() {
   return (
-    <div className="root">
+    <div>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
+          <Navbar />
           <Routes>
-            <Route path="/" element={<MachineListView />} />
+            <Route path="/" element={<RootRedirect />} />
+            <Route path="/machines" element={<MachineListView />} />
             <Route path="/print" element={<PrintMachinesView />} />
             <Route
               path="/machines/:machineId"
@@ -36,6 +44,8 @@ function App() {
               path="/machines/:id/values"
               element={<MachinenAttributeValuesView />}
             />
+            <Route path="/login" element={<LoginView />} />
+            <Route path="/register" element={<RegisterView />} />
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>

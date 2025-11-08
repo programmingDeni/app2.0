@@ -45,7 +45,7 @@ export default function MachineDetailsView(props: Props) {
   //MACHINE
   const { data: machine, isLoading, error } = useMachine(machineIdInt);
   const addCustomAttributeMutation = useAddCustomAttribute(machineIdInt);
-  const editCustomAttributeMutation = useEditCustomAttribute(machineIdInt);
+  const editCustomAttributeMutation = useEditCustomAttribute();
   const removeCustomAttributeMutation = useRemoveCustomAttribute(machineIdInt);
 
   const assignTemplateMutation = useAssignTemplate(machineIdInt);
@@ -127,6 +127,8 @@ export default function MachineDetailsView(props: Props) {
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error</div>;
+
+  console.log("hilfe");
 
   return (
     <MachineDetailsUI

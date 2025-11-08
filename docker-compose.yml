@@ -2,46 +2,76 @@ version: "3.9"
 
 services:
   postgres:
-    image: postgres:16
-    container_name: postgres
-    restart: always
+    image: postgres:16-alpine
+    container_name: app20-postgres
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: machinesdb
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
+      # Aus .env Datei
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5432:5432"
+      - "5432:5432" # Exposed für DB-Tools (pgAdmin, DBeaver)
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
 
   backend:
     build:
       context: ./backend/machine-management
-      dockerfile: ../../backend/Dockerfile.dev
+      dockerfile: Dockerfile.dev # ← KORRIGIERT: Jetzt im gleichen Ordner
     container_name: app20-backend
     ports:
       - "8080:8080"
+      - "5005:5005" # ← NEU: Debug Port
     volumes:
-      - ./backend/machine-management:/app
+      - ./backend/machine-management:/app # Code-Änderungen live
+      - maven_cache:/root/.m2 # ← NEU: Maven-Cache persistent
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy # ← Wartet bis DB bereit ist
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/machinesdb
-      SPRING_DATASOURCE_USERNAME: admin
-      SPRING_DATASOURCE_PASSWORD: admin
+      # Aus .env Datei
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS}
+      JWT_REFRESH_EXPIRATION_MS: ${JWT_REFRESH_EXPIRATION_MS}
+      SPRING_PROFILES_ACTIVE: dev # ← Development-Profil
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+    networks:
+      - app-network
 
   frontend:
     build:
-      context: ./frontend
+      context: ./new-frontend # ← KORRIGIERT: War "frontend", jetzt "new-frontend"
       dockerfile: Dockerfile.dev
     container_name: app20-frontend
     ports:
-      - "3000:3000"
+      - "5173:5173"
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./new-frontend:/app # ← KORRIGIERT: Code-Änderungen live
+      - /app/node_modules # ← Node modules bleiben im Container
     depends_on:
       - backend
+    environment:
+      - VITE_API_URL=http://localhost:8080 # Optional: API-URL für Frontend
+    networks:
+      - app-network
 
 volumes:
   postgres_data:
+    driver: local
+  maven_cache: # ← NEU: Maven Dependencies cachen
+    driver: local
+
+networks:
+  app-network: # ← NEU: Alle Services im gleichen Netzwerk
+    driver: bridge

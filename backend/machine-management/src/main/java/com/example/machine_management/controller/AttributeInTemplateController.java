@@ -2,7 +2,7 @@ package com.example.machine_management.controller;
 
 import com.example.machine_management.dto.AttributeInTemplate.AttributeTemplateDto;
 import com.example.machine_management.mapper.AttributeTemplateMapper;
-import com.example.machine_management.models.AttributeInTemplate;
+import com.example.machine_management.models.TemplateAttribute;
 import com.example.machine_management.models.AttributeType;
 import com.example.machine_management.repository.AttributeTemplateRepository;
 import com.example.machine_management.repository.MachineTemplateRepository;
@@ -23,8 +23,16 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "http://localhost:3000")
 public class AttributeInTemplateController {
 
+    private final AttributeTemplateService attributeTemplateService;
+    private final AttributeTemplateMapper attributeTemplateMapper;
+
     @Autowired
-    private AttributeTemplateService attributeTemplateService;
+    public AttributeInTemplateController(
+            AttributeTemplateService attributeTemplateService,
+            AttributeTemplateMapper attributeTemplateMapper) {
+        this.attributeTemplateService = attributeTemplateService;
+        this.attributeTemplateMapper = attributeTemplateMapper;
+    }
 
     @PostMapping
     public ResponseEntity<AttributeTemplateDto> createAttributeTemplate(@RequestBody AttributeTemplateDto dto) {
@@ -34,20 +42,20 @@ public class AttributeInTemplateController {
         }
 
         // 2. Call service
-        AttributeInTemplate created = attributeTemplateService.createOneForTemplate(dto);
+        TemplateAttribute created = attributeTemplateService.createOneForTemplate(dto);
 
         // 3. Convert and return
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(AttributeTemplateMapper.toDto(created));
+                .body(attributeTemplateMapper.toDto(created));
     }
 
     @GetMapping
     public ResponseEntity<List<AttributeTemplateDto>> getAllAttributeTemplates() {
-        // 1. Get data from service
-        List<AttributeInTemplate> templates = attributeTemplateService.getAllAttributeTemplates();
+        // 1. Get data from service (uses inherited findAll method)
+        List<TemplateAttribute> templates = attributeTemplateService.findAll();
 
         // 2. Convert and return
-        List<AttributeTemplateDto> dtos = AttributeTemplateMapper.toDtoList(templates);
+        List<AttributeTemplateDto> dtos = attributeTemplateMapper.toDtoList(templates);
 
         return ResponseEntity.ok(dtos);
     }
@@ -61,10 +69,10 @@ public class AttributeInTemplateController {
         }
 
         // 2. Get data from service
-        List<AttributeInTemplate> attributes = attributeTemplateService.getByMachineTemplateId(templateId);
+        List<TemplateAttribute> attributes = attributeTemplateService.getByMachineTemplateId(templateId);
 
         // 3. Convert and return
-        List<AttributeTemplateDto> dtos = AttributeTemplateMapper.toDtoList(attributes);
+        List<AttributeTemplateDto> dtos = attributeTemplateMapper.toDtoList(attributes);
 
         return ResponseEntity.ok(dtos);
     }
@@ -77,10 +85,10 @@ public class AttributeInTemplateController {
         }
 
         // 2. Get data from service
-        AttributeInTemplate template = attributeTemplateService.getById(id);
+        TemplateAttribute template = attributeTemplateService.findById(id);
 
         // 3. Convert and return
-        return ResponseEntity.ok(AttributeTemplateMapper.toDto(template));
+        return ResponseEntity.ok(attributeTemplateMapper.toDto(template));
     }
 
     @PutMapping("/{id}")
@@ -93,10 +101,10 @@ public class AttributeInTemplateController {
         }
 
         // 2. Update via service
-        AttributeInTemplate updated = attributeTemplateService.updateAttributeTemplate(id, dto);
+        TemplateAttribute updated = attributeTemplateService.updateAttributeTemplate(id, dto);
 
         // 3. Convert and return
-        return ResponseEntity.ok(AttributeTemplateMapper.toDto(updated));
+        return ResponseEntity.ok(attributeTemplateMapper.toDto(updated));
     }
 
     @DeleteMapping("/{id}")
@@ -107,7 +115,7 @@ public class AttributeInTemplateController {
         }
 
         // 2. Delete via service
-        attributeTemplateService.deleteAttributeTemplate(id);
+        attributeTemplateService.delete(id);
 
         // 3. Return success response
         return ResponseEntity.noContent().build();

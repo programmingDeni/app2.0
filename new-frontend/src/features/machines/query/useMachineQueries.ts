@@ -107,13 +107,13 @@ export function useAddCustomAttribute(machineId: number) {
   });
 }
 
-export function useEditCustomAttribute(machineId: number) {
+export function useEditCustomAttribute() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (attribute: Partial<MachineAttribute>) =>
       editMachineAttributeService(attribute),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["machine", machineId] });
+    onSuccess: (data: Partial<MachineAttribute>) => {
+      queryClient.invalidateQueries({ queryKey: ["machine", data.machineId] });
     },
   });
 }

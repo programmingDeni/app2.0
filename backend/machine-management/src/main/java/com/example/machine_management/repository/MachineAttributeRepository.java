@@ -11,11 +11,27 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MachineAttributeRepository extends JpaRepository<MachineAttribute, Integer> {
-    List<MachineAttribute> findByMachineId(Integer machineId);
 
-    @Query("SELECT a FROM MachineAttribute a LEFT JOIN FETCH a.attributeValues WHERE a.machineId = :machineId")
-    List<MachineAttribute> findAttributesWithValues(@Param("machineId") Integer machineId);
+    // ============= User-filtered queries =============
 
-    List<MachineAttribute> findAllMachineAttributesByMachineId(Integer machineId);
+    List<MachineAttribute> findByUserId(Integer userId);
 
+    Optional<MachineAttribute> findByIdAndUserId(Integer id, Integer userId);
+
+    List<MachineAttribute> findByMachineIdAndUserId(Integer machineId, Integer userId);
+
+    List<MachineAttribute> findAttributesWithValuesByMachineIdAndUserId(Integer machineId, Integer userId);
+
+    // ============= Legacy queries =============
+    /*
+     * List<MachineAttribute> findByMachineId(Integer machineId);
+     * 
+     * @Query("SELECT a FROM MachineAttribute a LEFT JOIN FETCH a.attributeValues WHERE a.machineId = :machineId"
+     * )
+     * List<MachineAttribute> findAttributesWithValues(@Param("machineId") Integer
+     * machineId);
+     * 
+     * List<MachineAttribute> findAllMachineAttributesByMachineId(Integer
+     * machineId);
+     */
 }

@@ -6,13 +6,19 @@ import java.util.List;
 import com.fasterxml.jackson.databind.annotation.JsonAppend.Attr;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 
 @Entity
-public class MachineAttribute {
+@Getter
+public class MachineAttribute extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(name = "user_id", nullable = false)
+    private Integer userId;
 
     private String attributeName;
 
@@ -22,9 +28,14 @@ public class MachineAttribute {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "machineAttribute")
     private List<AttributeValue> attributeValues = new ArrayList<>();
 
+    // TODO: hier auf iene machine verweisen nicht auf die ID
     private Integer machineId;
 
     private boolean fromTemplate = false;
+
+    @NotNull
+    @Column(nullable = false, name = "pruefungs_intervall")
+    private Integer pruefungsIntervall = 365; // Default
 
     // Constructors
 
@@ -69,25 +80,13 @@ public class MachineAttribute {
         this.fromTemplate = fromTemplate;
     }
 
-    // Getter + Setter
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getAttributeName() {
-        return attributeName;
-    }
+    // Setter
 
     public void setAttributeName(String attributeName) {
         if (attributeName == null || attributeName.trim().isEmpty()) {
             throw new IllegalArgumentException("AttributeName darf nicht null oder leer sein");
         }
         this.attributeName = attributeName;
-    }
-
-    public Integer getMachineId() {
-        return machineId;
     }
 
     public void setMachineId(Integer newMachine) {
@@ -100,19 +99,11 @@ public class MachineAttribute {
         this.machineId = newMachine;
     }
 
-    public AttributeType getType() {
-        return type;
-    }
-
     public void setType(AttributeType type) {
         if (type == null) {
             throw new IllegalArgumentException("Type darf nicht null sein");
         }
         this.type = type;
-    }
-
-    public List<AttributeValue> getAttributeValues() {
-        return attributeValues;
     }
 
     public void setAttributeValues(List<AttributeValue> attributeValues) {
@@ -132,10 +123,6 @@ public class MachineAttribute {
             throw new IllegalArgumentException("AttributeValue darf nicht leer sein");
         }
         this.attributeValues.add(attributeValue);
-    }
-
-    public boolean getFromTemplate() {
-        return fromTemplate;
     }
 
     public void setFromTemplate(boolean fromTemplate) {
@@ -165,4 +152,11 @@ public class MachineAttribute {
         }
     }
 
+    public void setPruefungsIntervall(Integer pruefungsIntervall) {
+        this.pruefungsIntervall = pruefungsIntervall;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
 }

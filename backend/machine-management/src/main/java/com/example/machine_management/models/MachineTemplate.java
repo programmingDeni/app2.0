@@ -1,21 +1,26 @@
 package com.example.machine_management.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class MachineTemplate {
+@Getter
+public class MachineTemplate extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(name = "user_id", nullable = false)
+    private Integer userId;
 
     @Column(nullable = false, unique = true)
     private String templateName;
 
     @OneToMany(mappedBy = "machineTemplate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AttributeInTemplate> attributeTemplates = new ArrayList<>();
+    private List<TemplateAttribute> attributeTemplates = new ArrayList<>();
 
     public MachineTemplate() {
     }
@@ -24,23 +29,11 @@ public class MachineTemplate {
         setTemplateName(templateName);
     }
 
-    // Getter & Setter
-    public Integer getId() {
-        return id;
-    }
-
-    public String getTemplateName() {
-        return templateName;
-    }
-
-    public List<AttributeInTemplate> getAttributeTemplates() {
-        return attributeTemplates;
-    }
-
-    public void setAttributeTemplates(List<AttributeInTemplate> attrs) {
+    // Setter
+    public void setAttributeTemplates(List<TemplateAttribute> attrs) {
         this.attributeTemplates = new ArrayList<>(attrs); // immer kopieren!
         if (attrs != null) {
-            for (AttributeInTemplate attr : attrs) {
+            for (TemplateAttribute attr : attrs) {
                 attr.setMachineTemplate(this);
             }
         }
@@ -55,14 +48,18 @@ public class MachineTemplate {
     }
 
     // Entitäts Methdoen
-    public void addAttribute(AttributeInTemplate attr) {
+    public void addAttribute(TemplateAttribute attr) {
         this.attributeTemplates.add(attr);
         attr.setMachineTemplate(this); // bidirektional setzen
     }
 
-    public void removeAttribute(AttributeInTemplate attr) {
+    public void removeAttribute(TemplateAttribute attr) {
         this.attributeTemplates.remove(attr);
         attr.setMachineTemplate(null);
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
 }

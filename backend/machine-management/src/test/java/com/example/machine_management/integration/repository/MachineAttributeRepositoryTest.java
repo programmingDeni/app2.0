@@ -16,6 +16,7 @@ import com.example.machine_management.models.MachineAttribute;
 import com.example.machine_management.models.AttributeType;
 //import com.example.machine_management.repository.MachineRepository;
 import com.example.machine_management.repository.MachineAttributeRepository;
+import com.example.machine_management.util.SecurityUtils;
 
 @DataJpaTest
 class MachineAttributeRepositoryTest {
@@ -24,6 +25,8 @@ class MachineAttributeRepositoryTest {
 
     @Autowired
     private MachineAttributeRepository attributeRepository;
+
+    @Autowired
 
     private Machine testMachine;
 
@@ -40,8 +43,10 @@ class MachineAttributeRepositoryTest {
         attr.setType(AttributeType.STRING);
         attributeRepository.save(attr);
 
+        Integer userId = SecurityUtils.getCurrentUserId();
+
         // when
-        List<MachineAttribute> found = attributeRepository.findByMachineId(testMachine.getId());
+        List<MachineAttribute> found = attributeRepository.findByMachineIdAndUserId(testMachine.getId(), userId);
 
         // then
         assertFalse(found.isEmpty(), "Liste sollte nicht leer sein");
@@ -52,7 +57,8 @@ class MachineAttributeRepositoryTest {
 
     @Test
     void whenFindByMachineWithNoAttributes_thenReturnEmptyList() {
-        List<MachineAttribute> found = attributeRepository.findByMachineId(testMachine.getId());
+        Integer userId = SecurityUtils.getCurrentUserId();
+        List<MachineAttribute> found = attributeRepository.findByMachineIdAndUserId(testMachine.getId(), userId);
         assertTrue(found.isEmpty(), "Liste sollte leer sein");
     }
 
