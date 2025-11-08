@@ -20,6 +20,9 @@ export default function Navbar() {
     }
   };
 
+    // Button ausblenden, wenn auf Login-Page
+  const isLoginPage = location.pathname === "/login";
+
   return (
     <nav className={styles.navbar}>
       <div className={styles.navbarContent}>
@@ -33,9 +36,12 @@ export default function Navbar() {
 
         {/* Right: Auth button */}
         <div className={styles.rightSection}>
+          {!isLoginPage && ( // Button ausblenden, wenn auf Login-Page
           <button onClick={handleAuthAction} className={styles.authButton}>
             {isAuthenticated ? "Logout" : "Login"}
           </button>
+          )}
+          
         </div>
       </div>
     </nav>

@@ -17,7 +17,7 @@ RUN pnpm install --frozen-lockfile
 # Dadurch sind Änderungen sofort sichtbar
 
 # Port für Vite Dev Server
-EXPOSE 3000
+EXPOSE 5173
 
 # Vite mit --host (damit von außerhalb des Containers erreichbar)
-CMD ["pnpm", "run", "dev", "--host"]
+CMD ["pnpm", "run", "dev", "--host", "0.0.0.0", "--port", "5173"]

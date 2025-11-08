@@ -128,6 +128,8 @@ export default function MachineDetailsView(props: Props) {
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error</div>;
 
+  console.log("hilfe");
+
   return (
     <MachineDetailsUI
       machine={machine}

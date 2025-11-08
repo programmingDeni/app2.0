@@ -38,11 +38,6 @@ export default function MachineListView() {
     }
   };
 
-  const handleAddMachine = async (machine: Partial<Machine>) => {
-    addMachineMutation.mutateAsync(machine);
-    refetch();
-  };
-
   const [showAddMachineForm, setShowAddMachineForm] = useState(false);
 
   if (isLoading) return <div>Loading...</div>;

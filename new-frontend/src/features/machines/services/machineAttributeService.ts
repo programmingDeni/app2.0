@@ -18,6 +18,7 @@ export async function getMachineAttributesEager(machineId: number) {
     const response = await axios.get<MachineAttribute[]>(
       `/api/machines/${machineId}/attributes/eager`
     );
+    console.log("machineAttributeService response:", response)
     return response.data;
   } catch (e) {
     throw e;

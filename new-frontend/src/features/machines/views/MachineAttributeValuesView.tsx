@@ -37,7 +37,8 @@ export default function MachineAttributeValuesView() {
   if (error) return <div>Error</div>;
   if (isLoading) return <div>Loading...</div>;
 
-  console.log("attributes", attributes);
+  console.log("custom attributes", attributes);
+  console.log("machine template attributes", machine?.machineTemplate?.templateAttributes)
 
   const handleAddAttributeValue = (
     attributeId: number,

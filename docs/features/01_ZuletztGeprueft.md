@@ -15,3 +15,5 @@ Frontend
     1.4. backend anpassungen noetig fuer eager und lazy loading der verschachtelten objekte (machineAttributes, attribtueValues)
 2.  UI-Elemente anpassen
 3.  Optional: Bearbeiten/Updaten ermöglichen
+
+Planung MachineValuesView update:
