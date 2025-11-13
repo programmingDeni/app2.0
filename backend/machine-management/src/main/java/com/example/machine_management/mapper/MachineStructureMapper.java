@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.example.machine_management.dto.MachineStructureDto;
-import com.example.machine_management.models.Machine;
+import com.example.machine_management.models.machine.Machine;
 
 @Component
 public class MachineStructureMapper {

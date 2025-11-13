@@ -1,15 +1,15 @@
-package com.example.machine_management.controller.templates;
+package com.example.machine_management.controller.machines;
 
-import com.example.machine_management.controller.base.AbstractMachineBaseController;
 import com.example.machine_management.dto.Machine.CreateMachineFromTemplateDto;
 import com.example.machine_management.dto.Machine.LazyMachineDto;
 import com.example.machine_management.dto.Machine.MachineDto;
-import com.example.machine_management.dto.MachineStructureDto;
 import com.example.machine_management.mapper.LazyMachineMapper;
 import com.example.machine_management.mapper.MachineMapper;
-import com.example.machine_management.mapper.MachineStructureMapper;
-import com.example.machine_management.models.Machine;
+import com.example.machine_management.models.machine.Machine;
 import com.example.machine_management.services.machine.MachineService;
+import com.example.machine_management.services.machine.MachineTemplateOperationsService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,41 +17,33 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Tag(name = "Template Operations", description = "Special operations for templates (create:Post to: 'api/machines/from-template', assign: post to: 'api/machines/{machineId}/template/{templateId}', remove: delete to: 'api/machines/{machineId}/template')")
 @RequestMapping("/api/machines")
-public class MachineTemplateOperationsController extends AbstractMachineBaseController {
+public class MachineTemplateOperationsController  {
 
     private final MachineService machineService;
     private final MachineMapper machineMapper;
-    private final MachineStructureMapper machineStructureMapper;
+    private final MachineTemplateOperationsService machineTemplateOperationsService;
 
     @Autowired
     public MachineTemplateOperationsController(MachineService machineService, MachineMapper machineMapper,
-            MachineStructureMapper machineStructureMapper) {
+    MachineTemplateOperationsService machineTemplateOperationsService) {
         this.machineService = machineService;
         this.machineMapper = machineMapper;
-        this.machineStructureMapper = machineStructureMapper;
+        this.machineTemplateOperationsService = machineTemplateOperationsService;
     }
 
     @PostMapping("/from-template")
     public ResponseEntity<LazyMachineDto> createMachineFromTemplate(
             @RequestBody CreateMachineFromTemplateDto dto) {
-        if (dto == null || !isValidTemplateDto(dto)) {
+        if (dto == null || dto.machineTemplateId == null || dto.machineTemplateId <= 0) {
             throw new IllegalArgumentException("Invalid template data");
         }
 
-        Machine created = machineService.createMachineFromTemplate(dto);
+        Machine created = machineTemplateOperationsService.createMachineFromTemplate(dto);
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(LazyMachineMapper.toDto(created));
-    }
-
-    @GetMapping("/{id}/structure")
-    public ResponseEntity<MachineStructureDto> getMachineStructure(@PathVariable Integer id) {
-        if (id == null || id <= 0) {
-            throw new IllegalArgumentException("Invalid ID");
-        }
-
-        Machine machine = machineService.findById(id);
-        return ResponseEntity.ok(machineStructureMapper.toDto(machine));
     }
 
     @PutMapping("/{id}/template/{templateId}")
@@ -63,7 +55,7 @@ public class MachineTemplateOperationsController extends AbstractMachineBaseCont
         }
 
         return ResponseEntity.ok(machineMapper.toDto(
-                machineService.assignTemplate(machineId, templateId)));
+                machineTemplateOperationsService.assignTemplate(machineId, templateId)));
     }
 
     @DeleteMapping("/{id}/template")
@@ -72,7 +64,7 @@ public class MachineTemplateOperationsController extends AbstractMachineBaseCont
             throw new IllegalArgumentException("Invalid ID");
         }
 
-        machineService.removeTemplateFromMachine(machineId);
+        machineTemplateOperationsService.removeTemplateFromMachine(machineId);
         return ResponseEntity.noContent().build();
     }
 }

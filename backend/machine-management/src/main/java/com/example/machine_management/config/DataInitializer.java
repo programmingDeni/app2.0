@@ -1,16 +1,17 @@
 package com.example.machine_management.config;
 
-import java.text.AttributedCharacterIterator.Attribute;
-
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.example.machine_management.dto.Machine.CreateMachineFromTemplateDto;
-import com.example.machine_management.dto.Machine.MachineDto;
-import com.example.machine_management.models.*;
+import com.example.machine_management.models.enums.AttributeType;
+import com.example.machine_management.models.machine.Machine;
+import com.example.machine_management.models.machine.MachineAttribute;
+import com.example.machine_management.models.template.MachineTemplate;
+import com.example.machine_management.models.template.TemplateAttribute;
+import com.example.machine_management.models.user.User;
 import com.example.machine_management.repository.*;
 import com.example.machine_management.services.machine.MachineService;
 
@@ -23,7 +24,7 @@ public class DataInitializer {
             UserRepository userRepo,
             PasswordEncoder passwordEncoder,
             MachineTemplateRepository templateRepo,
-            AttributeTemplateRepository attrTemplateRepo, MachineRepository machineRepo,
+            TemplateAttributeRepository attrTemplateRepo, MachineRepository machineRepo,
             MachineService machineService) {
         return args -> {
 
@@ -83,7 +84,7 @@ public class DataInitializer {
                     : "Kein Template"));
 
             for (MachineAttribute attr : createdMachine.getMachineAttributes()) {
-                System.out.println("- Attribut: " + attr.getAttributeName() + " (" + attr.getType() + ")");
+                System.out.println("- Attribut: " + attr.getAttributeName() + " (" + attr.getAttributeType() + ")");
             }
 
             System.out.println("Test-Daten initialisiert!");
@@ -91,7 +92,7 @@ public class DataInitializer {
     }
 
     private void createAttributeTemplate(
-            AttributeTemplateRepository repo,
+            TemplateAttributeRepository repo,
             MachineTemplate template,
             String name,
             AttributeType type) {

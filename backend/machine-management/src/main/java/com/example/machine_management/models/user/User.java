@@ -1,6 +1,8 @@
-package com.example.machine_management.models;
+package com.example.machine_management.models.user;
 
 import org.springframework.data.annotation.CreatedBy;
+
+import com.example.machine_management.models.base.AuditableEntity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

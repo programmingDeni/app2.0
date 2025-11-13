@@ -9,7 +9,7 @@ import TemplateCardLazyList from "../components-ui/TemplateCardLazyList";
 
 export async function fetchMachineTemplates(): Promise<Template[]> {
   try {
-    const response = await axios.get<Template[]>("/api/machine-templates/full");
+    const response = await axios.get<Template[]>("/api/machine-templates");
     return response.data;
   } catch (error) {
     console.error("Fehler beim Laden der Templates:", error);

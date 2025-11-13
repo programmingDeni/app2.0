@@ -1,149 +1,139 @@
 package com.example.machine_management.services;
 
 import java.util.Optional;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.machine_management.repository.AttributeValueRepository;
-import com.example.machine_management.repository.MachineAttributeRepository;
-import com.example.machine_management.repository.MachineRepository;
+import com.example.machine_management.services.abstracts.ParentManagementService;
+import com.example.machine_management.services.machine.MachineAttributeOperationsService;
 import com.example.machine_management.dto.AttributeValue.AttributeValueDto;
 import com.example.machine_management.dto.AttributeValue.CreateAttributeValueDto;
-import com.example.machine_management.exceptions.NotFoundException;
 import com.example.machine_management.mapper.AttributeValueMapper;
-import com.example.machine_management.models.Machine;
-import com.example.machine_management.models.MachineAttribute;
-import com.example.machine_management.models.AttributeValue;
-import com.example.machine_management.util.SecurityUtils;
+import com.example.machine_management.models.machine.AttributeValue;
+import com.example.machine_management.models.machine.MachineAttribute;
 
 @Service
-public class AttributeValueService extends GenericCrudService<AttributeValue, Integer, AttributeValueDto> {
+public class AttributeValueService extends ParentManagementService<AttributeValue, Integer, AttributeValueDto, CreateAttributeValueDto, MachineAttribute, Integer>  {
 
     private final AttributeValueRepository attributeValueRepository;
-    private final MachineAttributeRepository machineAttributeRepository;
-    private final MachineRepository machineRepository;
+
+    private final MachineAttributeOperationsService machineAttributeService;
 
     @Autowired
     public AttributeValueService(
             AttributeValueRepository attributeValueRepository,
             AttributeValueMapper mapper,
-            MachineAttributeRepository machineAttributeRepository,
-            MachineRepository machineRepository) {
-        super(attributeValueRepository, mapper);
+            MachineAttributeOperationsService machineAttributeService) {
+        super(attributeValueRepository);
         this.attributeValueRepository = attributeValueRepository;
-        this.machineAttributeRepository = machineAttributeRepository;
-        this.machineRepository = machineRepository;
+        this.machineAttributeService = machineAttributeService;
     }
 
-    // ============= Specialized Methods =============
-
-    // Attribute Value wird hier erstellt - mit ownership checks
-    public AttributeValue createAttributeValue(CreateAttributeValueDto createAttributeValueDto) {
-        Integer userId = SecurityUtils.getCurrentUserId();
-
-        // 1. Verify machine ownership
-        Machine machine = machineRepository.findByIdAndUserId(createAttributeValueDto.machineId, userId)
-                .orElseThrow(() -> new NotFoundException(
-                        "Maschine mit ID " + createAttributeValueDto.machineId + " nicht gefunden."));
-
-        // 2. Verify attribute ownership
-        MachineAttribute attribute = machineAttributeRepository
-                .findByIdAndUserId(createAttributeValueDto.attributeId, userId)
-                .orElseThrow(() -> new NotFoundException(
-                        "Attribut mit ID " + createAttributeValueDto.attributeId + " nicht gefunden."));
-
-        // 3. Prüfen, ob das Attribut zur Maschine gehört
-        if (!attribute.getMachineId().equals(machine.getId())) {
-            throw new IllegalArgumentException(
-                    "Attribut mit ID " + createAttributeValueDto.attributeId + " gehört nicht zur Maschine mit ID "
-                            + createAttributeValueDto.machineId + ".");
+    private void validateAttributeValueDto(AttributeValueDto dto){
+        if(dto.attributeValueYear == 0 || dto.attributeValueYear <= 1800){
+            throw new IllegalArgumentException("AttributeValueYear problem");
         }
-
-        AttributeValue toSave = new AttributeValue(attribute, createAttributeValueDto.attributeValueYear,
-                createAttributeValueDto.attributeValue, LocalDateTime.now(), LocalDateTime.now());
-        toSave.setUserId(userId);
-
-        // 4. Speichern
-        AttributeValue saved = attributeValueRepository.save(toSave);
-        return saved;
-    }
-
-    // Specialized update logic for year-based values
-    public AttributeValue updateAttributeValue(AttributeValueDto attributeValueDto) {
-        Integer userId = SecurityUtils.getCurrentUserId();
-
-        // 1. Verify attribute ownership
-        MachineAttribute existingAttribute = machineAttributeRepository
-                .findByIdAndUserId(attributeValueDto.machineAttributeId, userId)
-                .orElseThrow(() -> new NotFoundException("MachineAttribute not found"));
-
-        int year = attributeValueDto.attributeValueYear;
-        String value = attributeValueDto.attributeValue;
-
-        // 2. Gibt es schon einen Wert für dieses Jahr?
-        Optional<AttributeValue> existingValueOpt = attributeValueRepository
-                .findByMachineAttributeAndAttributeValueYear(existingAttribute, year);
-
-        AttributeValue toSave;
-
-        if (existingValueOpt.isPresent()) {
-            AttributeValue existingValue = existingValueOpt.get();
-            // Verify ownership
-            if (!existingValue.getUserId().equals(userId)) {
-                throw new NotFoundException("AttributeValue not found");
-            }
-            // 3. Wert aktualisieren
-            existingValue.setAttributeValue(value);
-            existingValue.setZuletztGeprueft(attributeValueDto.zuletztGeprueft);
-            existingValue.setZuletztGetauscht(attributeValueDto.zuletztGetauscht);
-            toSave = existingValue;
-        } else {
-            // 4. Neuer Wert
-            toSave = new AttributeValue(existingAttribute, year);
-            toSave.setAttributeValue(value);
-            toSave.setZuletztGeprueft(attributeValueDto.zuletztGeprueft);
-            toSave.setZuletztGetauscht(attributeValueDto.zuletztGetauscht);
-            toSave.setUserId(userId);
+        if(dto.attributeValue == null){
+            throw new IllegalArgumentException("AttributeValue darf nicht fehlen");
         }
+        if(dto.machineAttributeId == null){
+            throw new IllegalArgumentException("Atrtibute id darf nciht fehlen");
+        }
+            /**
+             *  FELDER DIE ICH JETZT NICHT BEHANDELT HABE 
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+            public LocalDateTime zuletztGeprueft;
 
-        // 5. Speichern
-        AttributeValue saved = attributeValueRepository.save(toSave);
-        return saved;
+            @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+            public LocalDateTime zuletztGetauscht;
+            */
     }
-
-    // ============= Implementierung der abstrakten Methoden aus GenericCrudService
-    // =============
 
     @Override
-    protected AttributeValue updateEntity(AttributeValue existingEntity, AttributeValueDto dto) {
-        existingEntity.setAttributeValueYear(dto.attributeValueYear);
-        existingEntity.setAttributeValue(dto.attributeValue);
-        existingEntity.setZuletztGeprueft(dto.zuletztGeprueft);
-        existingEntity.setZuletztGetauscht(dto.zuletztGetauscht);
+    protected MachineAttribute eagerFindParentById(Integer parentID) {
+        return machineAttributeService.userFindById(parentID, true);
+    }
+
+    @Override
+    protected MachineAttribute lazyFindParentById(Integer parentId) {
+        return machineAttributeService.userFindById(parentId, false);
+    }
+
+    //brauche glaub die struktur des parent findens nicht 
+    // ich kann ja das eager load vom parent einfach rufen?
+    @Override
+    protected List<AttributeValue> eagerFindEntitiesByParentId(Integer parentId) {
+        //Integer userId = SecurityUtils.getCurrentUserId();
+        //return this.attributeValueRepository.lazyFindByMachineAttributeIdAndUserId(parentId, userId);
+        //throw new UnsupportedOperationException("Unimplemented method 'eagerFindEntitiesByParentId'");
+        //TODO: was ist damit?
+        return null;
+    }
+
+    @Override
+    protected List<AttributeValue> lazyFindEntitiesByParentId(Integer parentId) {
+        //Integer userId = SecurityUtils.getCurrentUserId();
+        //return this.attributeValueRepository.eagerFindByMachineAttributeIdAndUserId(parentId,userId);
+        //TODO: was ist hiermit
+        return null;
+    }
+
+    @Override
+    protected void removeEntityFromParent(Integer parentId, AttributeValue entity) {
+        MachineAttribute parent = lazyFindParentById(parentId);
+        parent.removeAttributeValue(entity);
+    }
+
+    @Override
+    protected AttributeValue createEntity(CreateAttributeValueDto dto, MachineAttribute parent) {
+        AttributeValueDto attributeValueDto = new AttributeValueDto(dto.attributeValueYear,dto.attributeId, dto.attributeValue);
+        validateAttributeValueDto(attributeValueDto);
+        return new AttributeValue(
+            parent,
+            attributeValueDto.attributeValueYear,
+            attributeValueDto.attributeValue
+            );
+    }
+
+    @Override
+    protected AttributeValue updateEntity(AttributeValue existingEntity, AttributeValueDto updateDto) {
+        validateAttributeValueDto(updateDto);
+        existingEntity.setAttributeValue(updateDto.attributeValue);
+        existingEntity.setAttributeValueYear(updateDto.attributeValueYear);
         return existingEntity;
     }
 
     @Override
-    protected List<AttributeValue> findAllByUserId(Integer userId) {
-        return attributeValueRepository.findByUserId(userId);
+    protected void addEntityToParent(MachineAttribute parent, AttributeValue entity) {
+        parent.addAttributeValue(entity);
     }
 
     @Override
-    protected Optional<AttributeValue> findByIdAndUserId(Integer id, Integer userId) {
+    protected Optional<AttributeValue> userFindByIdLazy(Integer id, Integer userId) {
         return attributeValueRepository.findByIdAndUserId(id, userId);
     }
 
     @Override
-    protected void setUserId(AttributeValue entity, Integer userId) {
-        entity.setUserId(userId);
+    protected Optional<AttributeValue> userFindByIdEager(Integer id, Integer userId) {
+        // diese methode wird nicht gebraucht es hat noch keine children
+        //throw new UnsupportedOperationException("Unimplemented method 'userFindByIdEager'");
+        //TODO: was ist hiermit?
+        return null;
     }
 
-    public List<AttributeValue> getAttributeValuesByMachineId(Integer machineId) {
-        Integer userId = SecurityUtils.getCurrentUserId();
-        return attributeValueRepository.findByMachineAttributeMachineIdAndUserId(machineId, userId);
+    @Override
+    protected Optional<AttributeValue> adminFindByIdEager(Integer id) {
+        return attributeValueRepository.findById(id);
     }
+
+    @Override
+    protected List<AttributeValue> adminFindAllEager() {
+        return attributeValueRepository.findAll();
+    }
+
+
 
 }

@@ -3,7 +3,7 @@ package com.example.machine_management.services;
 import org.springframework.stereotype.Service;
 
 import com.example.machine_management.dto.Auth.AuthResponse;
-import com.example.machine_management.models.User;
+import com.example.machine_management.models.user.User;
 import com.example.machine_management.security.JwtUtils;
 
 @Service

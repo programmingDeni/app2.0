@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.machine_management.dto.AttributeInTemplate.TemplateAttributeDto;
 import com.example.machine_management.mapper.EntityMapper;
-import com.example.machine_management.models.TemplateAttribute;
+import com.example.machine_management.models.template.TemplateAttribute;
 
 @Component
 public class TemplateAttributeMapper implements EntityMapper<TemplateAttribute, TemplateAttributeDto> {

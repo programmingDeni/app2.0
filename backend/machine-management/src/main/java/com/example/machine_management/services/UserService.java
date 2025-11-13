@@ -3,7 +3,7 @@ package com.example.machine_management.services;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.machine_management.models.User;
+import com.example.machine_management.models.user.User;
 import com.example.machine_management.repository.UserRepository;
 
 @Service

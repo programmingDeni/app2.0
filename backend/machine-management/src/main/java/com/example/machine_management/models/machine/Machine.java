@@ -1,8 +1,11 @@
-package com.example.machine_management.models;
+package com.example.machine_management.models.machine;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.machine_management.models.base.AuditableEntity;
+import com.example.machine_management.models.base.UserOwned;
+import com.example.machine_management.models.template.MachineTemplate;
 import com.example.machine_management.util.SecurityUtils;
 
 import jakarta.persistence.*;
@@ -10,7 +13,7 @@ import jakarta.persistence.*;
 //import com.example.machine_management.models.MachineAttributes;
 
 @Entity
-public class Machine extends AuditableEntity {
+public class Machine extends AuditableEntity implements UserOwned{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -18,8 +21,7 @@ public class Machine extends AuditableEntity {
     @Column(unique = true)
     private String machineName;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "machineId") // FK in MachineAttributes
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "machine")
     private List<MachineAttribute> machineAttributes = new ArrayList<>();
 
     @ManyToOne
@@ -67,13 +69,13 @@ public class Machine extends AuditableEntity {
         if (this.machineAttributes == null)
             this.machineAttributes = new ArrayList<>();
         this.machineAttributes.add(attribute);
-        attribute.setMachineId(this.id);
+        attribute.setMachine(this);
     }
 
     public void removeAttribute(MachineAttribute attribute) {
         if (this.machineAttributes != null) {
             this.machineAttributes.remove(attribute);
-            attribute.setMachineId(null);
+            attribute.setMachine(null);
         }
     }
 
@@ -109,6 +111,17 @@ public class Machine extends AuditableEntity {
         }
     }
 
-    // TODO: Templates add / remove
+    // ═══════════════════════════════════════════════════════════════
+    //  MachineAttribute Operations (über Machine)
+    // ═══════════════════════════════════════════════════════════════
+    public void addMachineAttribute(MachineAttribute attr) {
+        this.machineAttributes.add(attr);
+        attr.setMachine(this); 
+    }
+
+    public void removeMachineAttribute(MachineAttribute attr) {
+        this.machineAttributes.remove(attr);
+        attr.setMachine(null);
+    }
 
 }

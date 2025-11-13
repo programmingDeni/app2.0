@@ -1,4 +1,4 @@
-package com.example.machine_management.models;
+package com.example.machine_management.models.base;
 
 import java.time.LocalDateTime;
 
@@ -12,9 +12,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
+import lombok.Setter;
 
 @MappedSuperclass
 @Getter
+@Setter
 @EntityListeners(AuditingEntityListener.class)
 public abstract class AuditableEntity {
     @CreatedBy
@@ -32,13 +34,4 @@ public abstract class AuditableEntity {
     @LastModifiedDate
     @Column(name = "modified_at")
     private LocalDateTime modifiedAt;
-
-    // Setter für manuelle Zuweisung (z.B. in DataInitializer)
-    public void setCreatedBy(Integer createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public void setModifiedBy(Integer modifiedBy) {
-        this.modifiedBy = modifiedBy;
-    }
 }

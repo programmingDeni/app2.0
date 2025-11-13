@@ -3,18 +3,21 @@ package com.example.machine_management.mapper;
 import com.example.machine_management.dto.MachineStructureDto;
 import com.example.machine_management.dto.MachineTemplates.CreateMachineTemplateWithAttributesDto;
 import com.example.machine_management.dto.MachineTemplates.MachineTemplateDto;
-import com.example.machine_management.models.TemplateAttribute;
-import com.example.machine_management.models.MachineTemplate;
+import com.example.machine_management.mapper.TemplateAttributes.TemplateAttributeMapper;
+import com.example.machine_management.models.template.MachineTemplate;
+import com.example.machine_management.models.template.TemplateAttribute;
+
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 
 @Component
 public class MachineTemplateMapper implements EntityMapper<MachineTemplate, MachineTemplateDto> {
 
-    private final AttributeTemplateMapper attributeTemplateMapper;
+    private final TemplateAttributeMapper templateAttributeMapper;
 
-    public MachineTemplateMapper(AttributeTemplateMapper attributeTemplateMapper) {
-        this.attributeTemplateMapper = attributeTemplateMapper;
+    public MachineTemplateMapper(TemplateAttributeMapper templateAttributeMapper) {
+        this.templateAttributeMapper = templateAttributeMapper;
     }
 
     @Override
@@ -22,7 +25,7 @@ public class MachineTemplateMapper implements EntityMapper<MachineTemplate, Mach
         MachineTemplateDto dto = new MachineTemplateDto();
         dto.id = template.getId();
         dto.templateName = template.getTemplateName();
-        dto.templateAttributes = attributeTemplateMapper.toDtoList(template.getAttributeTemplates());
+        dto.templateAttributes = templateAttributeMapper.toDtoList(template.getTemplateAttributes());
         return dto;
     }
 
@@ -43,9 +46,14 @@ public class MachineTemplateMapper implements EntityMapper<MachineTemplate, Mach
     public CreateMachineTemplateWithAttributesDto toWithAttributesDto(MachineTemplate machineTemplate) {
         CreateMachineTemplateWithAttributesDto withAttributesDto = new CreateMachineTemplateWithAttributesDto();
         withAttributesDto.templateName = machineTemplate.getTemplateName();
-        withAttributesDto.attributeTemplates = attributeTemplateMapper
-                .toDtoList(machineTemplate.getAttributeTemplates());
+        withAttributesDto.attributeTemplates = templateAttributeMapper
+                .toDtoList(machineTemplate.getTemplateAttributes());
         return withAttributesDto;
+    }
+
+    @Override
+    public List<MachineTemplateDto> toDtoList(List<MachineTemplate> entities) {
+        return entities.stream().map(this::toDto).toList();
     }
 
 }

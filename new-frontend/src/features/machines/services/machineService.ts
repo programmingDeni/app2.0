@@ -124,7 +124,7 @@ export async function createMachineService(
 //Read
 //all machines
 export async function fetchMachinesService(): Promise<Machine[]> {
-  const response = await axios.get("/api/machines");
+  const response = await axios.get("/api/machines?eager=false");
   const machines: Machine[] = response.data.map((dto: any) => {
     const { machineTemplateDto, ...rest } = dto;
     return {

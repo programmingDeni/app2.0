@@ -1,6 +1,9 @@
-package com.example.machine_management.models;
+package com.example.machine_management.models.machine;
 
 import java.time.LocalDateTime;
+
+import com.example.machine_management.models.base.AuditableEntity;
+import com.example.machine_management.models.base.UserOwned;
 
 // past or present validation
 import jakarta.validation.constraints.PastOrPresent;
@@ -21,7 +24,7 @@ import jakarta.persistence.Table;
 @Entity
 @Getter
 @Table(name = "attribute_value")
-public class AttributeValue extends AuditableEntity {
+public class AttributeValue extends AuditableEntity implements UserOwned {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -31,8 +34,10 @@ public class AttributeValue extends AuditableEntity {
 
     private String attributeValue;
 
+    //TODO: muss nicht das values objekt den typ kennen fuer die validierung? 
+
     @Column(name = "attribute_value_year", nullable = false)
-    private int attributeValueYear;
+    private Integer attributeValueYear;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "machine_attribute_id", nullable = false)
@@ -63,25 +68,16 @@ public class AttributeValue extends AuditableEntity {
     public AttributeValue(MachineAttribute machineAttribute, int year) {
         this.machineAttribute = machineAttribute;
         this.attributeValueYear = year;
-        machineAttribute.getAttributeValues().add(this);
-        attributeValue = "";
     }
 
     // Initialisuerung mit Wert
-    public AttributeValue(MachineAttribute machineAttribute, int year, String value, LocalDateTime zuletztGeprueft,
-            LocalDateTime zuletztGetauscht) {
+    public AttributeValue(MachineAttribute machineAttribute, int year, String value) {
         this(machineAttribute, year);
         this.attributeValue = value;
-        this.zuletztGeprueft = zuletztGeprueft;
-        this.zuletztGetauscht = zuletztGetauscht;
     }
 
     public void setAttributeValue(String value) {
         this.attributeValue = value;
-    }
-
-    public void setAttributeValueYear(int year) {
-        this.attributeValueYear = year;
     }
 
     public MachineAttribute getMachineAttribute() {
@@ -107,5 +103,30 @@ public class AttributeValue extends AuditableEntity {
     public void setZuletztGetauscht(LocalDateTime zuletztGetauscht) {
         this.zuletztGetauscht = zuletztGetauscht;
     }
-
+    /*
+     * 
+     
+    private void validateValueForType(String value) {
+            try {
+                switch (attributeType) {
+                    case INTEGER:
+                        Integer.parseInt(value);
+                        break;
+                    case BOOLEAN:
+                        if (!value.equalsIgnoreCase("true") && !value.equalsIgnoreCase("false")) {
+                            throw new IllegalArgumentException();
+                        }
+                        break;
+                    case STRING:
+                        // Strings sind immer valid
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unbekannter AttributeType: " + attributeType);
+                }
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(
+                        "Wert '" + value + "' ist nicht valid für Typ " + attributeType);
+            }
+        }
+            */
 }

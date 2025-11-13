@@ -5,12 +5,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.example.machine_management.dto.Machine.LazyMachineDto;
 import com.example.machine_management.dto.Machine.MachineDto;
 import com.example.machine_management.mapper.MachineMapper;
-import com.example.machine_management.models.TemplateAttribute;
-import com.example.machine_management.models.AttributeType;
-import com.example.machine_management.models.Machine;
-import com.example.machine_management.models.MachineAttribute;
-import com.example.machine_management.models.MachineTemplate;
-import com.example.machine_management.repository.AttributeTemplateRepository;
+import com.example.machine_management.models.enums.AttributeType;
+import com.example.machine_management.models.machine.Machine;
+import com.example.machine_management.models.machine.MachineAttribute;
+import com.example.machine_management.models.template.MachineTemplate;
+import com.example.machine_management.models.template.TemplateAttribute;
+import com.example.machine_management.repository.TemplateAttributeRepository;
 import com.example.machine_management.repository.MachineRepository;
 import com.example.machine_management.repository.MachineTemplateRepository;
 
@@ -57,7 +57,7 @@ class MachineMapperTest {
         // repo import
         MachineTemplate template = new MachineTemplate("Testtemplate");
         TemplateAttribute attr = new TemplateAttribute("TestAttribute", AttributeType.STRING, template);
-        template.setAttributeTemplates(List.of(attr));
+        template.setTemplateAttributes(List.of(attr));
 
         machineTemplateRepository.save(template);
 

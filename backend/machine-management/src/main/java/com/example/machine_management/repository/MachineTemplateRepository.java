@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.example.machine_management.models.MachineTemplate;
+import com.example.machine_management.models.template.MachineTemplate;
 
 public interface MachineTemplateRepository extends JpaRepository<MachineTemplate, Integer> {
 
@@ -18,22 +18,10 @@ public interface MachineTemplateRepository extends JpaRepository<MachineTemplate
 
     Optional<MachineTemplate> findByIdAndUserId(Integer id, Integer userId);
 
-    @Query("SELECT DISTINCT t FROM MachineTemplate t LEFT JOIN FETCH t.attributeTemplates WHERE t.userId = :userId")
+    @Query("SELECT DISTINCT t FROM MachineTemplate t LEFT JOIN FETCH t.templateAttributes WHERE t.userId = :userId")
     List<MachineTemplate> findAllWithAttributeTemplatesByUserId(@Param("userId") Integer userId);
 
     // AttributeTemplateRepository oder MachineTemplateRepository
-    @Query("SELECT t FROM MachineTemplate t LEFT JOIN FETCH t.attributeTemplates WHERE t.id = :id AND t.userId = :userId")
+    @Query("SELECT t FROM MachineTemplate t LEFT JOIN FETCH t.templateAttributes WHERE t.id = :id AND t.userId = :userId")
     Optional<MachineTemplate> findByIdWithAttributesAndUserId(@Param("id") Integer id, @Param("userId") Integer userId);
-
-    // ============= Legacy queries =============
-    /*
-     * @EntityGraph(attributePaths = "attributeTemplates")
-     * 
-     * @Query("SELECT t FROM MachineTemplate t")
-     * List<MachineTemplate> findAllWithAttributeTemplates();
-     * 
-     * @Query("SELECT t FROM MachineTemplate t LEFT JOIN FETCH t.attributeTemplates WHERE t.id = :id"
-     * )
-     * Optional<MachineTemplate> findByIdWithAttributes(@Param("id") Integer id);
-     */
 }

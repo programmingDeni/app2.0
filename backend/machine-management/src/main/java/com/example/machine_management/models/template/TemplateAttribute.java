@@ -1,4 +1,8 @@
-package com.example.machine_management.models;
+package com.example.machine_management.models.template;
+
+import com.example.machine_management.models.base.AuditableEntity;
+import com.example.machine_management.models.base.UserOwned;
+import com.example.machine_management.models.enums.AttributeType;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -7,7 +11,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class TemplateAttribute extends AuditableEntity {
+public class TemplateAttribute extends AuditableEntity implements UserOwned{
     // Attribute
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,13 +61,13 @@ public class TemplateAttribute extends AuditableEntity {
 
         // Alte Referenz entfernen
         if (this.machineTemplate != null) {
-            this.machineTemplate.getAttributeTemplates().remove(this);
+            this.machineTemplate.getTemplateAttributes().remove(this);
         }
 
         // Neue Referenz setzen
         this.machineTemplate = template;
-        if (!template.getAttributeTemplates().contains(this)) {
-            template.getAttributeTemplates().add(this);
+        if (!template.getTemplateAttributes().contains(this)) {
+            template.getTemplateAttributes().add(this);
         }
     }
 

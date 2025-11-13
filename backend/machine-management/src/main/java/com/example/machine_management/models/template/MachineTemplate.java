@@ -1,4 +1,4 @@
-package com.example.machine_management.models;
+package com.example.machine_management.models.template;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -6,9 +6,12 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.machine_management.models.base.AuditableEntity;
+import com.example.machine_management.models.base.UserOwned;
+
 @Entity
 @Getter
-public class MachineTemplate extends AuditableEntity {
+public class MachineTemplate extends AuditableEntity implements UserOwned {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -20,7 +23,7 @@ public class MachineTemplate extends AuditableEntity {
     private String templateName;
 
     @OneToMany(mappedBy = "machineTemplate", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TemplateAttribute> attributeTemplates = new ArrayList<>();
+    private List<TemplateAttribute> templateAttributes = new ArrayList<>();
 
     public MachineTemplate() {
     }
@@ -30,8 +33,8 @@ public class MachineTemplate extends AuditableEntity {
     }
 
     // Setter
-    public void setAttributeTemplates(List<TemplateAttribute> attrs) {
-        this.attributeTemplates = new ArrayList<>(attrs); // immer kopieren!
+    public void setTemplateAttributes(List<TemplateAttribute> attrs) {
+        this.templateAttributes = new ArrayList<>(attrs); // immer kopieren!
         if (attrs != null) {
             for (TemplateAttribute attr : attrs) {
                 attr.setMachineTemplate(this);
@@ -49,12 +52,12 @@ public class MachineTemplate extends AuditableEntity {
 
     // Entitäts Methdoen
     public void addAttribute(TemplateAttribute attr) {
-        this.attributeTemplates.add(attr);
+        this.templateAttributes.add(attr);
         attr.setMachineTemplate(this); // bidirektional setzen
     }
 
     public void removeAttribute(TemplateAttribute attr) {
-        this.attributeTemplates.remove(attr);
+        this.templateAttributes.remove(attr);
         attr.setMachineTemplate(null);
     }
 

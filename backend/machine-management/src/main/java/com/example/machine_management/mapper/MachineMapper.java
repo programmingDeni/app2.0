@@ -3,10 +3,12 @@ package com.example.machine_management.mapper;
 import com.example.machine_management.dto.Machine.MachineDto;
 import com.example.machine_management.dto.MachineAttributes.MachineAttributeDto;
 import com.example.machine_management.dto.MachineTemplates.MachineTemplateDto;
-import com.example.machine_management.models.TemplateAttribute;
-import com.example.machine_management.models.Machine;
-import com.example.machine_management.models.MachineAttribute;
-import com.example.machine_management.models.MachineTemplate;
+import com.example.machine_management.models.machine.Machine;
+import com.example.machine_management.models.machine.MachineAttribute;
+import com.example.machine_management.models.template.MachineTemplate;
+import com.example.machine_management.models.template.TemplateAttribute;
+
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -62,6 +64,11 @@ public class MachineMapper implements EntityMapper<Machine, MachineDto> {
         Machine machine = new Machine(name);
         machine.setMachineTemplate(template);
         return machine;
+    }
+
+    @Override
+    public List<MachineDto> toDtoList(List<Machine> entities) {
+        return entities.stream().map(this::toDto).toList();
     }
 
 }

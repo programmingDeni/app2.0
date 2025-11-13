@@ -1,4 +1,4 @@
-package com.example.machine_management.models;
+package com.example.machine_management.models.enums;
 
 
 public enum AttributeType {

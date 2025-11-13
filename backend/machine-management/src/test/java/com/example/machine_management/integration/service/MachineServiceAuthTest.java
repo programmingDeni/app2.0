@@ -1,6 +1,6 @@
 package com.example.machine_management.integration.service;
 
-import com.example.machine_management.models.Machine;
+import com.example.machine_management.models.machine.Machine;
 import com.example.machine_management.repository.MachineRepository;
 import com.example.machine_management.security.WithMockUserPrincipal;
 import com.example.machine_management.services.machine.MachineService;
@@ -52,7 +52,7 @@ class MachineServiceAuthTest {
         machineRepository.save(machine3);
 
         // Act: Hole alle Maschinen als User 1
-        List<Machine> machines = machineService.findAll();
+        List<Machine> machines = machineService.userFindAllLazy(2);
 
         // Assert: User 1 sieht nur seine 2 Maschinen
         assertEquals(2, machines.size());
@@ -79,7 +79,7 @@ class MachineServiceAuthTest {
         machineRepository.save(machine2);
 
         // Act: Hole alle Maschinen als User 2
-        List<Machine> machines = machineService.findAll();
+        List<Machine> machines = machineService.userFindAllLazy(2);
 
         // Assert: User 2 sieht nur seine 1 Maschine
         assertEquals(1, machines.size());
@@ -102,7 +102,7 @@ class MachineServiceAuthTest {
 
         // Act & Assert: User 1 versucht Machine von User 2 zu lesen
         assertThrows(Exception.class, () -> {
-            machineService.findById(saved.getId());
+            machineService.userFindById(saved.getId(),false);
         });
     }
 
