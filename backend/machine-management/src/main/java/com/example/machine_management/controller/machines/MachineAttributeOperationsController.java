@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Machine Attributes", description = "Manage attributes within a machine (nested under /machines/{machineId}/attributes)")
 @RestController
-@RequestMapping("/api/machines/{machineId}/attributes")
+@RequestMapping("/api/machines/{parentId}/attributes")
 public class MachineAttributeOperationsController 
     extends AbstractNestedCrudController<MachineAttribute, Integer, 
         MachineAttributeDto, CreateMachineAttributeDto, Machine, Integer> {

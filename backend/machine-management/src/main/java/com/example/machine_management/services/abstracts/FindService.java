@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.machine_management.exceptions.NotFoundException;
 import com.example.machine_management.models.base.UserOwned;
@@ -20,6 +21,7 @@ public abstract class FindService<E extends UserOwned, ID, DTO> {
         this.repository = repository;
     }
 
+    @Transactional(readOnly = true)
     public E userFindById(ID id, boolean eager) {
         Integer userId = SecurityUtils.getCurrentUserId();
         Optional<E> entity = eager 
@@ -28,6 +30,7 @@ public abstract class FindService<E extends UserOwned, ID, DTO> {
         return entity.orElseThrow(() -> new NotFoundException("Entity not found"));
     }
 
+    @Transactional(readOnly = true)
     public E adminFindById(ID id, boolean eager) {
         if (eager) {
             return adminFindByIdEager(id)
@@ -38,7 +41,7 @@ public abstract class FindService<E extends UserOwned, ID, DTO> {
         }
     }
 
-
+    @Transactional(readOnly = true)
     public List<E> adminFindAll(boolean eager) {
         return eager ? adminFindAllEager() : repository.findAll();
     }

@@ -1,43 +1,56 @@
 //List komponente und Presenter importieren
 //list is die UI der Liste
 import MachineAttributesList from "../components-ui/MachinenAttributValuesTableUI";
-//presenter enthält alle daten
-//import { useMachineAttributesPresenter } from "@/features/machines/presenter/useMachineAttributeValuesTablePresenter";
-import { useMachineAttributesAndValuesQuery } from "@/features/machines/query/useMachineAttributeQueries";
-import {
-  useEditCustomAttribute,
-  useMachine,
-} from "@/features/machines/query/useMachineQueries";
-import { useAddAttributeValue } from "../query/useAttributeValuesQuery";
+import { useQueryClient } from "@tanstack/react-query";
+import { MachineQuery } from "@/queries/machine/MachineQuery";
+import {MachineAttributeQuery} from "@/queries/machine/attributes/MachineAttributeQuery"
+import { AttributeValueQuery } from "@/queries/machine/attributes/values/AttributeValuesQuery";
 
 //machine id vom route
 import { useParams } from "react-router-dom";
 
 //Components
 import Button from "@/components/Button";
+import { MachineAttribute } from "../types/machine.types";
 
 export default function MachineAttributeValuesView() {
   const { id } = useParams();
   const machineId = id ? parseInt(id) : -1;
 
+  const queryClient = useQueryClient();
+  const machineQuery = new MachineQuery(queryClient);
+  const machineAttributeQuery = new MachineAttributeQuery(queryClient);
+  
+  const { data: machine, isLoading: machineIsLoading, error: machineError } = machineQuery.useEagerFindById(machineId);
+
+  console.log("MachineAttributeValuesView: Machine:", machine)
+
+  const attributes: MachineAttribute[] = machine?.attributes || [] ;
+  const customAttributes = attributes.filter((attr) => !attr.fromTemplate);
+  const templateAttributes = attributes.filter((attr) => !attr.fromTemplate);
   //const { machineName, attributes, handleAddAttributeValue } =useMachineAttributesPresenter(machineId);
+  /**
+   * 
+   
   const {
     data: attributes,
     isLoading,
     error,
-  } = useMachineAttributesAndValuesQuery(machineId);
+  } = machineAttributeQuery.useFindAllByParentId(machineId, true);
 
-  const { data: machine, isLoading: machineIsLoading } = useMachine(machineId);
 
   const useAddAttributeValueMutation = useAddAttributeValue();
   const useEditCustomAttributeMutation = useEditCustomAttribute();
 
+  */
+
   if (machineId < 0) return <div>Keine Maschine gefunden </div>;
 
-  if (error) return <div>Error</div>;
-  if (isLoading) return <div>Loading...</div>;
+  if (machineError) return <div>Error</div>;
+  if (machineIsLoading) return <div>Loading...</div>;
 
-  console.log("custom attributes", attributes);
+  console.log("custom attributes", customAttributes);
+  console.log("template attributes", templateAttributes);  
   console.log("machine template attributes", machine?.machineTemplate?.templateAttributes)
 
   const handleAddAttributeValue = (
@@ -54,12 +67,24 @@ export default function MachineAttributeValuesView() {
       year
     );
     //TODO: query dafür useAddAttributeValue
-    useAddAttributeValueMutation.mutate({
+    const valueQuery = new AttributeValueQuery(machineId, queryClient);
+    const mutation = valueQuery.useCreate(attributeId);
+
+    mutation.mutate({
       machineId: machineId,
       machineAttributeId: attributeId,
       attributeValue: attributeValue,
       attributeValueYear: year,
-    });
+    },
+  {
+        onSuccess: () => {
+          // Machine Query invalidieren für automatisches Refetch
+          queryClient.invalidateQueries({ 
+            queryKey: ['/api/machines', machineId] 
+          });
+        }
+      }
+    );
   };
 
   const handlePruefungsIntervallChanged = (
@@ -72,13 +97,38 @@ export default function MachineAttributeValuesView() {
       "pruefungsIntervall",
       pruefungsIntervall
     );
-    //TODO: eigentlich nur updateAttribute mutation aufrufen
-    useEditCustomAttributeMutation.mutate({
-      id: attributeId,
-      machineId: machineId,
-      pruefungsIntervall: pruefungsIntervall,
-    });
+    const mutation = machineAttributeQuery.useUpdate(machineId, attributeId);
+    mutation.mutate(
+      {
+        pruefungsIntervall: pruefungsIntervall,
+    },
+      {
+        onSuccess: () => {
+          // Machine Query invalidieren für automatisches Refetch
+          queryClient.invalidateQueries({ 
+            queryKey: ['/api/machines', machineId] 
+          });
+        }
+      }
+    );
   };
+
+  /**
+   * export interface MachineAttribute {
+     id: number;
+     machineId: number;
+     attributeName: string;
+     attributeType: string;
+     attributeValues: AttributeValue[];
+     fromTemplate: boolean;
+     pruefungsIntervall?: number;
+     zuletztGeprueft?: string;
+     zuletztGetauscht?: string;
+   }
+   */
+
+  console.log("MachineAttributeValuesView attributes: ",attributes)
+   
 
   return (
     <div>
@@ -100,7 +150,7 @@ export default function MachineAttributeValuesView() {
         <Button to={`/machines/${machineId}`}>
           → Maschine #{machineId} Struktur bearbeiten
         </Button>
-        <Button to="/">→ Zurück zur Startseite</Button>
+        <Button to="/machines">→ Zurück zur Startseite</Button>
       </div>
     </div>
   );

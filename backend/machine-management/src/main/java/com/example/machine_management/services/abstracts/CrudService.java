@@ -49,6 +49,7 @@ public abstract class CrudService<E extends UserOwned, ID, DTO> extends FindServ
     /**
      * Finde alle Entities eines Users 
      */    
+    @Transactional(readOnly = true)
     public List<E> getAllUserEntities(boolean eager){
         Integer userId = SecurityUtils.getCurrentUserId();
         return eager 

@@ -3,6 +3,7 @@ package com.example.machine_management.services.abstracts;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.machine_management.models.base.UserOwned;
 import com.example.machine_management.util.SecurityUtils;
@@ -15,6 +16,7 @@ public abstract class ParentManagementService<E extends UserOwned, ID, DTO, Crea
     }
 
     // ===== PARENT MANAGEMENT =====
+    @Transactional
     public E addToParent(PID parentId, CreateDTO dto) {
         Integer userId = SecurityUtils.getCurrentUserId();
         P parent = findParentById(parentId, false);
@@ -31,21 +33,25 @@ public abstract class ParentManagementService<E extends UserOwned, ID, DTO, Crea
      * @param dto The DTO containing updated data
      * @return The updated entity
      */
+    @Transactional
     public E update(ID id, DTO dto) {
         E existingEntity = userFindById(id, false); // Ownership check
         E updatedEntity = updateEntity(existingEntity, dto);
         return repository.save(updatedEntity);
     }
 
+    @Transactional
     public void removeFromParent(PID parentId, E entity){
         removeEntityFromParent(parentId, entity);
         repository.delete(entity);
     }
 
+    @Transactional(readOnly = true)
     public P findParentById(PID parentId, boolean eager){
         return eager ? eagerFindParentById(parentId) : lazyFindParentById(parentId);
     }
 
+    @Transactional(readOnly = true)
     public List<E> findEntitiesByParentId(PID parentId, boolean eager){
         return eager ? eagerFindEntitiesByParentId(parentId) : lazyFindEntitiesByParentId(parentId);
     }

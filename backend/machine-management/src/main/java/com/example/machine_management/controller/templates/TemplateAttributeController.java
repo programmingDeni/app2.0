@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api/machine-templates/{templateId}/attributes")
+@RequestMapping("/api/machine-templates/{parentId}/attributes")
 @Tag(name="Template attributes", description = "crud fuer template attribtues unter /api/machine-templates/attributes")
 public class TemplateAttributeController extends AbstractNestedCrudController<TemplateAttribute, Integer, TemplateAttributeDto, CreateTemplateAttributeDTO, MachineTemplate, Integer> {
 

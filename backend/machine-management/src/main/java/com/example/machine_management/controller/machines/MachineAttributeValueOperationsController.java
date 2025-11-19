@@ -11,7 +11,6 @@ import com.example.machine_management.mapper.EntityMapper;
 import com.example.machine_management.models.machine.AttributeValue;
 import com.example.machine_management.models.machine.MachineAttribute;
 import com.example.machine_management.services.AttributeValueService;
-import com.example.machine_management.services.abstracts.CrudService;
 import com.example.machine_management.services.abstracts.ParentManagementService;
 import com.example.machine_management.services.machine.MachineAttributeOperationsService;
 
@@ -19,12 +18,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.example.machine_management.controller.base.AbstractCrudController;
 import com.example.machine_management.controller.base.AbstractNestedCrudController;
 
 @Tag(name = "Attribute Values", description = "Values for machine attributes, route: '/api/machines/attributes/values'")
 @RestController
-@RequestMapping("/api/machines/{machineId}/attributes/{attributeId}/values")
+@RequestMapping("/api/machines/{machineId}/attributes/{parentId}/values")
 public class MachineAttributeValueOperationsController extends AbstractNestedCrudController<AttributeValue,Integer,AttributeValueDto, CreateAttributeValueDto, MachineAttribute, Integer> {
 
     private final AttributeValueService attributeValueService;
@@ -74,6 +72,5 @@ public class MachineAttributeValueOperationsController extends AbstractNestedCru
     protected List<AttributeValue> findByParentId(Integer parentId, boolean eager) {
         return attributeValueService.findEntitiesByParentId(parentId, eager);
     }
-
 
 }

@@ -22,6 +22,7 @@ public class Machine extends AuditableEntity implements UserOwned{
     private String machineName;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "machine")
+    @OrderColumn(name="attribute_order")
     private List<MachineAttribute> machineAttributes = new ArrayList<>();
 
     @ManyToOne

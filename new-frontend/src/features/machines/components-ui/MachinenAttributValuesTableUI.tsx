@@ -324,6 +324,9 @@ export default function MachinenAttributValuesTableUI({
     return newRow;
   };
 
+    console.log("MachineAttributeValuesTableUI attributes: ",attributes)
+
+
   return (
     <div>
       <h2>Maschinen-Attributwerte</h2>

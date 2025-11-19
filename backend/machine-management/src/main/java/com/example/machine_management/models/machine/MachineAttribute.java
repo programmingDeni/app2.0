@@ -28,6 +28,7 @@ public class MachineAttribute extends AuditableEntity implements UserOwned{
     private AttributeType attributeType;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "machineAttribute")
+    @OrderColumn(name="value_order")
     private List<AttributeValue> attributeValues = new ArrayList<>();
 
     @ManyToOne(fetch=FetchType.LAZY)

@@ -23,6 +23,7 @@ public class MachineTemplate extends AuditableEntity implements UserOwned {
     private String templateName;
 
     @OneToMany(mappedBy = "machineTemplate", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderColumn(name="template_attribute_order")
     private List<TemplateAttribute> templateAttributes = new ArrayList<>();
 
     public MachineTemplate() {
