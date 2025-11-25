@@ -5,21 +5,22 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const queryClient = new QueryClient();
 
-import MachineDetailsView from "@/features/machines/views/MachineDetails";
+import MachineDetailsView from "@/views/machines/MachineDetails";
 //import MachineStructureWrapper from "@/views/MachineStructureView/MachineStrucutreWrapper";
-import MachineListView from "./features/machines/views/MachineList/MachineListView";
-import TemplateListView from "./features/templates/views/TemplateList/TemplateListView";
+import MachineListView from "./features/machines/componentsMVP/MachineList/MachineListView";
+import TemplateListView from "./views/templates/TemplateList/TemplateListView";
 //import MachineAttributWerteView from "@/views/MachineAttributWerteSicht/MachineAttributWerteView";
-import MachinenAttributeValuesView from "./features/machines/views/MachineAttributeValuesView";
+import MachinenAttributeValuesView from "./views/machines/MachineAttributeValues/MachineAttributeValuesView";
 
-import TemplateDetails from "./features/templates/views/TempalteDetails";
-import PrintMachinesView from "./features/machines/views/PrintView";
+import TemplateDetails from "./views/templates/TempalteDetails";
+import PrintMachinesView from "./views/machines/PrintView";
 
 import { LoginView } from "./features/auth/views/LoginView";
 import { RegisterView } from "./features/auth/views/RegisterView";
 import { RootRedirect } from "./features/auth/components/RootRedirect";
 
-import Navbar from "./components/Navbar/Navbar";
+import Navbar from "./shared/components/Navbar/Navbar";
+import { Homepage } from "./views/Homepage";
 
 function App() {
   return (
@@ -29,7 +30,7 @@ function App() {
           <Navbar />
           <Routes>
             <Route path="/" element={<RootRedirect />} />
-            <Route path="/machines" element={<MachineListView />} />
+            <Route path="/home" element={<Homepage />} />
             <Route path="/print" element={<PrintMachinesView />} />
             <Route
               path="/machines/:machineId"

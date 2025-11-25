@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { MachineAttribute } from "../types/machine.types";
+import { MachineAttribute } from "../../../shared/types/machine.types";
 import { getMachineAttributesWithYearlyValues } from "../services/machineService";
 
 import { addAttributeValue } from "../services/attributeValueService";

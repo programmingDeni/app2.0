@@ -3,7 +3,7 @@ import {FindService} from "./FindService"
 import axios from "@/services/axios";
 
 
-class CrudService<TDto> extends FindService<TDto> {
+class CrudService<TDto, CreateDTO> extends FindService<TDto> {
   
   // GET /
   useFindAll(eager = true) {
@@ -14,8 +14,9 @@ class CrudService<TDto> extends FindService<TDto> {
   }
 
   // POST /
+  // davor war Omit<TDto, "id"> was vermiutlich besser ist aber ?
   useCreate() {
-    return useMutation<TDto, Error, Omit<TDto, 'id'>>({
+    return useMutation<TDto, Error,  CreateDTO>({
       mutationFn: (data) => axios.post(`${this.baseUrl}`, data).then(r => r.data),
       onSuccess: () => this.queryClient.invalidateQueries({ queryKey: [this.baseUrl] })
     });
@@ -23,7 +24,7 @@ class CrudService<TDto> extends FindService<TDto> {
 
   // PUT /{id}
   useUpdate(id: number) {
-    return useMutation<TDto, Error, TDto>({
+    return useMutation<TDto, Error, Partial<TDto>>({
       mutationFn: (data) => axios.put(`${this.baseUrl}/${id}`, data).then(r => r.data),
       onSuccess: () => {
         this.queryClient.invalidateQueries({ queryKey: [this.baseUrl] });

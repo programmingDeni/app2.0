@@ -69,8 +69,8 @@ public class TemplateAttributeOperationsService extends ParentManagementService<
         if(updateDto.templateId == null){
             throw new IllegalArgumentException("Updated Dto has to have a templateId");
         }
-        existingEntity.setAttributeInTemplateName(updateDto.attributeName);
-        existingEntity.setType(updateDto.attributeType);
+        existingEntity.setAttributeInTemplateName(updateDto.templateAttributeName);
+        existingEntity.setType(updateDto.templateAttributeType);
         return existingEntity;
     }
 
@@ -106,10 +106,10 @@ public class TemplateAttributeOperationsService extends ParentManagementService<
     }
 
     private void validateTemplateAttributeDto(TemplateAttributeDto templateAttributeDto){
-        if(templateAttributeDto.attributeName == null || templateAttributeDto.attributeName.trim() == ""){
+        if(templateAttributeDto.templateAttributeName == null || templateAttributeDto.templateAttributeName.trim() == ""){
             throw new IllegalArgumentException("Error in attributeName");
         }
-        if(templateAttributeDto.attributeType == null){
+        if(templateAttributeDto.templateAttributeType == null){
             throw new IllegalArgumentException("Attribut Typ error");
         }
 

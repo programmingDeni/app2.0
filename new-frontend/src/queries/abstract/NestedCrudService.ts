@@ -14,10 +14,10 @@ class NestedCrudService<TDto, TCreateDto = Omit<TDto, 'id'>> {
   }
 
   // GET /machines/{machineId}/attributes
-  useFindAllByParentId(parentId: number, eager = false) {
+  useFindAllByParentId(parentId: number) {
     return useQuery<TDto[]>({
-      queryKey: [this.getBaseUrl(parentId), { eager }],
-      queryFn: () => axios.get(this.getBaseUrl(parentId), { params: { eager } }).then(r => r.data),
+      queryKey: [this.getBaseUrl(parentId)],
+      queryFn: () => axios.get(this.getBaseUrl(parentId)).then(r => r.data),
       enabled: !!parentId
     });
   }

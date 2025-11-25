@@ -2,6 +2,7 @@
 package com.example.machine_management.controller.templates;
 
 import com.example.machine_management.controller.base.AbstractCrudController;
+import com.example.machine_management.dto.MachineTemplates.CreateMachineTemplateWithAttributesDto;
 import com.example.machine_management.dto.MachineTemplates.MachineTemplateDto;
 import com.example.machine_management.services.abstracts.CrudService;
 import com.example.machine_management.services.templates.MachineTemplateService;
@@ -9,6 +10,8 @@ import com.example.machine_management.services.templates.MachineTemplateService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.machine_management.mapper.EntityMapper;
@@ -40,4 +43,16 @@ public class TemplateController extends AbstractCrudController<MachineTemplate, 
     protected EntityMapper<MachineTemplate, MachineTemplateDto> getMapper() {
         return this.machineTemplateMapper;
     }
+
+    @PostMapping("/with-attribtues")
+    public ResponseEntity<MachineTemplateDto> createWithAttributes(@RequestBody CreateMachineTemplateWithAttributesDto dto){
+        if(dto == null)
+            throw new IllegalArgumentException();
+        //TODO: dto validation im dto file 
+        //TODO: die service methode erstellen
+        MachineTemplate template = this.machineTemplateService.createTemplateWithAttribtues(dto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(getMapper().toDto(template));
+    }
+    
 }

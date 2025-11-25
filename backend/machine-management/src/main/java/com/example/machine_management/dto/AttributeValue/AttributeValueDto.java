@@ -2,7 +2,6 @@ package com.example.machine_management.dto.AttributeValue;
 
 import java.time.LocalDateTime;
 
-import com.example.machine_management.models.machine.MachineAttribute;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class AttributeValueDto {

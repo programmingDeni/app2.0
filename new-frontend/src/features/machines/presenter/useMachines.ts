@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 //Types
-import { Machine, MachineAttribute } from "../types/machine.types";
+import { Machine, MachineAttribute } from "../../../shared/types/machine.types";
 
 //service
 import {
@@ -17,7 +17,7 @@ import {
   fetchMachineByIdService,
   removeCustomAttributeFromMachineService,
 } from "../services/machineService";
-import { AttributeType } from "@/features/machines/types/machine.types";
+import { AttributeType } from "@/shared/types/machine.types";
 
 export function useMachines() {
   const [machines, setMachines] = useState<Machine[]>([]);

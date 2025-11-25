@@ -1,4 +1,4 @@
-import { AttributeValue } from "@/features/machines/types/machine.types";
+import { AttributeValue } from "@/shared/types/machine.types";
 import { NestedCrudService } from "@/queries/abstract/NestedCrudService";
 import { QueryClient } from "@tanstack/react-query";
 

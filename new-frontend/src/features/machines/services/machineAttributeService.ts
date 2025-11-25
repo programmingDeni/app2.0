@@ -1,6 +1,6 @@
 // service klasse um machinen attribute zu verwalten
 import axios from "@/services/axios";
-import { MachineAttribute } from "../types/machine.types";
+import { MachineAttribute } from "../../../shared/types/machine.types";
 
 export async function getMachineAttributesLazy(machineId: number) {
   try {

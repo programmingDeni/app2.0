@@ -2,8 +2,8 @@ import axios from "@/services/axios";
 import type { AxiosResponse } from "axios";
 
 //denk moderneres Model
-import { Template, TemplateAttribute } from "../types/template.types";
-import TemplateCardLazyList from "../components-ui/TemplateCardLazyList";
+import { Template, TemplateAttribute } from "../../../shared/types/template.types";
+import TemplateCardLazyList from "../componentsMVP/TemplateList";
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Templates  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

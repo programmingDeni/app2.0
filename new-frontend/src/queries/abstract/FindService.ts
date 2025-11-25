@@ -8,17 +8,17 @@ class FindService<TDto> {
   ) {}
 
   // GET /{id}
-  useEagerFindById(id: number, eager = true) {
+  useEagerFindById(id: number) {
     return useQuery<TDto>({
-      queryKey: [this.baseUrl, id, { eager }],
+      queryKey: [this.baseUrl, id],
       queryFn: () => axios.get(`${this.baseUrl}/${id}`).then(r => r.data),
       enabled: !!id
     });
   }
   // GET /{id}/lazy
-  useLazyFindById(id: number, eager = true) {
+  useLazyFindById(id: number) {
     return useQuery<TDto>({
-      queryKey: [this.baseUrl, id, { eager }],
+      queryKey: [this.baseUrl, id],
       queryFn: () => axios.get(`${this.baseUrl}/${id}/lazy`).then(r => r.data),
       enabled: !!id
     });

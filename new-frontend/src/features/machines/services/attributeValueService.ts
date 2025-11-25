@@ -1,7 +1,7 @@
 import axios from "@/services/axios";
 import { AxiosResponse } from "axios";
 
-import { AttributeValue } from "../types/machine.types";
+import { AttributeValue } from "../../../shared/types/machine.types";
 
 export async function addAttributeValue(
   attributeValue: Partial<AttributeValue>

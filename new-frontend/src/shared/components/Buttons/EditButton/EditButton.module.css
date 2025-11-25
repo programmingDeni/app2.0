@@ -1,0 +1,24 @@
+
+/* Edit Button */
+.editButton {
+  padding: 0.25rem 0.5rem;
+  background: none;
+  border: 1px solid #007bff;
+  color: #007bff;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+    display: inline-flex;      /* NEU */
+  align-items: center;       /* NEU */
+  justify-content: center;  
+}
+
+.editButton:hover {
+  background: #007bff;
+  color: white;
+}
+
+.editButton:active {
+  transform: scale(0.95);
+}

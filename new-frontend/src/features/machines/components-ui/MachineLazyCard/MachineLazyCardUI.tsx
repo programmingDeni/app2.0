@@ -1,5 +1,5 @@
 import styles from "./MachineLazyCard.module.css";
-import { Machine } from "@/features/machines/types/machine.types";
+import { Machine } from "@/shared/types/machine.types";
 import { Link } from "react-router-dom";
 
 interface Props {

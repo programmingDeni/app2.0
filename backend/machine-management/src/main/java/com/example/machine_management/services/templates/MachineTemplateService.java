@@ -6,10 +6,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.machine_management.dto.AttributeInTemplate.TemplateAttributeDto;
+import com.example.machine_management.dto.MachineTemplates.CreateMachineTemplateWithAttributesDto;
 import com.example.machine_management.dto.MachineTemplates.MachineTemplateDto;
 import com.example.machine_management.models.template.MachineTemplate;
+import com.example.machine_management.models.template.TemplateAttribute;
 import com.example.machine_management.repository.MachineTemplateRepository;
 import com.example.machine_management.services.abstracts.CrudService;
+import com.example.machine_management.util.SecurityUtils;
 import com.example.machine_management.mapper.MachineTemplateMapper;
 
 @Service
@@ -78,6 +82,28 @@ public class MachineTemplateService extends CrudService<MachineTemplate, Integer
                 existingEntity.setTemplateName(dto.templateName);
                 return existingEntity; 
         }
+
+
+        public MachineTemplate createTemplateWithAttribtues(CreateMachineTemplateWithAttributesDto dto){                
+                Integer userId = SecurityUtils.getCurrentUserId();
+
+                //validation ins dto verschieben / verschoben
+                MachineTemplate created = new MachineTemplate(dto.templateName);
+                created.setUserId(userId);
+
+                for (TemplateAttributeDto templateAttributeDto : dto.attributeTemplates) {
+                        TemplateAttribute templateAttribute = new TemplateAttribute();
+                        templateAttribute.setAttributeInTemplateName(templateAttributeDto.templateAttributeName);
+                        templateAttribute.setType(templateAttributeDto.templateAttributeType);
+                        templateAttribute.setMachineTemplate(created);
+                        templateAttribute.setUserId(userId);
+                        created.addAttribute(templateAttribute);
+                }
+
+                return machineTemplateRepository.save(created);
+        }
+
+
 
         //HELPER
         private void validateTemplateDto(MachineTemplateDto dto){

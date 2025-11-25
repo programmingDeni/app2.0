@@ -16,7 +16,7 @@
  * />
  */
 
-import { Template } from "@/features/templates/types/template.types";
+import { Template } from "@/shared/types/template.types";
 
 interface Props {
   templates: Template[];

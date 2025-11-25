@@ -18,7 +18,7 @@ import {
 } from "../services/machineAttributeService";
 
 //types
-import { MachineAttribute } from "../types/machine.types";
+import { MachineAttribute } from "../../../shared/types/machine.types";
 
 export function useMachineAttributeQueries(machineId: number) {
   return useQuery<MachineAttribute[]>({

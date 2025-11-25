@@ -1,0 +1,27 @@
+/* Save Button */
+.saveButton {
+  padding: 0.5rem 1rem;
+  background: #28a745;
+  border: 1px solid #28a745;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.saveButton:hover {
+  background: #218838;
+  border-color: #1e7e34;
+}
+
+.saveButton:active {
+  transform: scale(0.95);
+}
+
+.saveButton:disabled {
+  background: #6c757d;
+  border-color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}

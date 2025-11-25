@@ -12,7 +12,7 @@ import {
 import {
   Template,
   TemplateAttribute,
-} from "@/features/templates/types/template.types";
+} from "@/shared/types/template.types";
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Templates  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -13,7 +13,7 @@ import { TextField, Checkbox, MenuItem, Select } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
 
 // ---- Types aus deinem Projekt ----
-import { MachineAttribute } from "../types/machine.types";
+import { MachineAttribute } from "../../../shared/types/machine.types";
 
 interface Props {
   attributes: MachineAttribute[];

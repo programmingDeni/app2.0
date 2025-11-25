@@ -2,7 +2,6 @@ package com.example.machine_management.dto.MachineTemplates;
 
 import java.util.List;
 
-import com.example.machine_management.dto.AttributeInTemplate.AttributeTemplateDto;
 import com.example.machine_management.dto.AttributeInTemplate.TemplateAttributeDto;
 
 public class CreateMachineTemplateWithAttributesDto {

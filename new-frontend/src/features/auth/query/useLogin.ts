@@ -49,7 +49,7 @@ export function useLogin() {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
 
       // Navigate to main page
-      navigate("/machines");
+      navigate("/home");
     },
 
     onError: (error) => {

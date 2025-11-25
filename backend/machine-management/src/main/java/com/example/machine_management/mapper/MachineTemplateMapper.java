@@ -33,6 +33,7 @@ public class MachineTemplateMapper implements EntityMapper<MachineTemplate, Mach
     public MachineTemplate fromDto(MachineTemplateDto dto) {
         MachineTemplate template = new MachineTemplate();
         template.setTemplateName(dto.templateName);
+        //template.setTemplateAttributes(templateAttributeMapper.fromDtoList(dto.templateAttributes));
         return template;
     }
 

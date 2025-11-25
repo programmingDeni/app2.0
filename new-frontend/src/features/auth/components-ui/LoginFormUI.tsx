@@ -1,6 +1,5 @@
 import react, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Navigate } from "react-router-dom";
 import { LoginRequest } from "../types/LoginRequest";
 import styles from "../styles/LoginFormUI.module.css";
 

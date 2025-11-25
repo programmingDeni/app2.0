@@ -1,6 +1,6 @@
 //jquery klasse um attributeValues zu verwalten
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { AttributeValue } from "../types/machine.types";
+import { AttributeValue } from "../../../shared/types/machine.types";
 
 // service import
 // TODO:service implementieren

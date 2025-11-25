@@ -2,40 +2,35 @@
 import { useState } from "react";
 
 // Types aus dem neuen Frontend
-import { Template, TemplateAttribute } from "../../types/template.types";
+import { Template, TemplateAttribute } from "../../../../shared/types/template.types";
 
 //Button Import
-import Button from "@/components/Button";
-import TemplateAttributeRow from "../TemplateAttributeRow";
+import Button from "@/shared/components/Buttons/GenericButton";
+import TemplateAttributeListView from "../../TemplateAttributes/components/TemplateAttributesList";
+import { DeleteButton } from "@/shared/components/Buttons/DeleteButton";
+import { EditButton } from "@/shared/components/Buttons/EditButton";
 
 interface Props {
   machineTemplate: Template;
-  onRemoveAttribute: (attributeId: number) => void | Promise<void>;
   allowEdit?: boolean;
   onEditTemplate?: (template: Partial<Template>) => void | Promise<void>;
-  handleTemplateAttributeChange?: (
-    templateAttribute: TemplateAttribute
-  ) => void;
+  onDelete?:(id:number) => void;
+  
 }
 
 export default function TemplateCardUI(props: Props) {
   const {
     machineTemplate,
-    onRemoveAttribute,
     allowEdit,
     onEditTemplate,
-    handleTemplateAttributeChange,
+    onDelete
   } = props;
-  const attributeTemplates = machineTemplate.templateAttributes ?? [];
 
   // Edit-Modus State
   const [isEditing, setIsEditing] = useState(false);
   const [templateName, setTemplateName] = useState(
     machineTemplate.templateName
   );
-
-  //Edit Modus State Attribute
-  const [editingAttrId, setEditingAttrId] = useState<number | null>(null);
 
   const handleSave = () => {
     if (onEditTemplate) {
@@ -44,11 +39,19 @@ export default function TemplateCardUI(props: Props) {
     setIsEditing(false);
   };
 
+
   return (
     <div>
-      <h3 className="w-full text-left sm:!text-left">
-        Template Name: {machineTemplate.templateName}
-      </h3>
+      <div className={style.header}>
+        <div className={style.headerName}>
+          Template Name: {machineTemplate.templateName}
+        </div>
+        <div className={styled.headerButtons}>
+            <EditButton onClick={() => `/machine-templates/${template.id}`}/>
+            <DeleteButton onDelete={onDelete} id={machineTemplate.id}/>
+
+        </div>
+      </div>
       <div>
         {allowEdit && !isEditing && (
           <Button
@@ -78,39 +81,10 @@ export default function TemplateCardUI(props: Props) {
           </div>
         )}
       </div>
-      <h3>Attribute Templates:</h3>
-      {attributeTemplates.length === 0 ? (
-        <div>Keine Attribute vorhanden</div>
-      ) : (
-        <table style={{ width: "100%" }}>
-          <colgroup>
-            <col style={{ width: "40%" }} />
-            <col style={{ width: "25%" }} />
-            <col style={{ width: "35%" }} />
-          </colgroup>
-          <tbody>
-            {attributeTemplates.map((attr) => (
-              <TemplateAttributeRow
-                key={attr.id!}
-                templateAttribute={attr}
-                editable={allowEdit && editingAttrId === attr.id}
-                onChange={(name, type) => {
-                  /* optional live update */
-                }}
-                onSave={(updatedAttr) => {
-                  if (handleTemplateAttributeChange) {
-                    handleTemplateAttributeChange(updatedAttr);
-                    setEditingAttrId(null);
-                  }
-                }}
-                onCancel={() => setEditingAttrId(null)}
-                onEditClick={() => setEditingAttrId(attr.id!)}
-                onDelete={() => onRemoveAttribute(attr.id!)}
+              <TemplateAttributeListView
+                templateId={machineTemplate.id!}
+                allowEdit={allowEdit}
               />
-            ))}
-          </tbody>
-        </table>
-      )}
     </div>
   );
 }

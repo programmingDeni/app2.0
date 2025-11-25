@@ -1,9 +1,11 @@
 package com.example.machine_management.services.machine;
+import com.example.machine_management.dto.Machine.CreateMachineFromTemplateDto;
 import com.example.machine_management.dto.Machine.MachineDto;
 import com.example.machine_management.mapper.MachineMapper;
 import com.example.machine_management.models.machine.Machine;
 import com.example.machine_management.repository.MachineRepository;
 import com.example.machine_management.services.abstracts.CrudService;
+import com.example.machine_management.util.SecurityUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -86,6 +88,4 @@ public class MachineService extends CrudService<Machine, Integer, MachineDto> {
             throw new IllegalArgumentException("Maschinenname darf nicht leer sein.");
         }
     }
-
-
 }

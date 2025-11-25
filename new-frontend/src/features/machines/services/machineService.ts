@@ -5,7 +5,7 @@ import {
   MachineLazy,
   CreateMachineByName,
   CreateMachineFromTemplate,
-} from "@/features/machines/types/machine.types";
+} from "@/shared/types/machine.types";
 
 export function fetchMachinesLazy() {
   return axios.get<MachineLazy[]>("/api/machines/lazy");
@@ -82,7 +82,7 @@ export async function getMachineAttributesWithYearlyValues(machineId: number) {
 import {
   Machine,
   MachineAttribute,
-} from "@/features/machines/types/machine.types";
+} from "@/shared/types/machine.types";
 
 //Create
 export async function createMachineService(

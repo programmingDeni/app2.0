@@ -1,4 +1,4 @@
-import { TemplateAttribute } from "@/features/templates/types/template.types";
+import { TemplateAttribute } from "@/shared/types/template.types";
 import { NestedCrudService } from "@/queries/abstract/NestedCrudService";
 import { QueryClient } from "@tanstack/react-query";
 

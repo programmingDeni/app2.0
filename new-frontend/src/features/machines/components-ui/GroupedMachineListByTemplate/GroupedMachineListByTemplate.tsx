@@ -1,6 +1,6 @@
 import react, { useState } from "react";
-import { Machine } from "../../types/machine.types";
-import Button from "@/components/Button";
+import { Machine } from "../../../../shared/types/machine.types";
+import Button from "@/shared/components/Buttons/GenericButton";
 
 interface Props {
   machines: Machine[];

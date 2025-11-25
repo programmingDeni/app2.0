@@ -6,12 +6,15 @@ import com.example.machine_management.services.machine.MachineService;
 
 import lombok.extern.slf4j.Slf4j;
 
+import com.example.machine_management.dto.Machine.CreateMachineFromTemplateDto;
 import com.example.machine_management.dto.Machine.MachineDto;
 import com.example.machine_management.mapper.EntityMapper;
 import com.example.machine_management.mapper.MachineAttributeMapper;
 import com.example.machine_management.mapper.MachineMapper;
 import com.example.machine_management.models.machine.Machine;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 // OpenAPI/Swagger Annotations
