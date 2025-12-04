@@ -1,0 +1,81 @@
+/**
+ * Spacing Utilities
+ * Margin & Padding
+ */
+
+/* ========================================
+   PADDING ALL
+   ======================================== */
+.p-0 { padding: 0; }
+.p-xs { padding: var(--spacing-xs); }
+.p-sm { padding: var(--spacing-sm); }
+.p-md { padding: var(--spacing-md); }
+.p-lg { padding: var(--spacing-lg); }
+.p-xl { padding: var(--spacing-xl); }
+
+/* ========================================
+   PADDING INLINE (horizontal)
+   ======================================== */
+.px-0 { padding-inline: 0; }
+.px-xs { padding-inline: var(--spacing-xs); }
+.px-sm { padding-inline: var(--spacing-sm); }
+.px-md { padding-inline: var(--spacing-md); }
+.px-lg { padding-inline: var(--spacing-lg); }
+.px-xl { padding-inline: var(--spacing-xl); }
+
+/* ========================================
+   PADDING BLOCK (vertical)
+   ======================================== */
+.py-0 { padding-block: 0; }
+.py-xs { padding-block: var(--spacing-xs); }
+.py-sm { padding-block: var(--spacing-sm); }
+.py-md { padding-block: var(--spacing-md); }
+.py-lg { padding-block: var(--spacing-lg); }
+.py-xl { padding-block: var(--spacing-xl); }
+
+/* ========================================
+   MARGIN ALL
+   ======================================== */
+.m-0 { margin: 0; }
+.m-auto { margin: auto; }
+.m-xs { margin: var(--spacing-xs); }
+.m-sm { margin: var(--spacing-sm); }
+.m-md { margin: var(--spacing-md); }
+.m-lg { margin: var(--spacing-lg); }
+
+/* ========================================
+   MARGIN INLINE (horizontal)
+   ======================================== */
+.mx-auto { margin-inline: auto; }
+.mx-xs { margin-inline: var(--spacing-xs); }
+.mx-sm { margin-inline: var(--spacing-sm); }
+.mx-md { margin-inline: var(--spacing-md); }
+
+/* ========================================
+   MARGIN BLOCK (vertical)
+   ======================================== */
+.my-0 { margin-block: 0; }
+.my-xs { margin-block: var(--spacing-xs); }
+.my-sm { margin-block: var(--spacing-sm); }
+.my-md { margin-block: var(--spacing-md); }
+.my-lg { margin-block: var(--spacing-lg); }
+
+/* ========================================
+   MARGIN BOTTOM (häufiger Use-Case)
+   ======================================== */
+.mb-0 { margin-bottom: 0; }
+.mb-xs { margin-bottom: var(--spacing-xs); }
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+
+/* ========================================
+   MARGIN TOP
+   ======================================== */
+.mt-0 { margin-top: 0; }
+.mt-xs { margin-top: var(--spacing-xs); }
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+
+.mt-auto { margin-top: auto; }

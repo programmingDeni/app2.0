@@ -26,35 +26,63 @@ export const LoginFormUI = ({
 
   return (
     <div className={styles.authContainer}>
-      <form className={styles.form} onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        {error && <div className="error">{error.message}</div>}
-        <div className={styles.buttonContainer}>
-          <button className={styles.button} disabled={isLoading}>
-            {isLoading ? "Loading..." : "Login"}
-          </button>
+      <div className={`card ${styles.authCard}`}>
+        <h1 className={styles.authTitle}>Anmelden</h1>
+        {error && <p className="form-error">{error.message}</p>}
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email" className="form-label">
+              E-Mail
+            </label>
+            <input
+              id="email"
+              type="email"
+              className="form-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="password" className="form-label">
+              Passwort
+            </label>
+            <input
+              id="password"
+              type="password"
+              className="form-input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+            />
+          </div>
+          <div className="form-actions">
           <button
-            className={styles.button}
-            type="button"
-            onClick={() => navigate("/register")}
+            type="submit"
+            className="btn btn--primary btn--block btn--lg"
+            disabled={isLoading}
           >
-            Register
+            {isLoading ? "Wird angemeldet..." : "Anmelden"}
           </button>
+
+          </div>
+        </form>
+        <div className={styles.divider}>
+          {" "}
+          <span>Neu hier?</span>
         </div>
-      </form>
+
+        <button
+          type="button"
+          className="btn btn--secondary btn--block"
+          onClick={() => navigate("/register")}
+        >
+          Konto erstellen
+        </button>
+      </div>
     </div>
   );
 };

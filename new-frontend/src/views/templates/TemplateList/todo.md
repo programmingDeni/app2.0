@@ -1,1 +1,0 @@
-muss die komponenten im desktop nebeneinander anzeigen

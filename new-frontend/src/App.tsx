@@ -1,6 +1,6 @@
 import "./App.css";
 // React imports
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 //React Query
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const queryClient = new QueryClient();
@@ -21,36 +21,73 @@ import { RootRedirect } from "./features/auth/components/RootRedirect";
 
 import Navbar from "./shared/components/Navbar/Navbar";
 import { Homepage } from "./views/Homepage";
+import TemplateFormView from "./features/templates/componentsMVP/TemplateForm";
+import { AuthGuard } from "./features/auth/components/AuthGuard";
 
 function App() {
   return (
-    <div>
+    <>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Navbar />
-          <Routes>
-            <Route path="/" element={<RootRedirect />} />
-            <Route path="/home" element={<Homepage />} />
-            <Route path="/print" element={<PrintMachinesView />} />
-            <Route
-              path="/machines/:machineId"
-              element={<MachineDetailsView showLinks={false} />}
-            />
-            <Route path="/machine-templates" element={<TemplateListView />} />
-            <Route
-              path="/machine-templates/:templateId"
-              element={<TemplateDetails showLinks={true} />}
-            />
-            <Route
-              path="/machines/:id/values"
-              element={<MachinenAttributeValuesView />}
-            />
-            <Route path="/login" element={<LoginView />} />
-            <Route path="/register" element={<RegisterView />} />
-          </Routes>
+          <div className="app-main">
+            <Routes>
+              {/** SHARED */}
+              <Route path="/" element={<RootRedirect />} />
+              <Route
+                path="/login"
+                element={
+                  <AuthGuard requireAuth={false}>
+                    <LoginView />
+                  </AuthGuard>
+                }
+              />
+              <Route
+                path="/register"
+                element={
+                  <AuthGuard requireAuth={false}>
+                    <RegisterView />
+                  </AuthGuard>
+                }
+              />
+
+              <Route
+                element={
+                  <AuthGuard requireAuth={true}>
+                    <Outlet />
+                  </AuthGuard>
+                }
+              >
+                {/** MACHINES */}
+                <Route path="/home" element={<Homepage />} />
+                <Route path="/print" element={<PrintMachinesView />} />
+                <Route
+                  path="/machines/:machineId"
+                  element={<MachineDetailsView showLinks={false} />}
+                />
+                <Route
+                  path="/machines/:id/values"
+                  element={<MachinenAttributeValuesView />}
+                />
+                {/** TEMPLATES */}
+                <Route
+                  path="/machine-templates"
+                  element={<TemplateListView />}
+                />
+                <Route
+                  path="/machine-templates/:templateId"
+                  element={<TemplateDetails showLinks={true} />}
+                />
+                <Route
+                  path="machine-templates/add"
+                  element={<TemplateFormView />}
+                />
+              </Route>
+            </Routes>
+          </div>
         </BrowserRouter>
       </QueryClientProvider>
-    </div>
+    </>
   );
 }
 

@@ -46,11 +46,18 @@ class NestedCrudService<TDto, TCreateDto = Omit<TDto, 'id'>> {
     });
   }
 
+  useCreateDynamic() {
+    return useMutation<TDto, Error, { parentId: number; data: TCreateDto }>({
+      mutationFn: ({parentId, data}) => axios.post(this.getBaseUrl(parentId), data).then(r => r.data),
+      onSuccess: (_,{parentId}) => this.queryClient.invalidateQueries({ queryKey: [this.getBaseUrl(parentId)] })
+    });
+  }
+
   // PUT /machines/{machineId}/attributes/{id}
-  useUpdate(parentId: number, id: number) {
-    return useMutation<TDto, Error, Partial<TDto>>({
-      mutationFn: (data) => axios.patch(`${this.getBaseUrl(parentId)}/${id}`, data).then(r => r.data),
-      onSuccess: () => {
+  useUpdate(parentId: number) {
+    return useMutation<TDto, Error, { id: number; data: Partial<TDto> }>({
+      mutationFn: ({id, data}) => axios.put(`${this.getBaseUrl(parentId)}/${id}`, data).then(r => r.data),
+      onSuccess: (_,{id}) => {
         this.queryClient.invalidateQueries({ queryKey: [this.getBaseUrl(parentId)] });
         this.queryClient.invalidateQueries({ queryKey: [this.getBaseUrl(parentId), id] });
       }

@@ -1,55 +1,44 @@
-/* LoginFormUI.module.css */
-
-/* Container: Überschreibt .root und zentriert die Form */
 .authContainer {
-  /* Eigenes Layout für Zentrierung */
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  min-height: 100vh !important;
-  width: 100vw !important;
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  /*background-color: #f5f5f5;*/
-}
-
-/* Die Form selbst */
-.form {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 1rem !important;
-  background-color: rgb(9, 10, 20) !important;
-  padding: 2rem !important;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  width: 400px;
-  max-width: 90vw;
-}
-
-.buttonContainer {
+  min-height: calc(100vh-50px);
   display: flex;
-  gap: 1rem; /* Abstand zwischen den Buttons */
-  width: 100%; /* füllt den verfügbaren Platz */
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
 }
 
-.buttonContainer button {
-  flex: 1; /* beide gleich breit */
-  padding: 0.75rem 1rem;
-  border: none;
-  border-radius: 6px;
-  background-color: #007bff;
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+.authCard {
+  width: 100%;
+  max-width: 380px;
 }
 
-.buttonContainer button:hover:not(:disabled) {
-  background-color: #0056b3;
+.authTitle {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  margin: 0 0 var(--spacing-lg) 0;
 }
 
-.buttonContainer button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+.divider {
+  display: flex;
+  align-items: center;
+  margin: var(--spacing-lg) 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-color: var(--color-border);
+}
+
+.divider span {
+  padding: 0 var(--spacing-md);
+}
+
+.linkText {
+  text-align: center;
+  margin-top: var(--spacing-lg);
+  font-size: var(--font-size-sm);
 }

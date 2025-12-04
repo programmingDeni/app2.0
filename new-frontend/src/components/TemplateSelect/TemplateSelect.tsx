@@ -35,6 +35,7 @@ export default function TemplateSelect({
       onChange={(e) =>
         onChange(e.target.value === "" ? null : Number(e.target.value))
       }
+      className="form-select"
     >
       <option value="">Kein Template verwenden</option>
       {templates.map((template) => (

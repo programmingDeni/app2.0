@@ -5,6 +5,7 @@ import AddMachineFormUI from "./AddMachineFormUI";
 import { useQueryClient } from "@tanstack/react-query";
 import { MachineQuery } from "@/queries/machine/MachineQuery";
 import { TemplateQuery } from "@/queries/template/TemplateQuery";
+import { MachineTemplateOperationsQuery } from "@/queries/machine/MachineTemplateOperationsQuery";
 import { QueryStateWrapper } from "@/shared/abstracts/QueryStateWrapper";
 
 interface Props {}
@@ -16,7 +17,10 @@ export default function AddMachineFormView({}: Props) {
  const addMachineQuery = machineQuery.useCreate()
  
  const templateQuery = new TemplateQuery(queryClient);
-  const findAllTemplatesQuery = templateQuery.useFindAll(false);  
+ const findAllTemplatesQuery = templateQuery.useFindAll(false);  
+
+ const machineTemplateOperationsQuery = new MachineTemplateOperationsQuery();
+ const createMachineFromTemplateQuery = machineTemplateOperationsQuery.useCreateFromTemplate();
   
   const [name, setName] = useState("");
   const [templateId, setTemplateId] = useState<number | null>(null);
@@ -27,12 +31,14 @@ export default function AddMachineFormView({}: Props) {
   };
 
   const handleSubmit = (machine: CreateMachineByName | CreateMachineFromTemplate) =>{
+    console.log("inside submit", machine,"type:",machine.type);
     switch(machine.type){
       case 'byName':
         addMachineQuery.mutate(machine);
         break;
       case 'fromTemplate':
         //TODO: spezielle implementation
+        createMachineFromTemplateQuery.mutate(machine);
     }
     resetForm();
   }

@@ -48,7 +48,7 @@ export default function TemplateListComponentView() {
 
   //list ui rendern
   return (
-    <>
+    <div className="scroll-container">
       {errorMsg && (
         <div className={messageStyle.error}>
           {errorMsg}
@@ -63,6 +63,6 @@ export default function TemplateListComponentView() {
           />
         )}
       </QueryStateWrapper>
-    </>
+    </div>
   );
 }

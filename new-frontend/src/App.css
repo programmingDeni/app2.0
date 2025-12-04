@@ -7,6 +7,17 @@
   width: 100%;
   box-sizing: border-box;
   text-align: center;
+  display: flex;
+  flex-direction: column;
+  max-height: 100vh;
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;  /* Kritisch für Flex! */
 }
 
 .logo {

@@ -1,37 +1,39 @@
 //bekommt von Props alles Übergeben was es für ANzeige und Veränderungen braucht
 import Button from "@/shared/components/Buttons/GenericButton";
-import AddAttributeFormView from "@/features/templates/TemplateAttributes/components/AddAttribute";
+import AddAttributeFormUi from "@/features/templates/TemplateAttributes/components/TemplateAttributeForms/AddAttribute/AddTemplateAttributeFormUI";
 import { TemplateAttribute } from "../../../../shared/types/template.types";
-import style from "./AddTemplateForm.module.css"
+import { useAttributesPresenter } from "./useAttributesPresenter";
+import "@/shared/styles/main.css";
 
 type Props = {
   templateName: string;
   setTemplateName: (name: string) => void;
   isEditing: boolean;
   setIsEditing: (val: boolean) => void;
-  handleSubmit: (attributes: TemplateAttribute[]) => void;
-  errorMsg?: string | null;
-  successMsg?: string | null;
+  attributePresenter: ReturnType<typeof useAttributesPresenter>;
+  isEditMode?: boolean;
+  handleSubmit: () => void;
+  error?: string | null;
 };
 
-export default function AddTemplateFormUI({
+export default function TemplateFormUi({
   templateName,
   setTemplateName,
   isEditing,
   setIsEditing,
+  attributePresenter,
+  isEditMode,
   handleSubmit,
-  errorMsg,
-  successMsg,
+  error,
 }: Props) {
   return (
-    <div className={style.formContainer}>
-      <h2 className={style.header}>Add Template Form</h2>
+    <div className="form-group">
       {/* Messages direkt unter der Überschrift */}
-      {errorMsg && <div className={style.message}>{errorMsg}</div>}
-      {successMsg && <div className={style.message}>{successMsg}</div>}
-      <div className={style.nameSection}>
-        <h3>Template Name:</h3>
-        <div>
+      <div className="flex-shrink-0 stack stack--sm">
+        <h2>{isEditMode ? "Template bearbeiten" : "Template erstellen"}</h2>
+        <div className="row row--sm">
+          <h3>Template Name:</h3>
+
           {isEditing ? (
             <input
               value={templateName}
@@ -41,7 +43,7 @@ export default function AddTemplateFormUI({
                 if (e.key === "Enter") setIsEditing(false);
               }}
               autoFocus
-              className="border rounded px-2"
+              className="form-input"
             />
           ) : (
             <span
@@ -53,9 +55,11 @@ export default function AddTemplateFormUI({
           )}
         </div>
       </div>
-      <div className={style.contentArea}>
-        <AddAttributeFormView onSubmit={handleSubmit} />
-      </div>
+      <div className="error">{error && <>error</>}</div>
+      <AddAttributeFormUi
+        attributePresenter={attributePresenter}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 }

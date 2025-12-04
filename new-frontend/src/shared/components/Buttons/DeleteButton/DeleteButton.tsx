@@ -1,17 +1,19 @@
-import style from "./DeleteButton.module.css";
-
 interface DeleteButtonProps {
     onDelete: (id: number) => void;
     id: number;
     children?: React.ReactNode;
+    className?: string;
 }
 
-export function DeleteButton({ onDelete, id, children }: DeleteButtonProps) {
+export function DeleteButton({ onDelete, id, children, className }: DeleteButtonProps) {
+    const combinedClassName = className 
+        ? `btn ${className}` 
+        : "btn";
     return (
         <button
             type="button"
             onClick={() => onDelete(id)}
-            className={style.deleteButton}
+            className={combinedClassName}
             title="Löschen"
         >
             {children || (

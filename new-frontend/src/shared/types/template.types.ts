@@ -10,6 +10,7 @@ export interface TemplateAttribute {
   id?: number;
   templateAttributeName: string;
   templateAttributeType: string;
+  templateId?: number;
 }
 
 //one for creating an template (without id)

@@ -1,0 +1,102 @@
+/**
+ * Flexbox Utilities
+ * Stack (vertikal), Row (horizontal), Cluster (wrap)
+ */
+
+ .scroll-container {
+  display: flex;
+  flex-direction: column;
+  flex:1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Scrollable Flex Child - wichtig für overflow in flex containers */
+
+.flex-scroll {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* Center Content */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+ .sticky-top {
+  position: sticky;
+  top: 0;
+  background: var(--color-bg-primary);
+  z-index: 1;
+    padding-bottom: var(--spacing-sm);
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+  margin-bottom: var(--spacing-md);
+}
+
+/* ========================================
+   STACK: Vertikales Layout mit Gap
+   ======================================== */
+.stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.stack--xs { gap: var(--spacing-xs); }
+.stack--sm { gap: var(--spacing-sm); }  
+.stack--md { gap: var(--spacing-md); }
+.stack--lg { gap: var(--spacing-lg); }
+.stack--xl { gap: var(--spacing-xl); }
+
+/* ========================================
+   ROW: Horizontales Layout (kein Wrap)
+   ======================================== */
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.row--xs { gap: var(--spacing-xs); }
+.row--sm { gap: var(--spacing-sm); }
+.row--md { gap: var(--spacing-md); }
+.row--lg { gap: var(--spacing-lg); }
+
+/* Justify Content */
+.row--start { justify-content: flex-start; }
+.row--center { justify-content: center; }
+.row--end { justify-content: flex-end; }
+.row--between { justify-content: space-between; }
+.row--around { justify-content: space-around; }
+
+/* Align Items */
+.row--align-start { align-items: flex-start; }
+.row--align-end { align-items: flex-end; }
+.row--align-stretch { align-items: stretch; }
+
+/* ========================================
+   CLUSTER: Horizontales Layout mit Wrap
+   ======================================== */
+.cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.cluster--xs { gap: var(--spacing-xs); }
+.cluster--sm { gap: var(--spacing-sm); }
+.cluster--md { gap: var(--spacing-md); }
+.cluster--lg { gap: var(--spacing-lg); }
+
+/* ========================================
+   FLEX UTILITIES
+   ======================================== */
+.flex-1 { flex: 1; }
+.flex-auto { flex: auto; }
+.flex-none { flex: none; }
+.flex-shrink-0 { flex-shrink: 0; }
+.flex-grow-0 { flex-grow: 0; }
+

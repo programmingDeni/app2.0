@@ -1,11 +1,17 @@
 import { useState } from "react";
 
-import { TemplateAttribute } from "../../../../../shared/types/template.types";
+import { TemplateAttribute } from "../../../../shared/types/template.types";
 
-export function useAddAttributeFormPresenter() {
-  const [attributes, setAttributes] = useState<TemplateAttribute[]>([
-    { templateAttributeName: "", templateAttributeType: "STRING" },
-  ]);
+interface Props {
+  initialAttributes?: TemplateAttribute[];
+}
+
+export function useAttributesPresenter({initialAttributes} : Props ) {
+  const [attributes, setAttributes] = useState<TemplateAttribute[]>(
+    initialAttributes?.length
+      ? initialAttributes
+      : [{ templateAttributeName: "", templateAttributeType: "STRING" }]
+  );
 
   const onChangeName = (idx: number, val: string) => {
     setAttributes((prev) => {

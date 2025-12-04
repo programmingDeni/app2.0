@@ -1,0 +1,38 @@
+/**
+ * Typography Design Tokens
+ * Schriftarten, -größen und -gewichte
+ */
+:root {
+  /* Font Families */
+  --font-family-base: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-family-mono: 'Fira Code', Consolas, Monaco, monospace;
+
+  /* Font Sizes */
+  --font-size-xs: 0.75rem;   /* 12px */
+  --font-size-sm: 0.875rem;  /* 14px */
+  --font-size-md: 1rem;      /* 16px */
+  --font-size-lg: 1.125rem;  /* 18px */
+  --font-size-xl: 1.25rem;   /* 20px */
+  --font-size-2xl: 1.5rem;   /* 24px */
+  --font-size-3xl: 2rem;     /* 32px */
+  --font-size-4xl: 3rem;     /* 48px */
+
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Line Heights */
+  --line-height-tight: 1.1;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Heading Sizes (Semantic) */
+  --heading-1: var(--font-size-4xl);
+  --heading-2: var(--font-size-3xl);
+  --heading-3: var(--font-size-2xl);
+  --heading-4: var(--font-size-xl);
+  --heading-5: var(--font-size-lg);
+  --heading-6: var(--font-size-md);
+}

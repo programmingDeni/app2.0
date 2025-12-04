@@ -6,6 +6,7 @@ import Button from "@/shared/components/Buttons/GenericButton";
 import { TemplateAttribute } from "../../../../../shared/types/template.types";
 import { AttributeType } from "@/shared/types/machine.types";
 import { useState } from "react";
+import "@/shared/styles/main.css"
 
 interface Props {
   templateAttribute: TemplateAttribute;
@@ -34,14 +35,10 @@ export default function TemplateAttributeRowUI(props: Props) {
 
   if (!allowEdit) {
     return (
-      <tr>
-        <td style={{ textAlign: "left", width: "60%" }}>
-          <strong>Name:</strong> {templateAttribute.templateAttributeName}
-        </td>
-        <td style={{ textAlign: "left", width: 120 }}>
-          <strong>Typ:</strong> {templateAttribute.templateAttributeType}
-        </td>
-      </tr>
+      <div className="card__item">
+          <span>Name: {templateAttribute.templateAttributeName}</span>
+          <span>Typ: {templateAttribute.templateAttributeType}</span>
+      </div>
     );
   }
 

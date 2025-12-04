@@ -1,5 +1,4 @@
 .container{
-    flex:1;
     overflow: hidden;
     min-height:0;
     display: flex;

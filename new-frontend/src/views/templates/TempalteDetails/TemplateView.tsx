@@ -8,19 +8,16 @@ import { useParams } from "react-router-dom";
 import Button from "@/shared/components/Buttons/GenericButton";
 
 // importiere TEmplateCardUi
-import TemplateCardUi from "@/features/templates/components-ui/TemplateCard";
-//ToggleableSection
-import ToggleableSection from "@/shared/components/ToggleableSection/ToggleableSection";
-
-//importiere AddAttributeFormView Componente
-import AddAttributeFormView from "@/features/templates/TemplateAttributes/components/AddAttribute";
+import { TemplateCardUi } from "@/features/templates/components-ui/TemplateCard";
 
 //importiere query
-import {TemplateQuery} from "@/queries/template/TemplateQuery"
+import { TemplateQuery } from "@/queries/template/TemplateQuery";
 import { useQueryClient } from "@tanstack/react-query";
 
 //Type(s)
 import { Template } from "../../../shared/types/template.types";
+import TemplateFormView from "@/features/templates/componentsMVP/TemplateForm";
+import { EditButton } from "@/shared/components/Buttons/EditButton";
 
 interface TemplateViewProps {
   templateId?: number;
@@ -29,7 +26,7 @@ interface TemplateViewProps {
 }
 
 export default function TemplateView(props: TemplateViewProps) {
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(true);
 
   //Parameter übergeben
   //allowEdit
@@ -50,7 +47,11 @@ export default function TemplateView(props: TemplateViewProps) {
 
   const queryClient = useQueryClient();
   const templateQuery = new TemplateQuery(queryClient);
-  const { data: template, isLoading: templateIsLoading, error: templateLoadingError} = templateQuery.useLazyFindById(templateId!);
+  const {
+    data: template,
+    isLoading: templateIsLoading,
+    error: templateLoadingError,
+  } = templateQuery.useLazyFindById(templateId!);
   const templateUpdateMutation = templateQuery.useUpdate(templateId!);
 
   if (!templateId) {
@@ -59,11 +60,11 @@ export default function TemplateView(props: TemplateViewProps) {
   if (!template) {
     return <div>Template nicht gefunden.</div>;
   }
-  if(templateIsLoading){
-    return (<>Template laedt...</>)
+  if (templateIsLoading) {
+    return <>Template laedt...</>;
   }
-  if(templateLoadingError){
-    <>Error: {templateLoadingError.message}</>
+  if (templateLoadingError) {
+    <>Error: {templateLoadingError.message}</>;
   }
 
   //Bearbeitungs Methoden
@@ -74,36 +75,21 @@ export default function TemplateView(props: TemplateViewProps) {
   console.log("TempalteView: tempalte:", template);
 
   return (
-    <div>
-      <TemplateCardUi
-        key={template.id}
-        machineTemplate={template}
-        allowEdit={allowEdit && !showForm}
-        onEditTemplate={handleEditTemplate}
-      />
-      {allowEdit && (
-        <ToggleableSection
-          toggleLabel="Attribute zu Template hinzufügen"
-          onOpen={() => setShowForm(true)}
-          onClose={() => setShowForm(false)}
-          open={showForm}
-        >
-          <AddAttributeFormView templateId={template.id} />
-        </ToggleableSection>
-      )}
-      {showLinks && (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.5rem",
-            alignItems: "center",
-          }}
-        >
-          <Button to={`/machine-templates`}>→ Zurück zu den Templates</Button>
-          <Button to={`/`}>→ Zur Startseite</Button>
-        </div>
-      )}
+    <div className="pageWrapper mt-lg">
+      <div className="twoColumn__actionButton row row--sm">
+        <EditButton
+          className="btn--secondary btn--icon btn--m"
+          onClick={() => setShowForm(!showForm)}
+        />
+        <Button className="btn--secondary btn--m" to="/home"></Button>
+      </div>
+      <div className="pageContent">
+        {showForm ? (
+          <TemplateFormView machineTemplate={template} />
+        ) : (
+          <TemplateCardUi machineTemplate={template} />
+        )}
+      </div>
     </div>
   );
 }

@@ -31,7 +31,7 @@ export default function MachineListView() {
   //if (machines.length === 0) return <div>No Machines</div>;
 
   return (
-    <div style={{ textAlign: "center", width: "100%" }}>
+    <div className="grid grid--cols-2 grid--gap-sm">
       {machines.length === 0 ? (
         <div>Keine Maschinen vorhanden</div>
       ) : (

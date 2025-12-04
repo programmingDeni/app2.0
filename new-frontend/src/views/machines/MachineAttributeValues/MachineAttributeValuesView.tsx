@@ -20,6 +20,11 @@ export default function MachineAttributeValuesView() {
   const queryClient = useQueryClient();
   const machineQuery = new MachineQuery(queryClient);
   const machineAttributeQuery = new MachineAttributeQuery(queryClient);
+  const updateMachineAttributeMutation = machineAttributeQuery.useUpdate(machineId);
+  const valueQuery = new AttributeValueQuery(machineId,queryClient);
+  const createValueMutation = valueQuery.useCreateDynamic();
+
+
   
   const { data: machine, isLoading: machineIsLoading, error: machineError } = machineQuery.useEagerFindById(machineId);
 
@@ -67,14 +72,16 @@ export default function MachineAttributeValuesView() {
       year
     );
     //TODO: query dafür useAddAttributeValue
-    const valueQuery = new AttributeValueQuery(machineId, queryClient);
-    const mutation = valueQuery.useCreate(attributeId);
-
-    mutation.mutate({
-      machineId: machineId,
-      machineAttributeId: attributeId,
-      attributeValue: attributeValue,
-      attributeValueYear: year,
+    // query umschreiben sodaass nicht beim initialisieren sondern beim aufruf die id uebergeben werden muss
+    //hier ist das problem mit doppel nested 
+    createValueMutation.mutate({
+      parentId: attributeId,
+      data : {
+        machineId: machineId,
+        machineAttributeId: attributeId,
+        attributeValue: attributeValue,
+        attributeValueYear: year,
+      }
     },
   {
         onSuccess: () => {
@@ -97,10 +104,11 @@ export default function MachineAttributeValuesView() {
       "pruefungsIntervall",
       pruefungsIntervall
     );
-    const mutation = machineAttributeQuery.useUpdate(machineId, attributeId);
-    mutation.mutate(
+    
+    updateMachineAttributeMutation.mutate(
       {
-        pruefungsIntervall: pruefungsIntervall,
+        id: attributeId,
+        data: {pruefungsIntervall},
     },
       {
         onSuccess: () => {

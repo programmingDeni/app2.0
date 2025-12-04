@@ -27,12 +27,14 @@ export default function ToggleableSection({
     }
   };
 
-  return (
-    <div className="space-y-2">
-      <Button onClick={handleToggle}>
+return (
+  <div className="container container--narrow mt-auto stack stack--md">
+    <div className="flex-center">
+      <Button className="btn btn--primary" onClick={handleToggle}>
         {open ? toggleLabelActive ?? "Schließen" : toggleLabel}
       </Button>
-      {open && <div>{children}</div>}
     </div>
-  );
+    {open && <>{children}</>}
+  </div>
+);
 }

@@ -1,16 +1,19 @@
-import style from "./EditButton.module.css";
 
 interface EditButtonProps {
     onClick: () => void;
     children?: React.ReactNode;
+    className?:string;
 }
 
-export function EditButton({ onClick, children }: EditButtonProps) {
+export function EditButton({ onClick, children, className }: EditButtonProps) {
+    const combinedClassName = className 
+        ? `btn ${className}` 
+        : "btn";
     return (
         <button
             type="button"
             onClick={onClick}
-            className={style.editButton}
+            className={combinedClassName}
             title="Bearbeiten"
         >
             {children || (

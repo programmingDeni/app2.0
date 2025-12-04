@@ -31,23 +31,26 @@ export default function AddMachineFormUI({
        machine = {
          machineName: name,
          machineTemplateId: selectedTemplateId,
+         type: 'fromTemplate',
         };
       } else {
         machine = {
           name: name,
+          type:'byName'
         };
       }
     
-    onSubmit(machine); // ← Machine zurückgeben!
+    onSubmit(machine); 
   };
 
   return (
-    <div>
+    <div className = "form-group">
       <input
         type="text"
         placeholder="Maschinenname"
         value={name}
         onChange={(e) => onNameChange(e.target.value)}
+        className="form-input"
       />
       <TemplateSelect
         templates={templates}
