@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.example.machine_management.repository.MachineRepository;
-import com.example.machine_management.models.MachineTemplate;
+import com.example.machine_management.models.template.MachineTemplate;
 import com.example.machine_management.repository.AttributeValueRepository;
 
 import jakarta.transaction.Transactional;

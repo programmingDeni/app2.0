@@ -1,0 +1,6 @@
+/**
+ * Layouts - Aggregiert alle Layout-Dateien
+ */
+@import './_page.css';
+@import './_two-column.css';
+@import './_sidebar.css';

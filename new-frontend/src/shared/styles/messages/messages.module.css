@@ -1,0 +1,47 @@
+/* Empty State Message - f�r "Keine Daten gefunden" Nachrichten */
+.emptyState {
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+  padding: 0.5rem 0.5rem;
+}
+
+/* Success Message */
+.success {
+  padding: 0.75rem 1rem;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 4px;
+  color: #155724;
+  margin-bottom: 1rem;
+}
+
+/* Error Message */
+.error {
+  padding: 0.75rem 1rem;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  color: #721c24;
+  margin-bottom: 1rem;
+}
+
+/* Info Message */
+.info {
+  padding: 0.75rem 1rem;
+  background-color: #d1ecf1;
+  border: 1px solid #bee5eb;
+  border-radius: 4px;
+  color: #0c5460;
+  margin-bottom: 1rem;
+}
+
+/* Warning Message */
+.warning {
+  padding: 0.75rem 1rem;
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  border-radius: 4px;
+  color: #856404;
+  margin-bottom: 1rem;
+}

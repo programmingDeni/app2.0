@@ -3,12 +3,11 @@ package com.example.machine_management.mapper.TemplateAttributes;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.hibernate.sql.Template;
 import org.springframework.stereotype.Component;
 
 import com.example.machine_management.dto.AttributeInTemplate.TemplateAttributeDto;
 import com.example.machine_management.mapper.EntityMapper;
-import com.example.machine_management.models.TemplateAttribute;
+import com.example.machine_management.models.template.TemplateAttribute;
 
 @Component
 public class TemplateAttributeMapper implements EntityMapper<TemplateAttribute, TemplateAttributeDto> {
@@ -17,16 +16,16 @@ public class TemplateAttributeMapper implements EntityMapper<TemplateAttribute, 
     public TemplateAttributeDto toDto(TemplateAttribute attr) {
         TemplateAttributeDto dto = new TemplateAttributeDto();
         dto.id = attr.getId();
-        dto.attributeName = attr.getAttributeInTemplateName();
-        dto.attributeType = attr.getType();
+        dto.templateAttributeName = attr.getAttributeInTemplateName();
+        dto.templateAttributeType = attr.getType();
         return dto;
     }
 
     @Override
     public TemplateAttribute fromDto(TemplateAttributeDto dto) {
         TemplateAttribute attr = new TemplateAttribute();
-        attr.setAttributeInTemplateName(dto.attributeName);
-        attr.setType(dto.attributeType);
+        attr.setAttributeInTemplateName(dto.templateAttributeName);
+        attr.setType(dto.templateAttributeType);
         return attr;
     }
 
@@ -38,15 +37,14 @@ public class TemplateAttributeMapper implements EntityMapper<TemplateAttribute, 
                 .collect(Collectors.toList());
     }
 
-    /*
-     * LEGACY
-     * public static TemplateAttributeDto toDto(TemplateAttribute attr) {
-     * TemplateAttributeDto dto = new TemplateAttributeDto();
-     * dto.id = attr.getId();
-     * dto.attributeName = attr.getAttributeInTemplateName();
-     * dto.attributeType = attr.getType();
-     * return dto;
-     * }
-     */
+    public List<TemplateAttribute> fromDtoList(List<TemplateAttributeDto> templateAttributeDtos){
+        if(templateAttributeDtos == null)
+            return null;
+        else{
+            return templateAttributeDtos.stream()
+                        .map(this::fromDto)
+                        .collect(Collectors.toList());
+        }
+    }
 
 }

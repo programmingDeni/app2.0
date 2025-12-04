@@ -1,0 +1,28 @@
+/**
+ * Layout Dimension Tokens
+ * Feste Dimensionen für Layout-Komponenten
+ */
+:root {
+  /* Fixed Dimensions */
+  --navbar-height: 60px;
+  --sidebar-width: 280px;
+  --sidebar-collapsed-width: 64px;
+
+  /* Content Constraints */
+  --max-content-width: 1280px;
+  --min-content-width: 320px;
+
+  /* Page Content Height (unterhalb Navbar) */
+  --page-content-height: calc(100vh - var(--navbar-height) -20px);
+  --page-content-height-dynamic: calc(100dvh - var(--navbar-height) -20px);
+
+  /* Column Ratios für Two-Column Layout */
+  --two-col-left-flex: 1;
+  --two-col-right-flex: 2;
+
+  /* Responsive Breakpoints (als Referenz) */
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+}

@@ -1,0 +1,11 @@
+.header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.headerButtons{
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}

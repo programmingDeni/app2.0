@@ -2,7 +2,6 @@ package com.example.machine_management.dto.AttributeValue;
 
 import java.time.LocalDateTime;
 
-import com.example.machine_management.models.MachineAttribute;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class AttributeValueDto {
@@ -17,6 +16,13 @@ public class AttributeValueDto {
     public LocalDateTime zuletztGetauscht;
 
     public AttributeValueDto() {
+    }
+
+    //construktor fuer create mit parent id 
+    public AttributeValueDto(int attributeValueYear, Integer machineAttributeId, String attributeValue){
+        this.attributeValueYear = attributeValueYear;
+        this.machineAttributeId = machineAttributeId;
+        this.attributeValue = attributeValue;
     }
 
     public AttributeValueDto(Integer id, int attributeValueYear, Integer machineAttributeId) {

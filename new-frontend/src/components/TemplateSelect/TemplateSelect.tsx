@@ -16,7 +16,7 @@
  * />
  */
 
-import { Template } from "@/features/templates/types/template.types";
+import { Template } from "@/shared/types/template.types";
 
 interface Props {
   templates: Template[];
@@ -35,6 +35,7 @@ export default function TemplateSelect({
       onChange={(e) =>
         onChange(e.target.value === "" ? null : Number(e.target.value))
       }
+      className="form-select"
     >
       <option value="">Kein Template verwenden</option>
       {templates.map((template) => (

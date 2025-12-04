@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.example.machine_management.dto.Machine.LazyMachineDto;
-import com.example.machine_management.models.Machine;
+import com.example.machine_management.models.machine.Machine;
 
 public class LazyMachineMapper {
 

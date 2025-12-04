@@ -1,0 +1,29 @@
+.container{
+    overflow: hidden;
+    min-height:0;
+    display: flex;
+    flex-direction: column;
+}
+
+.header{
+    flex-shrink: 0;
+}
+
+.listContent{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex:1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.listContent > div {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 1rem;
+}
+
+.listContent > div:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}

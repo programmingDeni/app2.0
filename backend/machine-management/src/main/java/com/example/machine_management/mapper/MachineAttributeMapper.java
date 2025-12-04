@@ -4,10 +4,10 @@ import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.machine_management.models.Machine;
-import com.example.machine_management.models.MachineAttribute;
+import com.example.machine_management.models.enums.AttributeType;
+import com.example.machine_management.models.machine.Machine;
+import com.example.machine_management.models.machine.MachineAttribute;
 import com.example.machine_management.dto.MachineAttributes.MachineAttributeDto;
-import com.example.machine_management.models.AttributeType;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -32,7 +32,7 @@ public class MachineAttributeMapper implements EntityMapper<MachineAttribute, Ma
         // Für GenericCrudService - machineId wird später gesetzt
         MachineAttribute attr = new MachineAttribute();
         attr.setAttributeName(dto.attributeName);
-        attr.setType(AttributeType.valueOf(dto.attributeType));
+        attr.setAttributeType((dto.attributeType));
         attr.setPruefungsIntervall(dto.pruefungsIntervall);
         return attr;
     }
@@ -41,11 +41,11 @@ public class MachineAttributeMapper implements EntityMapper<MachineAttribute, Ma
         return new MachineAttributeDto(
                 attr.getId(),
                 attr.getAttributeName(),
-                attr.getType().toString(),
+                attr.getAttributeType(),
                 attr.getAttributeValues().stream()
                         .map(attributeValueMapper::toDto)
                         .collect(Collectors.toList()),
-                attr.getMachineId(),
+                attr.getMachine().getId(),
                 attr.isFromTemplate(),
                 attr.getPruefungsIntervall());
     }
@@ -54,9 +54,9 @@ public class MachineAttributeMapper implements EntityMapper<MachineAttribute, Ma
         return new MachineAttributeDto(
                 attr.getId(),
                 attr.getAttributeName(),
-                attr.getType().toString(),
+                attr.getAttributeType(),
                 new ArrayList<>(),
-                attr.getMachineId(),
+                attr.getMachine().getId(),
                 attr.isFromTemplate(),
                 attr.getPruefungsIntervall());
     }
@@ -78,16 +78,23 @@ public class MachineAttributeMapper implements EntityMapper<MachineAttribute, Ma
     }
 
     public MachineAttribute toEntity(MachineAttributeDto machineAttributeDto, Integer machineId) {
-        MachineAttribute attr = new MachineAttribute(machineId, machineAttributeDto.id);
-        // attr.setId(dto.id);
-        attr.setType(AttributeType.valueOf(machineAttributeDto.attributeType)); // <-- hier Umwandlung String → Enum
-
+        MachineAttribute attr = new MachineAttribute();
+        //userid muss wo anders gesetzt werden
+        attr.setAttributeName(machineAttributeDto.attributeName);
+        attr.setAttributeType((machineAttributeDto.attributeType)); // <-- hier Umwandlung String → Enum
+        //attribtuevalues?
         if (machineAttributeDto.attributeValues != null) {
             attr.setAttributeValues(machineAttributeDto.attributeValues.stream()
                     .map(val -> attributeValueMapper.toEntity(val, attr))
                     .collect(Collectors.toList()));
         }
+        
 
         return attr;
+    }
+
+    @Override
+    public List<MachineAttributeDto> toDtoList(List<MachineAttribute> entities) {
+        return entities.stream().map(this::toDto).toList();
     }
 }

@@ -1,1 +1,1 @@
-export { default } from "./TemplateCardUI";
+export {TemplateCardUi} from "./TemplateCardUi";

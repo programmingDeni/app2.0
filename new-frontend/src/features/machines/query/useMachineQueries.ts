@@ -16,7 +16,7 @@ import {
 import {
   Machine,
   MachineAttribute,
-} from "@/features/machines/types/machine.types";
+} from "@/shared/types/machine.types";
 
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Machines  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //CRUDE Operationen

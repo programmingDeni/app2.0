@@ -1,4 +1,4 @@
-import { Machine } from "@/features/machines/types/machine.types";
+import { Machine } from "@/shared/types/machine.types";
 import MachineLazyCardUI from "./MachineLazyCardUI";
 
 interface Props {

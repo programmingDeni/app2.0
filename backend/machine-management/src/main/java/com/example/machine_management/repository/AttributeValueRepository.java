@@ -1,11 +1,14 @@
 package com.example.machine_management.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import java.util.List;
 import java.util.Optional;
 
-import com.example.machine_management.models.AttributeValue;
-import com.example.machine_management.models.MachineAttribute;
+import com.example.machine_management.models.machine.AttributeValue;
+import com.example.machine_management.models.machine.MachineAttribute;
 
 public interface AttributeValueRepository extends JpaRepository<AttributeValue, Integer> {
     // ============= User-filtered queries =============
@@ -14,26 +17,10 @@ public interface AttributeValueRepository extends JpaRepository<AttributeValue, 
 
     Optional<AttributeValue> findByIdAndUserId(Integer id, Integer userId);
 
-    List<AttributeValue> findByMachineAttributeIdAndUserId(Integer machineAttributeId, Integer userId);
+    @Query("SELECT av FROM AttributeValue av WHERE av.machineAttribute.id = :machineAttributeId AND av.userId = :userId")
+    List<AttributeValue> lazyFindByMachineAttributeIdAndUserId(@Param("machineAttributeId") Integer machineAttributeId, @Param("userId") Integer userId);
 
     Optional<AttributeValue> findByMachineAttributeAndAttributeValueYear(MachineAttribute machineAttribute,
             Integer year);
 
-    List<AttributeValue> findByMachineAttributeMachineIdAndUserId(Integer machineId, Integer userId);
-    // ============= Legacy queries =============
-    /*
-     * // muss auf jeden fall möglich sein über das machinheneAttribute zu fidnen
-     * List<AttributeValue> findAllByMachineAttribute(MachineAttribute
-     * machineAttribute);
-     * 
-     * List<AttributeValue> findAllByAttributeValueYear(int year);
-     * 
-     * Optional<AttributeValue>
-     * findByMachineAttributeAndAttributeValueYear(MachineAttribute
-     * machineAttribute, int year);
-     * 
-     * List<AttributeValue> findByMachineAttributeId(Integer machineAttributeId);
-     * 
-     * List<AttributeValue> findByMachineAttributeMachineId(Integer machineId);
-     */
 }

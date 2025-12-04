@@ -1,0 +1,18 @@
+/**
+ * Border Design Tokens
+ * Border-Radius und -Breiten
+ */
+:root {
+  /* Border Radius */
+  --radius-none: 0;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  /* Border Widths */
+  --border-width-thin: 1px;
+  --border-width-medium: 2px;
+  --border-width-thick: 4px;
+}

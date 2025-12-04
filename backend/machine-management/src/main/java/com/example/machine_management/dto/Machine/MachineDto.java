@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.example.machine_management.dto.MachineAttributes.MachineAttributeDto;
 import com.example.machine_management.dto.MachineTemplates.MachineTemplateDto;
-import com.example.machine_management.models.Machine;
+import com.example.machine_management.models.machine.Machine;
 
 public class MachineDto {
 

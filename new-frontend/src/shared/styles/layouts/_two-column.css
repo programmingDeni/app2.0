@@ -1,0 +1,98 @@
+/**
+ * Two-Column Layout
+ * Master/Detail oder List/Form Pattern
+ * Default: 1:2 Verhältnis (links kleiner, rechts größer)
+ */
+
+.twoColumn {
+  display: flex;
+  gap: var(--spacing-md);
+  flex:1;
+  min-height: 0;
+  padding: var(--spacing-md);
+  overflow: hidden;
+}
+
+.twoColumn__left {
+  display: flex;
+  flex-direction: column;
+  flex: var(--two-col-left-flex);
+  overflow: hidden;
+  min-height: 0;
+  max-height: 100%;
+}
+
+.twoColumn__right {
+  display: flex;
+  flex-direction: column;
+  flex: var(--two-col-right-flex);
+  overflow: hidden;
+  min-height: 0;
+  max-height: 100%;
+
+}
+
+/* Varianten */
+.twoColumn--equal {
+  --two-col-left-flex: 1;
+  --two-col-right-flex: 1;
+}
+
+.twoColumn--reversed {
+  --two-col-left-flex: 2;
+  --two-col-right-flex: 1;
+}
+
+.twoColumn--withDivider .twoColumn__left {
+  border-right: var(--border-width-thin) solid var(--color-border);
+  padding-right: var(--spacing-md);
+}
+
+.twoColumn--withDivider .twoColumn__right {
+  padding-left: var(--spacing-md);
+}
+
+/* Scrollable Content innerhalb der Spalten */
+.twoColumn__scrollable {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+/* Top-right positionierter Button (häufiges Pattern) */
+.twoColumn__actionButton {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  z-index: var(--z-dropdown);
+}
+
+/* Responsive: Stack auf Mobile */
+@media (max-width: 768px) {
+  .twoColumn {
+    flex-direction: column;
+  }
+
+  .twoColumn__left,
+  .twoColumn__right {
+    flex: none;
+    padding: 0;
+    border: none;
+  }
+
+  .twoColumn__left {
+    max-height: 40vh;
+  }
+
+  .twoColumn--withDivider .twoColumn__left {
+    border-right: none;
+    border-bottom: var(--border-width-thin) solid var(--color-border);
+    padding-right: 0;
+    padding-bottom: var(--spacing-md);
+  }
+
+  .twoColumn--withDivider .twoColumn__right {
+    padding-left: 0;
+    padding-top: var(--spacing-md);
+  }
+}

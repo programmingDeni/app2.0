@@ -1,98 +1,83 @@
 package com.example.machine_management.controller.machines;
-
-import com.example.machine_management.controller.base.AbstractMachineBaseController;
-import com.example.machine_management.dto.Machine.Attributes.CreateMachineAttributeDto;
+import com.example.machine_management.controller.base.AbstractNestedCrudController;
+import com.example.machine_management.dto.MachineAttributes.CreateMachineAttributeDto;
 import com.example.machine_management.dto.MachineAttributes.MachineAttributeDto;
+import com.example.machine_management.mapper.EntityMapper;
 import com.example.machine_management.mapper.MachineAttributeMapper;
-import com.example.machine_management.models.MachineAttribute;
+import com.example.machine_management.models.machine.Machine;
+import com.example.machine_management.models.machine.MachineAttribute;
+import com.example.machine_management.services.abstracts.ParentManagementService;
 import com.example.machine_management.services.machine.MachineAttributeOperationsService;
+import com.example.machine_management.services.machine.MachineService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Machine Attributes", description = "Manage attributes within a machine (nested under /machines/{machineId}/attributes)")
 @RestController
-@RequestMapping("/api/machines")
-public class MachineAttributeOperationsController extends AbstractMachineBaseController {
+@RequestMapping("/api/machines/{parentId}/attributes")
+public class MachineAttributeOperationsController 
+    extends AbstractNestedCrudController<MachineAttribute, Integer, 
+        MachineAttributeDto, CreateMachineAttributeDto, Machine, Integer> {
 
-    private final MachineAttributeOperationsService machineAttributeOperationsService;
+    private final MachineAttributeOperationsService machineAttributeService;
 
     private final MachineAttributeMapper machineAttributeMapper;
 
+    private final MachineService machineService;
+
     @Autowired
-    public MachineAttributeOperationsController(MachineAttributeOperationsService machineAttributeOperationsService,
-            MachineAttributeMapper machineAttributeMapper) {
-        this.machineAttributeOperationsService = machineAttributeOperationsService;
+    public MachineAttributeOperationsController(MachineAttributeOperationsService machineAttributeService,
+            MachineAttributeMapper machineAttributeMapper,
+            MachineService machineService) {
+        this.machineAttributeService = machineAttributeService;
         this.machineAttributeMapper = machineAttributeMapper;
+        this.machineService = machineService;
     }
 
-    @PostMapping("/{id}/attributes")
-    public ResponseEntity<MachineAttributeDto> createAttribute(
-            @PathVariable Integer id,
-            @RequestBody CreateMachineAttributeDto dto) {
-        if (dto == null || !isValidMachineAttributeDto(dto)) {
-            throw new IllegalArgumentException("Invalid attribute data");
-        }
-        if (id == null || id <= 0) {
-            throw new IllegalArgumentException("Invalid ID");
-        }
-
-        MachineAttribute created = machineAttributeOperationsService.addMachineAttribute(id, dto);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(machineAttributeMapper.toDtoLazy(created));
+    @Override
+    protected ParentManagementService<MachineAttribute, Integer, MachineAttributeDto, CreateMachineAttributeDto, Machine, Integer> getService() {
+        return this.machineAttributeService;
     }
 
-    @PutMapping("/{id}/attributes/{attributeId}")
-    public ResponseEntity<MachineAttributeDto> editMachineAttribute(
-            @PathVariable("id") Integer machineId,
-            @PathVariable Integer attributeId,
-            @RequestBody MachineAttributeDto dto) {
-        if (machineId == null || machineId <= 0 || attributeId == null || attributeId <= 0) {
-            throw new IllegalArgumentException("Invalid update data");
-        }
-
-        MachineAttribute updated = machineService.editMachineAttribute(machineId, attributeId, dto);
-        return ResponseEntity.ok(machineAttributeMapper.toDtoLazy(updated));
+    @Override
+    protected EntityMapper<MachineAttribute, MachineAttributeDto> getMapper() {
+        return this.machineAttributeMapper;
     }
 
-    @DeleteMapping("/{id}/attributes/{attributeId}")
-    public ResponseEntity<Void> removeMachineAttribute(
-            @PathVariable Integer id,
-            @PathVariable Integer attributeId) {
-        if (id == null || id <= 0 || attributeId == null || attributeId <= 0) {
-            throw new IllegalArgumentException("Invalid update data");
-        }
-
-        machineService.removeMachineAttribute(id, attributeId);
-        return ResponseEntity.noContent().build();
+    @Override
+    protected Machine getParent(Integer parentId) {
+        return machineService.userFindById(parentId, false);
     }
 
-    // lazy loading der attribute einer maschine
-    @GetMapping("/{machineId}/attributes")
-    public ResponseEntity<List<MachineAttributeDto>> getMachineAttributes(@PathVariable Integer machineId) {
-        // check ob id korrekt uebergeben wurde
-        if (machineId == null || machineId <= 0) {
-            throw new IllegalArgumentException("Invalid ID");
+    @Override
+    protected boolean belongsToParent(MachineAttribute entity, Integer parentId) {
+        Machine machine = getParent(parentId);
+        if(machine.getMachineAttributes().contains(entity)){
+            return true;
         }
-        // calle den service, lass die attribute holen
-        List<MachineAttribute> attributes = machineAttributeOperationsService.getMachineAttributesLazy(machineId);
-        // returne die gemappten dtos
-        return ResponseEntity.ok(machineAttributeMapper.toDtoListLazy(attributes));
+        else {
+            return false;
+        }
     }
 
-    @GetMapping("/{machineId}/attributes/eager")
-    public ResponseEntity<List<MachineAttributeDto>> getMachineAttributesEager(@PathVariable Integer machineId) {
-        // check ob id korrekt uebergeben wurde
-        if (machineId == null || machineId <= 0) {
-            throw new IllegalArgumentException("Invalid ID");
-        }
-        // calle den service, lass die attribute holen
-        List<MachineAttribute> attributes = machineAttributeOperationsService.getMachineAttributesEager(machineId);
-        // returne die gemappten dtos
-        return ResponseEntity.ok(machineAttributeMapper.toDtoListEager(attributes));
+    @Override
+    protected MachineAttributeDto enrichDtoWithParentId(CreateMachineAttributeDto createDto, Integer parentId) {
+        return new MachineAttributeDto(createDto.attributeName, createDto.attributeType, parentId);
     }
 
+    @Override
+    protected List<MachineAttribute> findByParentId(Integer parentId, boolean eager) {
+        return machineAttributeService.findEntitiesByParentId(parentId, eager);
+    }
+
+
+
+    
 }

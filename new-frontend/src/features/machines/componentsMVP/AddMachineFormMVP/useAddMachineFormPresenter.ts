@@ -1,8 +1,13 @@
 //import der typ nahen hooks
-import { useMachineTemplates } from "@/presenters/useMachineTemplates";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { TemplateQuery } from "@/queries/template/TemplateQuery";
 
 export function useAddMachineFormPresenter() {
+  const queryClient = useQueryClient();
+  const templateQuery = new TemplateQuery(queryClient);
+  const findAllTemplatesQuery = templateQuery.useFindAll(false);
+  
   const { templates, loadingTemplates, errorTemplates } = useMachineTemplates();
   const [name, setName] = useState("");
   const [templateId, setTemplateId] = useState<number | null>(null);

@@ -3,12 +3,13 @@ package com.example.machine_management.dto.MachineAttributes;
 import java.util.List;
 
 import com.example.machine_management.dto.AttributeValue.AttributeValueDto;
+import com.example.machine_management.models.enums.AttributeType;
 
 public class MachineAttributeDto {
 
     public Integer id;
     public String attributeName;
-    public String attributeType; // wenn du das Enum als String nutzen willst
+    public AttributeType attributeType; // wenn du das Enum als String nutzen willst
     public List<AttributeValueDto> attributeValues;
     public int machineId;
     public boolean fromTemplate;
@@ -17,7 +18,14 @@ public class MachineAttributeDto {
     public MachineAttributeDto() {
     }
 
-    public MachineAttributeDto(Integer id, String attributeName, String attributeType,
+    //minimal constructor fuers create
+    public MachineAttributeDto(String attributeName, AttributeType attributeType, Integer machineId){
+        this.attributeName = attributeName;
+        this.attributeType = attributeType;
+        this.machineId = machineId; 
+    }
+
+    public MachineAttributeDto(Integer id, String attributeName, AttributeType attributeType,
             List<AttributeValueDto> attributeValues, Integer machineId, boolean fromTemplate,
             Integer pruefungsIntervall) {
         this.id = id;

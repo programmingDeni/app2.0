@@ -1,0 +1,39 @@
+.container{
+  
+}
+
+.formContainer{
+    flex: 1;
+    display: flex;
+    flex-direction:column;
+    gap: 1.5rem; 
+    overflow: hidden;
+}
+
+.contentArea{
+    flex:1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-height: 0 ;
+}
+
+/* NEU - Für Header-Elemente */
+.header {
+  flex-shrink: 0; /* Verhindert Schrumpfen */
+}
+
+/* NEU - Für Name-Section */
+.nameSection {
+  flex-shrink: 0; /* Verhindert Schrumpfen */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between; /* Positioniert Inhalt am rechten Rand */
+  align-items: center; /* Zentriert Elemente vertikal */
+  padding-right: 1rem;
+}
+
+/* NEU - Für Messages */
+.message {
+  flex-shrink: 0; /* Verhindert Schrumpfen */
+}

@@ -1,16 +1,10 @@
 package com.example.machine_management.services.machine;
-
 import com.example.machine_management.dto.Machine.CreateMachineFromTemplateDto;
 import com.example.machine_management.dto.Machine.MachineDto;
-import com.example.machine_management.dto.Machine.Attributes.CreateMachineAttributeDto;
-import com.example.machine_management.dto.MachineAttributes.MachineAttributeDto;
-import com.example.machine_management.exceptions.NotFoundException;
 import com.example.machine_management.mapper.MachineMapper;
-import com.example.machine_management.models.Machine;
-import com.example.machine_management.models.MachineAttribute;
-import com.example.machine_management.models.MachineTemplate;
+import com.example.machine_management.models.machine.Machine;
 import com.example.machine_management.repository.MachineRepository;
-import com.example.machine_management.services.GenericCrudService;
+import com.example.machine_management.services.abstracts.CrudService;
 import com.example.machine_management.util.SecurityUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,179 +17,75 @@ import java.util.Optional;
  * Service für die Verwaltung von Maschinen (Machine Entities).
  * Erweitert den GenericCrudService für Standard-CRUD-Operationen und
  * delegiert spezialisierte Operationen an dedizierte Services.
- * 
- * Standard-CRUD-Operationen (geerbt):
- * - {@link #findAll()} - Liste aller Maschinen
- * - {@link #findById(Integer)} - Maschine mit allen Relations
- * - {@link #create(MachineDto)} - Neue Maschine erstellen
- * - {@link #delete(Integer)} - Maschine löschen
- * 
- * Template-bezogene Operationen (delegiert an MachineTemplateOperations):
- * - {@link #assignTemplate(Integer, Integer)} - Template einer Maschine
- * zuweisen
- * - {@link #removeTemplateFromMachine(Integer)} - Template von Maschine
- * entfernen
- * - {@link #createMachineFromTemplate(CreateMachineFromTemplateDto)} - Neue
- * Maschine aus Template
- * 
- * Attribute-bezogene Operationen (delegiert an MachineAttributeOperations):
- * - {@link #addMachineAttribute(Integer, CreateMachineAttributeDto)} - Attribut
- * hinzufügen
- * - {@link #editMachineAttribute(Integer, Integer, MachineAttributeDto)} -
- * Attribut bearbeiten
- * - {@link #removeMachineAttribute(Integer, Integer)} - Attribut entfernen
- * 
- * @see GenericCrudService
- * @see MachineTemplateOperations
- * @see MachineAttributeOperations
- * @see Machine
- * @see MachineDto
- * 
- * @throws NotFoundException        wenn eine Entity nicht gefunden wird
- * @throws IllegalArgumentException bei invaliden Eingabedaten
+ * CRUD Operations und user reads 
  */
 
 @Service
-public class MachineService extends GenericCrudService<Machine, Integer, MachineDto> {
+public class MachineService extends CrudService<Machine, Integer, MachineDto> {
 
-    // für spezielle Operationen
-
-    private final MachineTemplateOperationsService machineTemplateOperationsService;
-    private final MachineAttributeOperationsService machineAttributeOperationsService;
+    //repo
+    private final MachineRepository machineRepository;
 
     @Autowired
     public MachineService(
             MachineRepository machineRepository,
-            MachineMapper mapper,
-            MachineTemplateOperationsService machineTemplateOperationsService,
-            MachineAttributeOperationsService machineAttributeOperationsService) {
+            MachineMapper mapper){
         super(machineRepository, mapper);
-        this.machineTemplateOperationsService = machineTemplateOperationsService;
-        this.machineAttributeOperationsService = machineAttributeOperationsService;
-    }
-    // ============= Implementierung der abstrakten Methoden aus GenericCrudService
-    // =============
-
-    /**
-     * Findet Maschine by ID mit allen Relations (eager loading).
-     * Lädt: MachineAttributes (mit Values), MachineTemplate
-     * 
-     * @param id Machine ID
-     * @return Machine mit allen geladenen Relations
-     * @throws NotFoundException wenn Maschine nicht gefunden
-     */
-    @Override
-    public Machine findById(Integer id) {
-        Integer userId = SecurityUtils.getCurrentUserId();
-        // hier spezielle Implementation mit findWithAllDataById. soll eager laden
-        Machine machine = ((MachineRepository) repo).findWithAllDataByIdAndUserId(id, userId)
-                .orElseThrow(() -> new NotFoundException("Maschine mit ID " + id + " nicht gefunden."));
-        return machine;
+        this.machineRepository = machineRepository;
     }
 
-    /**
-     * Implementation der abstrakten updateEntity Methode.
-     * Aktualisiert den Namen einer Maschine.
-     * Andere Eigenschaften (Template, Attribute) werden über dedizierte Methoden
-     * verwaltet.
-     *
-     * @param existingEntity die zu aktualisierende Maschine
-     * @param machineDto     DTO mit den neuen Daten
-     * @return die aktualisierte Maschine
-     * @throws IllegalArgumentException wenn der Maschinenname leer ist
-     * @throws NotFoundException        wenn die Maschine nicht gefunden wurde
-     */
     @Override
-    protected Machine updateEntity(Machine existingEntity, MachineDto machineDto) {
-        if (machineDto.machineName == null || machineDto.machineName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Maschinenname darf nicht leer sein.");
-        }
+    protected Machine createEntity(MachineDto dto) {
+        validateMachineDto(dto);
+        //fuer create from template eigene methode
+        return new Machine(dto.machineName);
+    }
 
-        existingEntity.setMachineName(machineDto.machineName);
+    @Override
+    protected List<Machine> eagerGetAllUserEntities(Integer userId) {
+        return machineRepository.findAllByUserIdEager(userId);
+    }
+
+    @Override
+    protected List<Machine> lazyGetAllUserEntities(Integer userId) {
+        return machineRepository.findAllByUserId(userId);
+    }
+
+    @Override
+    protected Machine updateEntity(Machine existingEntity, MachineDto dto) {
+        validateMachineDto(dto);
+        existingEntity.setMachineName(dto.machineName);
+        //modified by und at wird anscheindnd von jpa auditin uebernommen
         return existingEntity; // GenericCrudService speichert es
     }
+    
+    @Override
+    protected Optional<Machine> userFindByIdLazy(Integer id, Integer userId) {
+        return machineRepository.findByIdAndUserId(id, userId);
+    }
+
 
     @Override
-    protected List<Machine> findAllByUserId(Integer userId) {
-        return ((MachineRepository) repo).findAllByUserId(userId);
+    protected Optional<Machine> userFindByIdEager(Integer id, Integer userId) {
+        return machineRepository.findWithAllDataByIdAndUserId(id, userId);
     }
 
     @Override
-    protected Optional<Machine> findByIdAndUserId(Integer id, Integer userId) throws NotFoundException {
-        return ((MachineRepository) repo).findByIdAndUserId(id, userId);
+    protected Optional<Machine> adminFindByIdEager(Integer id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'adminFindByIdEager'");
     }
+
 
     @Override
-    protected void setUserId(Machine entity, Integer userId) {
-        entity.setUserId(userId);
+    protected List<Machine> adminFindAllEager() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'adminFindAllEager'");
     }
 
-    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MACHINEN
-    // TEMPLATE OPS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    /**
-     * Erstellt neue Maschine aus Template.
-     * delegiert an
-     * {@link MachineTemplateOperationsService#createMachineFromTemplate(CreateMachineFromTemplateDto)}
-     */
-    public Machine createMachineFromTemplate(CreateMachineFromTemplateDto dto) {
-        return machineTemplateOperationsService.createMachineFromTemplate(dto);
+    private void validateMachineDto(MachineDto dto){
+        if(dto.machineName == null || dto.machineName.trim().isEmpty()){
+            throw new IllegalArgumentException("Maschinenname darf nicht leer sein.");
+        }
     }
-
-    /**
-     * Weist einer Maschine ein Template zu.
-     * delegiert an
-     * {@link MachineTemplateOperationsService#assignTemplate(Integer, Integer)}
-     */
-    public Machine assignTemplate(Integer machineId, Integer templateId) {
-        return machineTemplateOperationsService.assignTemplate(machineId, templateId);
-    }
-
-    /**
-     * Entfernt Template von einer Maschine.
-     * delegiert an
-     * {@link MachineTemplateOperationsService#removeTemplateFromMachine(Integer)}
-     */
-    public void removeTemplateFromMachine(Integer machineId) {
-        machineTemplateOperationsService.removeTemplateFromMachine(machineId);
-    }
-
-    /**
-     * Findet alle Maschinen eines Templates.
-     * delegiert an
-     * {@link MachineTemplateOperationsService#findByTemplate(MachineTemplate)}
-     */
-    public List<Machine> findByTemplate(MachineTemplate template) {
-        return machineTemplateOperationsService.findByTemplate(template);
-    }
-
-    // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% MACHINEN
-    // ATTRIBUTE OPS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    /**
-     * Entfernt ein Attribut von einer Maschine.
-     * delegiert an
-     * {@link MachineAttributeOperationsService#removeMachineAttribute(Integer, Integer)}
-     */
-    public void removeMachineAttribute(Integer machineId, Integer attributeId) {
-        machineAttributeOperationsService.removeMachineAttribute(machineId, attributeId);
-    }
-
-    /**
-     * Bearbeitet ein Attribut einer Maschine.
-     * delegiert an
-     * {@link MachineAttributeOperationsService#editMachineAttribute(Integer, Integer, MachineAttributeDto)}
-     */
-    public MachineAttribute editMachineAttribute(Integer machineId, Integer attributeId, MachineAttributeDto dto) {
-        return machineAttributeOperationsService.editMachineAttribute(machineId, attributeId, dto);
-    }
-
-    /**
-     * Fügt eine neues Attribut zu einer Maschine hinzu.
-     * delegiert an
-     * {@link MachineAttributeOperationsService#addMachineAttribute(Integer, CreateMachineAttributeDto)}
-     */
-    public MachineAttribute addMachineAttribute(Integer machineId, CreateMachineAttributeDto dto) {
-        return machineAttributeOperationsService.addMachineAttribute(machineId, dto);
-    }
-
 }

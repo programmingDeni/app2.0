@@ -1,0 +1,16 @@
+/**
+ * Transition Tokens
+ * Animationen und Übergänge
+ */
+:root {
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 350ms ease;
+
+  /* Spezifische Transitions */
+  --transition-color: color var(--transition-fast);
+  --transition-bg: background-color var(--transition-normal);
+  --transition-border: border-color var(--transition-fast);
+  --transition-transform: transform var(--transition-normal);
+  --transition-opacity: opacity var(--transition-normal);
+}

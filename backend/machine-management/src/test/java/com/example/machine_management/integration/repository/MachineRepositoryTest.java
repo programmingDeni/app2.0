@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import com.example.machine_management.models.Machine;
+import com.example.machine_management.models.machine.Machine;
 import com.example.machine_management.repository.MachineRepository;
 
 @DataJpaTest
@@ -51,12 +51,6 @@ class MachineRepositoryTest {
         assertNotNull(saved.getId(), "ID sollte generiert worden sein");
     }
 
-    @Test
-    @Disabled
-    void whenFindByNameNotExists_thenReturnEmpty() {
-        // Optional<Machine> found = machineRepository.findByMachineName("NonExistent");
-        // assertTrue(found.isEmpty(), "Sollte leeres Optional zurückgeben");
-    }
 
     @Test
     void whenFindById_thenReturnMachine() {

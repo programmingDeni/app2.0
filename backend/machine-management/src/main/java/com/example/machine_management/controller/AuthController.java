@@ -4,7 +4,7 @@ import com.example.machine_management.dto.*;
 import com.example.machine_management.dto.Auth.AuthRequest;
 import com.example.machine_management.dto.Auth.AuthResponse;
 import com.example.machine_management.dto.Auth.RefreshTokenRequest;
-import com.example.machine_management.models.User;
+import com.example.machine_management.models.user.User;
 import com.example.machine_management.security.UserPrincipal;
 import com.example.machine_management.services.AuthService;
 import com.example.machine_management.services.UserService;

@@ -1,16 +1,15 @@
-import Button from "@/components/Button";
+import Button from "@/shared/components/Buttons/GenericButton";
 import TemplateSelect from "../../../../components/TemplateSelect/TemplateSelect";
-import { Template } from "@/features/templates/types/template.types";
+import { Template } from "@/shared/types/template.types";
+import { CreateMachineByName, CreateMachineFromTemplate, Machine } from "@/shared/types/machine.types";
 
 interface Props {
   name: string;
   onNameChange: (val: string) => void;
   selectedTemplateId: number | null;
   onTemplateChange: (id: number | null) => void;
-  onSubmit: () => void;
+  onSubmit: (machine: CreateMachineByName | CreateMachineFromTemplate) => void;
   templates: Template[];
-  loading: boolean;
-  error: Error | null;
 }
 
 export default function AddMachineFormUI({
@@ -20,26 +19,45 @@ export default function AddMachineFormUI({
   onTemplateChange,
   onSubmit,
   templates,
-  loading,
-  error,
 }: Props) {
-  if (loading) return <p>lade Templates...</p>;
-  if (error) return <p>Fehler beim Laden</p>;
+
+   const handleSubmit = () => {
+     
+     if (!name.trim()) return;
+     
+     let machine: CreateMachineByName | CreateMachineFromTemplate;
+     
+     if (selectedTemplateId !== null) {
+       machine = {
+         machineName: name,
+         machineTemplateId: selectedTemplateId,
+         type: 'fromTemplate',
+        };
+      } else {
+        machine = {
+          name: name,
+          type:'byName'
+        };
+      }
+    
+    onSubmit(machine); 
+  };
 
   return (
-    <div>
+    <div className = "form-group">
       <input
         type="text"
         placeholder="Maschinenname"
         value={name}
         onChange={(e) => onNameChange(e.target.value)}
+        className="form-input"
       />
       <TemplateSelect
         templates={templates}
         selectedTemplateId={selectedTemplateId}
         onChange={onTemplateChange}
       />
-      <Button onClick={onSubmit} disabled={!name.trim()}>
+      <Button onClick={handleSubmit} disabled={!name.trim()}>
         Speichern
       </Button>
     </div>

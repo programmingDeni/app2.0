@@ -1,24 +1,31 @@
 package com.example.machine_management.services.machine;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.machine_management.dto.Machine.CreateMachineFromTemplateDto;
+import com.example.machine_management.dto.MachineTemplates.MachineTemplateDto;
 import com.example.machine_management.exceptions.NotFoundException;
 import com.example.machine_management.util.SecurityUtils;
-//models
-import com.example.machine_management.models.TemplateAttribute;
-import com.example.machine_management.models.Machine;
-import com.example.machine_management.models.MachineAttribute;
-import com.example.machine_management.models.MachineTemplate;
+import com.example.machine_management.models.machine.Machine;
+import com.example.machine_management.models.machine.MachineAttribute;
+import com.example.machine_management.models.template.MachineTemplate;
+import com.example.machine_management.models.template.TemplateAttribute;
 //repos
 import com.example.machine_management.repository.MachineRepository;
 import com.example.machine_management.repository.MachineTemplateRepository;
-
+import com.example.machine_management.services.abstracts.ParentManagementService;
+/**
+ * Spezieller fall von service der von nichts erbt 
+ * da fuer template verwaltung zustaendig
+ * das ist nicht direkt ein child von machine aber uebernimmt aufgaben die machinen und 
+ * tempaltes involvieren
+ */
 @Service
-public class MachineTemplateOperationsService {
+public class MachineTemplateOperationsService{
     // NO GenericCrudService extension!
 
     private final MachineRepository machineRepo;
@@ -114,12 +121,16 @@ public class MachineTemplateOperationsService {
         machine.setMachineTemplate(template);
 
         // Copy template attributes to machine with userId
-        for (TemplateAttribute templateAttr : template.getAttributeTemplates()) {
+        for (TemplateAttribute templateAttr : template.getTemplateAttributes()) {
             MachineAttribute machineAttr = new MachineAttribute(
-                    machineId,
+                    userId,
                     templateAttr.getAttributeInTemplateName(),
                     templateAttr.getType(),
-                    true); // fromTemplate = true
+                    null,       //initialisieren ohne attributeValues
+                    machine,
+                    true,          // fromTemplate = true
+                    365      // pruefungsintervall
+                    ); 
             machineAttr.setUserId(userId);
             machine.getMachineAttributes().add(machineAttr);
         }

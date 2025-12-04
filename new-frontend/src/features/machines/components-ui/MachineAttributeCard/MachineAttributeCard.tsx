@@ -1,6 +1,6 @@
-import Button from "@/components/Button";
-import { MachineAttribute } from "@/features/machines/types/machine.types";
-import { AttributeType } from "@/features/machines/types/machine.types";
+import Button from "@/shared/components/Buttons/GenericButton";
+import { MachineAttribute } from "@/shared/types/machine.types";
+import { AttributeType } from "@/shared/types/machine.types";
 import { useState } from "react";
 
 interface Props {

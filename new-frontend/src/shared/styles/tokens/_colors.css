@@ -1,0 +1,67 @@
+/**
+ * Color Design Tokens
+ * Zentrale Farbdefinitionen für die gesamte App
+ */
+:root {
+  /* Primary Palette */
+  --color-primary: #007bff;
+  --color-primary-hover: #0056b3;
+  --color-primary-active: #004494;
+  --color-primary-light: #e0e7ff;
+  --color-primary-lighter: #dbeafe;
+
+  /* Semantic Colors */
+  --color-success: #28a745;
+  --color-success-hover: #218838;
+  --color-success-bg: #d4edda;
+  --color-success-border: #c3e6cb;
+
+  --color-danger: #dc3545;
+  --color-danger-hover: #c82333;
+  --color-danger-bg: #f8d7da;
+  --color-danger-border: #f5c6cb;
+
+  --color-warning: #ffc107;
+  --color-warning-bg: #fff3cd;
+  --color-warning-border: #ffeeba;
+
+  --color-info: #17a2b8;
+  --color-info-bg: #d1ecf1;
+  --color-info-border: #bee5eb;
+
+  --color-muted: #6c757d;
+
+  /* Neutral Palette (Dark Theme - Default) */
+  --color-bg-primary: #242424;
+  --color-bg-secondary: #1e1e1e;
+  --color-bg-tertiary: #2c2c2c;
+  --color-bg-elevated: #333;
+
+  --color-text-primary: rgba(255, 255, 255, 0.87);
+  --color-text-secondary: #ccc;
+  --color-text-muted: #888;
+
+  --color-border: #333;
+  --color-border-light: rgba(255, 255, 255, 0.2);
+
+  /* Link Colors */
+  --color-link: #646cff;
+  --color-link-hover: #535bf2;
+}
+
+/* Light Theme Override */
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-bg-primary: #ffffff;
+    --color-bg-secondary: #f8f9fa;
+    --color-bg-tertiary: #e9ecef;
+    --color-bg-elevated: #ffffff;
+
+    --color-text-primary: #213547;
+    --color-text-secondary: #495057;
+    --color-text-muted: #6c757d;
+
+    --color-border: #e0e0e0;
+    --color-border-light: rgba(0, 0, 0, 0.1);
+  }
+}

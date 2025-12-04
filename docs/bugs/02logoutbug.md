@@ -1,0 +1,1 @@
+der client verliert die autorisierung vom backend aber man wird im client nicht abgemeldet aber kann ncihts mehr machen

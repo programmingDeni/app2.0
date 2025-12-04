@@ -1,0 +1,25 @@
+/**
+ * Main Style Entry Point
+ * Importiert alle Style-Module in der richtigen Reihenfolge
+ *
+ * Struktur:
+ * 1. Design Tokens (CSS Custom Properties)
+ * 2. Utility Classes
+ * 3. Component Base Styles
+ * 4. Layout Patterns
+ *
+ * Import in index.css:
+ * @import './shared/styles/main.css';
+ */
+
+/* 1. Design Tokens - Müssen zuerst geladen werden */
+@import './tokens/index.css';
+
+/* 2. Utilities - Helferklassen */
+@import './utilities/index.css';
+
+/* 3. Component Base Styles */
+@import './components/index.css';
+
+/* 4. Layouts - Page Structures */
+@import './layouts/index.css';

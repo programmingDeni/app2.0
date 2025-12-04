@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { AttributeType } from "@/features/machines/types/machine.types";
+import { AttributeType } from "@/shared/types/machine.types";
 
 interface Props {
   machineId: number;

@@ -1,10 +1,12 @@
 package com.example.machine_management.mapper;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.example.machine_management.dto.AttributeValue.AttributeValueDto;
-import com.example.machine_management.models.AttributeValue;
-import com.example.machine_management.models.MachineAttribute;
+import com.example.machine_management.models.machine.AttributeValue;
+import com.example.machine_management.models.machine.MachineAttribute;
 
 @Component
 public class AttributeValueMapper implements EntityMapper<AttributeValue, AttributeValueDto> {
@@ -27,9 +29,13 @@ public class AttributeValueMapper implements EntityMapper<AttributeValue, Attrib
 
     // Helper method that requires MachineAttribute
     public AttributeValue toEntity(AttributeValueDto dto, MachineAttribute machineAttribute) {
-        AttributeValue val = new AttributeValue(machineAttribute, dto.attributeValueYear, dto.attributeValue,
-                dto.zuletztGeprueft, dto.zuletztGetauscht);
+        AttributeValue val = new AttributeValue(machineAttribute, dto.attributeValueYear, dto.attributeValue);
         return val;
+    }
+
+    @Override
+    public List<AttributeValueDto> toDtoList(List<AttributeValue> entities) {
+        return entities.stream().map(this::toDto).collect(java.util.stream.Collectors.toList());
     }
 
 }

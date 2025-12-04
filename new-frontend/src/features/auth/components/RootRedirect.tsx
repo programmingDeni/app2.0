@@ -28,7 +28,7 @@ export function RootRedirect() {
 
   // Redirect basierend auf Auth Status
   return isAuthenticated ? (
-    <Navigate to="/machines" replace />
+    <Navigate to="/home" replace />
   ) : (
     <Navigate to="/login" replace />
   );

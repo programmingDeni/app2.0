@@ -1,0 +1,81 @@
+/**
+ * Card Base Styles
+ */
+
+.card {
+  background: var(--color-bg-secondary);
+  border: var(--border-width-thin) solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-card-padding);
+  box-shadow: var(--shadow-lg);
+  transition: var(--transition-bg);
+}
+
+.card:hover {
+  background: var(--color-bg-tertiary);
+}
+
+/* Interactive Card (klickbar) */
+.card--interactive {
+  cursor: pointer;
+}
+
+.card--interactive:hover {
+  box-shadow: var(--shadow-xl);
+}
+
+/* Flat Card (ohne Shadow) */
+.card--flat {
+  box-shadow: none;
+}
+
+/* Card Sections */
+.card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.card__title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+}
+
+.card__subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.card__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) 0;
+  border-bottom: var(--border-width-thin) solid var(--color-border);
+}
+
+.card__item:last-child {
+  border-bottom: none;
+}
+
+.card__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: var(--border-width-thin) solid var(--color-border);
+}
+
+.card__actions {
+  display: flex;
+  gap: var(--spacing-xs);
+}

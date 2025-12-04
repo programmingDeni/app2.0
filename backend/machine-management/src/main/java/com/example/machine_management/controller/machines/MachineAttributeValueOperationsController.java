@@ -3,53 +3,74 @@ package com.example.machine_management.controller.machines;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.example.machine_management.dto.AttributeValue.AttributeValueDto;
-import com.example.machine_management.dto.MachineAttributes.MachineAttributeDto;
+import com.example.machine_management.dto.AttributeValue.CreateAttributeValueDto;
 import com.example.machine_management.mapper.AttributeValueMapper;
-import com.example.machine_management.models.AttributeValue;
-import com.example.machine_management.models.Machine;
+import com.example.machine_management.mapper.EntityMapper;
+import com.example.machine_management.models.machine.AttributeValue;
+import com.example.machine_management.models.machine.MachineAttribute;
 import com.example.machine_management.services.AttributeValueService;
+import com.example.machine_management.services.abstracts.ParentManagementService;
+import com.example.machine_management.services.machine.MachineAttributeOperationsService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.example.machine_management.controller.base.AbstractMachineBaseController;
+import com.example.machine_management.controller.base.AbstractNestedCrudController;
 
+@Tag(name = "Attribute Values", description = "Values for machine attributes, route: '/api/machines/attributes/values'")
 @RestController
-@RequestMapping("/api/machines/")
-public class MachineAttributeValueOperationsController extends AbstractMachineBaseController {
+@RequestMapping("/api/machines/{machineId}/attributes/{parentId}/values")
+public class MachineAttributeValueOperationsController extends AbstractNestedCrudController<AttributeValue,Integer,AttributeValueDto, CreateAttributeValueDto, MachineAttribute, Integer> {
 
     private final AttributeValueService attributeValueService;
     private final AttributeValueMapper attributeValueMapper;
-
+    private final MachineAttributeOperationsService machineAttributeOperationsService;
     @Autowired
     public MachineAttributeValueOperationsController(AttributeValueService attributeValueService,
-            AttributeValueMapper attributeValueMapper) {
+            AttributeValueMapper attributeValueMapper,
+            MachineAttributeOperationsService machineAttributeOperationsService) {
         this.attributeValueService = attributeValueService;
         this.attributeValueMapper = attributeValueMapper;
+        this.machineAttributeOperationsService=machineAttributeOperationsService;
     }
 
-    @GetMapping("/{machineId}/attribute-values")
-    public ResponseEntity<List<AttributeValueDto>> getMachineAttributes(
-            @PathVariable Integer machineId) {
-        if (machineId == null || machineId <= 0) {
-            throw new IllegalArgumentException("Invalid ID");
+    @Override
+    protected ParentManagementService<AttributeValue, Integer, AttributeValueDto, CreateAttributeValueDto, MachineAttribute, Integer> getService() {
+        return this.attributeValueService;
+    }
+
+    @Override
+    protected EntityMapper<AttributeValue, AttributeValueDto> getMapper() {
+        return this.attributeValueMapper;
+    }
+
+    @Override
+    protected MachineAttribute getParent(Integer parentId) {
+        return attributeValueService.findParentById(parentId, false);
+    }
+
+    @Override
+    protected boolean belongsToParent(AttributeValue entity, Integer parentId) {
+        MachineAttribute machineAttribute = getParent(parentId);
+        if(machineAttribute.getAttributeValues().contains(entity)){
+            return true;
         }
-
-        // TEST
-        Machine machine = machineService.findById(machineId);
-
-        List<AttributeValue> attributeValues = attributeValueService.getAttributeValuesByMachineId(machineId);
-        List<AttributeValueDto> attributeValueDtos = attributeValues.stream()
-                .map(attributeValueMapper::toDto)
-                .toList();
-
-        // Implementation for fetching machine attributes can be added here
-        return ResponseEntity.status(HttpStatus.OK).body(attributeValueDtos);
+        else {
+            return false;
+        }
     }
+
+    @Override
+    protected AttributeValueDto enrichDtoWithParentId(CreateAttributeValueDto createDto, Integer parentId) {
+        return new AttributeValueDto(createDto.attributeValueYear,parentId,createDto.attributeValue);
+    }
+
+    @Override
+    protected List<AttributeValue> findByParentId(Integer parentId, boolean eager) {
+        return attributeValueService.findEntitiesByParentId(parentId, eager);
+    }
+
 }

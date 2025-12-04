@@ -7,7 +7,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-@EnableJpaAuditing  // Aktiviert automatisches Auditing (createdBy, modifiedBy, etc.)
 public class Security {
     @Bean
     public PasswordEncoder passwordEncoder() {

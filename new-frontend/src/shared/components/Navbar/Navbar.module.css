@@ -1,0 +1,27 @@
+.navbar {
+  height: 50px;
+  /* ... existing styles */
+}
+
+.navbarContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 var(--spacing-md);
+}
+
+.leftSection {
+  display: flex;
+  gap: var(--spacing-xs);
+}
+
+.logoContainer {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.rightSection {
+  display: flex;
+}
