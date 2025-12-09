@@ -28,11 +28,11 @@ docker-compose up
 
 # Zugriff
 
-# Frontend: http://localhost:5173
+### Frontend: http://localhost:5173
 
-# Backend: http://localhost:8080
+### Backend: http://localhost:8080
 
-# Login: admin@example.com / admin123
+### Login: admin@example.com / admin123
 
 ## ✨ Key Features
 
@@ -49,6 +49,10 @@ The backend is a layered Spring Boot application that handles all core business 
 
 - `Config` – Application configuration
 - `Controller` – Exposes RESTful endpoints, entities converted to json by mappers here
+  - `3 abstract controller:`
+    -`Base Controller`: Wraps crud operations with dto validation
+    -`Crud Controller`: Defines endpoints, calls (abstract) services for parent classes
+    -`Nested Crud Controller`: Like Crud controller but for nested entities           
   - `MachineController`: Manage machines and their attributes
   - `TemplateController`: Manage machine templates and attribute templates
 - `DTO` – Data transfer objects
@@ -58,13 +62,17 @@ The backend is a layered Spring Boot application that handles all core business 
 - `Repository` – Data access (JPA)
 - `Security` - JWT Authentication
 - `Service` – Business logic, works with entities
+  -`3 abstract services`
+    -`FindService`: defines user and admin find by id functions
+    -`CrudService`: defines Crud operations
+    -`ParentManagmentService`: like crud but for nested entities
 - `Util`
 
 ## 🖥️ Frontend
 
 The frontend is organized by **features** (e.g. machines and templates), and components follow the **Model-View-Presenter (MVP)** pattern.
 
-React Query handles all data fetching and caching.
+React Query handles all data fetching and caching. Follow Backend structure: FindService, CrudService, NestedCrudService
 No local state is stored in components – the UI updates reactively based on server state.
 
 ## 📦 Tech Stack
