@@ -62,7 +62,7 @@ The backend is a layered Spring Boot application that handles all core business 
 - `Repository` – Data access (JPA)
 - `Security` - JWT Authentication
 - `Service` – Business logic, works with entities
-    -`3 abstract services`
+    - `3 abstract services`
         - `FindService`: defines user and admin find by id functions
         - `CrudService`: defines Crud operations
         - `ParentManagmentService`: like crud but for nested entities
