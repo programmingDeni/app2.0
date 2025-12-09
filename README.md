@@ -49,12 +49,12 @@ The backend is a layered Spring Boot application that handles all core business 
 
 - `Config` – Application configuration
 - `Controller` – Exposes RESTful endpoints, entities converted to json by mappers here
-  - `3 abstract controller:`
-    --`Base Controller`: Wraps crud operations with dto validation
-    --`Crud Controller`: Defines endpoints, calls (abstract) services for parent classes
-    --`Nested Crud Controller`: Like Crud controller but for nested entities           
-  - `MachineController`: Manage machines and their attributes
-  - `TemplateController`: Manage machine templates and attribute templates
+    - `3 abstract controller:`
+        -`Base Controller`: Wraps crud operations with dto validation
+        -`Crud Controller`: Defines endpoints, calls (abstract) services for parent classes
+        -`Nested Crud Controller`: Like Crud controller but for nested entities
+    - `MachineController`: Manage machines and their attributes
+    - `TemplateController`: Manage machine templates and attribute templates
 - `DTO` – Data transfer objects
 - `Exception` – Custom exceptions
 - `Mapper` – DTO ↔ Entity mapping
@@ -62,10 +62,10 @@ The backend is a layered Spring Boot application that handles all core business 
 - `Repository` – Data access (JPA)
 - `Security` - JWT Authentication
 - `Service` – Business logic, works with entities
-  -`3 abstract services`
-    -`FindService`: defines user and admin find by id functions
-    -`CrudService`: defines Crud operations
-    -`ParentManagmentService`: like crud but for nested entities
+    -`3 abstract services`
+        -`FindService`: defines user and admin find by id functions
+        -`CrudService`: defines Crud operations
+        -`ParentManagmentService`: like crud but for nested entities
 - `Util`
 
 ## 🖥️ Frontend
