@@ -1,4 +1,9 @@
 # Machine Management App (Work in progress)
+<img width="1916" height="935" alt="grafik" src="https://github.com/user-attachments/assets/0b4f4617-87ab-42e0-b74e-0e185c9ca60a" />
+<img width="1915" height="940" alt="grafik" src="https://github.com/user-attachments/assets/ccf07f67-4db6-4e39-9a0e-91dc6fd5305c" />
+<img width="1919" height="936" alt="grafik" src="https://github.com/user-attachments/assets/cdf2df35-34e4-482d-8e28-e5dab7b47545" />
+<img width="1916" height="938" alt="grafik" src="https://github.com/user-attachments/assets/6a355204-7a56-48a3-a396-22ab516258b2" />
+
 
 This application enables the structured management and documentation of machines and their attributes, with a focus on maintenance and inspection tracking.
 
