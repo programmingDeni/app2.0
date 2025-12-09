@@ -11,7 +11,7 @@ public class MachineDto {
     public Integer id;
     public String machineName;
     public List<MachineAttributeDto> attributes;
-    public MachineTemplateDto machineTemplateDto;
+    public MachineTemplateDto machineTemplate;
 
     public MachineDto() {
     }
@@ -21,6 +21,6 @@ public class MachineDto {
         this.id = id;
         this.machineName = machineName;
         this.attributes = machineAttributeDtos;
-        this.machineTemplateDto = machineTemplate;
+        this.machineTemplate = machineTemplate;
     }
 }

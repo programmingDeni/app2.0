@@ -22,6 +22,11 @@ import {
 import MachineDetailsUI from "./MachineDetailsUI";
 import { MachineAttribute } from "../../../shared/types/machine.types";
 import { AttributeType } from "@/shared/types/machine.types";
+import { useQueryClient } from "@tanstack/react-query";
+import { MachineQuery } from "@/queries/machine/MachineQuery";
+import { MachineTemplateOperationsQuery } from "@/queries/machine/MachineTemplateOperationsQuery";
+import { MachineAttributeQuery } from "@/queries/machine/attributes/MachineAttributeQuery";
+import { TemplateQuery } from "@/queries/template/TemplateQuery";
 
 //Props
 interface Props {
@@ -43,20 +48,34 @@ export default function MachineDetailsView(props: Props) {
   // KOMPONENTE BRAUCHT MACHINEN UND TEMPLATES DATEN
   //  Queries & Mutations
   //MACHINE
-  const { data: machine, isLoading, error } = useMachine(machineIdInt);
-  const addCustomAttributeMutation = useAddCustomAttribute(machineIdInt);
-  const editCustomAttributeMutation = useEditCustomAttribute();
-  const removeCustomAttributeMutation = useRemoveCustomAttribute(machineIdInt);
+  const queryClient = useQueryClient();
+  const machineQuery = new MachineQuery(queryClient);
+  const findMachineById = machineQuery.useEagerFindById(machineIdInt);
 
-  const assignTemplateMutation = useAssignTemplate(machineIdInt);
-  const removeTemplateMutation = useRemoveTemplate(machineIdInt);
+  //MACHINE TEMPLATE OPERATIONS
+  const machineTemplateOperationsQuery = new MachineTemplateOperationsQuery();
+  const assignTemplateMutation =
+    machineTemplateOperationsQuery.useAssignTemplate(machineIdInt);
+  const removeTemplateMutation =
+    machineTemplateOperationsQuery.useRemoveTemplate(machineIdInt);
+
+  //MACHINE ATTRIBUTES
+  const machineAttributeQuery = new MachineAttributeQuery(queryClient);
+  const findMachineAttributes =
+    machineAttributeQuery.useFindAllByParentId(machineIdInt);
+  const addCustomAttributeMutation = machineAttributeQuery.useCreateDynamic();
+  const editCustomAttributeMutation =
+    machineAttributeQuery.useUpdate(machineIdInt);
+  const removeCustomAttributeMutation =
+    machineAttributeQuery.useDelete(machineIdInt);
+
+  //TEMPLATES
+  const templateQuery = new TemplateQuery(queryClient);
+  const findAllTemplates = templateQuery.useFindAll();
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Templates %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-  const templateId = machine?.machineTemplate?.id;
-  const { data: template } = useTemplate(templateId, { enabled: !!templateId });
-
-  const { data: templates } = useTemplates();
+  const machine = findMachineById.data;
+  const template = machine?.machineTemplate;
 
   const handleAssignTemplate = async (templateId: number) => {
     await assignTemplateMutation.mutateAsync(templateId);
@@ -103,9 +122,16 @@ export default function MachineDetailsView(props: Props) {
     attributeName: string,
     attributeType: AttributeType
   ) => {
+    console.log("handleCustomAttributeAdded", attributeName, attributeType);
     await addCustomAttributeMutation.mutateAsync({
-      attributeName,
-      attributeType,
+      parentId: machineIdInt,
+      data: {
+        machineId: machineIdInt,
+        attributeName,
+        attributeType,
+        fromTemplate: false,
+        attributeValues: [],
+      },
     });
   };
   //Remove
@@ -116,7 +142,10 @@ export default function MachineDetailsView(props: Props) {
   const handleCustomAttributeEdited = async (
     attribute: Partial<MachineAttribute>
   ) => {
-    await editCustomAttributeMutation.mutateAsync(attribute);
+    await editCustomAttributeMutation.mutateAsync({
+      id: attribute.id!,
+      data: attribute,
+    });
   };
 
   const customAttributes = machine.attributes.filter(
@@ -125,10 +154,10 @@ export default function MachineDetailsView(props: Props) {
 
   //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Render %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error</div>;
+  //if (isLoading) return <div>Loading...</div>;
+  //if (error) return <div>Error</div>;
 
-  console.log("MachineDetailsView: Machine:", machine, "Template:",template);
+  console.log("MachineDetailsView: Machine:", machine, "Template:", template);
 
   return (
     <MachineDetailsUI
@@ -140,7 +169,7 @@ export default function MachineDetailsView(props: Props) {
       handleRemoveAttribute={handleRemoveAttribute}
       handleAssignTemplate={handleAssignTemplate}
       handleRemoveTemplate={handleRemoveTemplate}
-      templates={templates!}
+      templates={findAllTemplates.data!}
       selectedTemplateId={selectedTemplateId}
       setSelectedTemplateId={handleTemplateChange}
       showLinks={showLinks}

@@ -1,5 +1,6 @@
 package com.example.machine_management.services.machine;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +19,8 @@ import com.example.machine_management.services.abstracts.ParentManagementService
 import com.example.machine_management.util.SecurityUtils;
 
 @Service
-public class MachineAttributeOperationsService extends ParentManagementService<MachineAttribute, Integer, MachineAttributeDto, CreateMachineAttributeDto, Machine, Integer> {
+public class MachineAttributeOperationsService extends
+        ParentManagementService<MachineAttribute, Integer, MachineAttributeDto, CreateMachineAttributeDto, Machine, Integer> {
 
     private final MachineService machineService;
 
@@ -28,14 +30,14 @@ public class MachineAttributeOperationsService extends ParentManagementService<M
     public MachineAttributeOperationsService(
             MachineAttributeRepository machineAttributeRepo,
             MachineService machineService) {
-                super(machineAttributeRepo);
+        super(machineAttributeRepo);
         this.machineAttributeRepo = machineAttributeRepo;
-        this.machineService=machineService;
+        this.machineService = machineService;
     }
 
     @Override
     protected MachineAttribute updateEntity(MachineAttribute existingEntity, MachineAttributeDto updateDto) {
-        //TODO: hier muss noch was passieren
+        // TODO: hier muss noch was passieren
         if (updateDto.attributeName != null) {
             existingEntity.setAttributeName(updateDto.attributeName);
         }
@@ -43,15 +45,15 @@ public class MachineAttributeOperationsService extends ParentManagementService<M
         if (updateDto.attributeType != null) {
             existingEntity.setAttributeType((updateDto.attributeType));
         }
-        if(updateDto.pruefungsIntervall != null){
+        if (updateDto.pruefungsIntervall != null) {
             existingEntity.setPruefungsIntervall(updateDto.pruefungsIntervall);
-        } 
+        }
         return existingEntity;
     }
 
     @Override
     protected Machine eagerFindParentById(Integer parentID) {
-       return machineService.userFindById(parentID, true);
+        return machineService.userFindById(parentID, true);
     }
 
     @Override
@@ -62,7 +64,7 @@ public class MachineAttributeOperationsService extends ParentManagementService<M
     @Override
     protected List<MachineAttribute> eagerFindEntitiesByParentId(Integer parentId) {
         Integer userId = SecurityUtils.getCurrentUserId();
-        return machineAttributeRepo.eagerFindByMachineIdAndUserId(parentId,userId );
+        return machineAttributeRepo.eagerFindByMachineIdAndUserId(parentId, userId);
     }
 
     @Override
@@ -81,14 +83,13 @@ public class MachineAttributeOperationsService extends ParentManagementService<M
     protected MachineAttribute createEntity(CreateMachineAttributeDto dto, Machine parent) {
         Integer userId = SecurityUtils.getCurrentUserId();
         MachineAttribute entity = new MachineAttribute(
-            userId,
-            dto.attributeName,
-            dto.attributeType,
-            null,
-            parent,
-            false,
-            365
-        );
+                userId,
+                dto.attributeName,
+                dto.attributeType,
+                new ArrayList<>(),
+                parent,
+                false,
+                365);
         return entity;
     }
 

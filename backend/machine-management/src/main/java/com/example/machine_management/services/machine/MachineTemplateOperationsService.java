@@ -1,5 +1,6 @@
 package com.example.machine_management.services.machine;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,14 +19,16 @@ import com.example.machine_management.models.template.TemplateAttribute;
 import com.example.machine_management.repository.MachineRepository;
 import com.example.machine_management.repository.MachineTemplateRepository;
 import com.example.machine_management.services.abstracts.ParentManagementService;
+
 /**
- * Spezieller fall von service der von nichts erbt 
+ * Spezieller fall von service der von nichts erbt
  * da fuer template verwaltung zustaendig
- * das ist nicht direkt ein child von machine aber uebernimmt aufgaben die machinen und 
+ * das ist nicht direkt ein child von machine aber uebernimmt aufgaben die
+ * machinen und
  * tempaltes involvieren
  */
 @Service
-public class MachineTemplateOperationsService{
+public class MachineTemplateOperationsService {
     // NO GenericCrudService extension!
 
     private final MachineRepository machineRepo;
@@ -126,11 +129,11 @@ public class MachineTemplateOperationsService{
                     userId,
                     templateAttr.getAttributeInTemplateName(),
                     templateAttr.getType(),
-                    null,       //initialisieren ohne attributeValues
+                    new ArrayList<>(), // initialisieren ohne attributeValues
                     machine,
-                    true,          // fromTemplate = true
-                    365      // pruefungsintervall
-                    ); 
+                    true, // fromTemplate = true
+                    365 // pruefungsintervall
+            );
             machineAttr.setUserId(userId);
             machine.getMachineAttributes().add(machineAttr);
         }

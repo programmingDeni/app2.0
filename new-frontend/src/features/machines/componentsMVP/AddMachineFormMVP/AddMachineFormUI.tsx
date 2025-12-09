@@ -1,7 +1,11 @@
 import Button from "@/shared/components/Buttons/GenericButton";
 import TemplateSelect from "../../../../components/TemplateSelect/TemplateSelect";
 import { Template } from "@/shared/types/template.types";
-import { CreateMachineByName, CreateMachineFromTemplate, Machine } from "@/shared/types/machine.types";
+import {
+  CreateMachineByName,
+  CreateMachineFromTemplate,
+  Machine,
+} from "@/shared/types/machine.types";
 
 interface Props {
   name: string;
@@ -18,33 +22,30 @@ export default function AddMachineFormUI({
   selectedTemplateId,
   onTemplateChange,
   onSubmit,
-  templates,
 }: Props) {
+  const handleSubmit = () => {
+    if (!name.trim()) return;
 
-   const handleSubmit = () => {
-     
-     if (!name.trim()) return;
-     
-     let machine: CreateMachineByName | CreateMachineFromTemplate;
-     
-     if (selectedTemplateId !== null) {
-       machine = {
-         machineName: name,
-         machineTemplateId: selectedTemplateId,
-         type: 'fromTemplate',
-        };
-      } else {
-        machine = {
-          name: name,
-          type:'byName'
-        };
-      }
-    
-    onSubmit(machine); 
+    let machine: CreateMachineByName | CreateMachineFromTemplate;
+
+    if (selectedTemplateId !== null) {
+      machine = {
+        machineName: name,
+        machineTemplateId: selectedTemplateId,
+        type: "fromTemplate",
+      };
+    } else {
+      machine = {
+        name: name,
+        type: "byName",
+      };
+    }
+
+    onSubmit(machine);
   };
 
   return (
-    <div className = "form-group">
+    <div className="form-group">
       <input
         type="text"
         placeholder="Maschinenname"
@@ -53,7 +54,6 @@ export default function AddMachineFormUI({
         className="form-input"
       />
       <TemplateSelect
-        templates={templates}
         selectedTemplateId={selectedTemplateId}
         onChange={onTemplateChange}
       />

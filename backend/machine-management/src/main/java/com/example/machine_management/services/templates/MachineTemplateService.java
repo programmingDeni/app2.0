@@ -2,6 +2,7 @@ package com.example.machine_management.services.templates;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +20,7 @@ import com.example.machine_management.mapper.MachineTemplateMapper;
 @Service
 public class MachineTemplateService extends CrudService<MachineTemplate, Integer, MachineTemplateDto> {
 
-        //repo 
+        // repo
         private final MachineTemplateRepository machineTemplateRepository;
 
         @Autowired
@@ -54,12 +55,10 @@ public class MachineTemplateService extends CrudService<MachineTemplate, Integer
                 throw new UnsupportedOperationException("Unimplemented method 'adminFindAllEager'");
         }
 
-
-
         @Override
         protected MachineTemplate createEntity(MachineTemplateDto dto) {
                 validateTemplateDto(dto);
-                //die attribute werden in speziellem service verwaltet
+                // die attribute werden in speziellem service verwaltet
                 return new MachineTemplate(dto.templateName);
         }
 
@@ -67,27 +66,25 @@ public class MachineTemplateService extends CrudService<MachineTemplate, Integer
         protected List<MachineTemplate> eagerGetAllUserEntities(Integer userId) {
                 return machineTemplateRepository.findAllWithAttributeTemplatesByUserId(userId);
         }
-        
 
         @Override
-        protected List<MachineTemplate> lazyGetAllUserEntities(Integer userId) {               
+        protected List<MachineTemplate> lazyGetAllUserEntities(Integer userId) {
                 return machineTemplateRepository.findAllByUserId(userId);
         }
-
 
         @Override
         protected MachineTemplate updateEntity(MachineTemplate existingEntity, MachineTemplateDto dto) {
                 validateTemplateDto(dto);
-                //die attribtue werden in speziellem serivce verwaltet
+                // die attribtue werden in speziellem serivce verwaltet
                 existingEntity.setTemplateName(dto.templateName);
-                return existingEntity; 
+                return existingEntity;
         }
 
-
-        public MachineTemplate createTemplateWithAttribtues(CreateMachineTemplateWithAttributesDto dto){                
+        @Transactional
+        public MachineTemplate createTemplateWithAttribtues(CreateMachineTemplateWithAttributesDto dto) {
                 Integer userId = SecurityUtils.getCurrentUserId();
 
-                //validation ins dto verschieben / verschoben
+                // validation ins dto verschieben / verschoben
                 MachineTemplate created = new MachineTemplate(dto.templateName);
                 created.setUserId(userId);
 
@@ -103,10 +100,53 @@ public class MachineTemplateService extends CrudService<MachineTemplate, Integer
                 return machineTemplateRepository.save(created);
         }
 
+        @Transactional
+        public MachineTemplate duplicate(Integer id) {
+                Integer userId = SecurityUtils.getCurrentUserId();
 
+                MachineTemplate original = machineTemplateRepository.findByIdAndUserId(id, userId)
+                                .orElseThrow(() -> new IllegalArgumentException(
+                                                "Template with id " + id + " not found"));
 
-        //HELPER
-        private void validateTemplateDto(MachineTemplateDto dto){
+                String copyName = generateUniqueCopyName(original.getTemplateName(), userId);
+
+                MachineTemplate copy = new MachineTemplate(copyName);
+
+                List<TemplateAttribute> copiedAttributes = original.getTemplateAttributes().stream()
+                                .map((templateAttribute) -> {
+                                        TemplateAttribute copiedAttribute = new TemplateAttribute();
+                                        copiedAttribute.setAttributeInTemplateName(
+                                                        templateAttribute.getAttributeInTemplateName());
+                                        copiedAttribute.setType(templateAttribute.getType());
+                                        copiedAttribute.setMachineTemplate(copy);
+                                        copiedAttribute.setUserId(userId);
+                                        return copiedAttribute;
+                                })
+                                .toList();
+
+                copy.setTemplateAttributes(copiedAttributes);
+                copy.setUserId(userId);
+
+                return machineTemplateRepository.save(copy);
+        }
+
+        private String generateUniqueCopyName(String originalName, Integer userId) {
+                // Basis-Name ohne existierende (1), (2), etc.
+                String baseName = originalName.replaceAll("\\s*\\(\\d+\\)$", "");
+
+                List<String> existingNames = machineTemplateRepository.findAllTemplateNamesByUserId(userId);
+
+                int counter = 1;
+                String newName = baseName + " (" + counter + ")";
+                while (existingNames.contains(newName)) {
+                        counter++;
+                        newName = baseName + " (" + counter + ")";
+                }
+                return newName;
+        }
+
+        // HELPER
+        private void validateTemplateDto(MachineTemplateDto dto) {
                 if (dto == null) {
                         throw new IllegalArgumentException("DTO darf nicht null sein");
                 }

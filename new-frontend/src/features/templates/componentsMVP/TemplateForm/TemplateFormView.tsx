@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // UI UND presenter importieren
 // UI
@@ -29,6 +29,7 @@ export default function TemplateFormView({ machineTemplate, onSubmit }: Props) {
   );
   const [isEditing, setIsEditing] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
   //template queries
@@ -42,6 +43,17 @@ export default function TemplateFormView({ machineTemplate, onSubmit }: Props) {
   const updateAttributeMutation = attributeQuery.useUpdate(
     machineTemplate?.id ?? -1
   );
+
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage(null);
+      }, 2000);
+
+      // Cleanup: Timer abbrechen wenn Component unmountet
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
 
   //const addAttributeMutation = attributeQuery.useCreate(machineTemplate?.id ?? -1);
   //attributes state
@@ -70,11 +82,11 @@ export default function TemplateFormView({ machineTemplate, onSubmit }: Props) {
     //TODO: aber aktuallisiert der uach die attribute mit oder muss ich da den attribute
     //query verwenden
     if (isEditMode && machineTemplate?.id) {
+      //backend temlate (name) update
       await updateTemplateMutation.mutateAsync({
         templateName,
       });
-      //TODO: muss hier die templateId dem attribut hinzufuegen sagt das backend ?
-      //wieso hat es das feld nciht ?
+      //backend attribute update
       attributePresenter.attributes.forEach((attribute) => {
         attribute.templateId = machineTemplate?.id;
         updateAttributeMutation.mutate({
@@ -82,11 +94,13 @@ export default function TemplateFormView({ machineTemplate, onSubmit }: Props) {
           data: { ...attribute },
         });
       });
+      setSuccessMessage("Template erfolgreich aktualisiert!");
     } else {
       await addTemplateMutation.mutateAsync({
         templateName,
         attributeTemplates: attributePresenter.attributes,
       });
+      setSuccessMessage("Template erfolgreich erstellt!");
     }
     if (!isEditMode) {
       setTemplateName("");
@@ -94,6 +108,11 @@ export default function TemplateFormView({ machineTemplate, onSubmit }: Props) {
     }
     //inform parent
     onSubmit?.();
+  };
+
+  const handleSetTempalteName = (name: string) => {
+    setTemplateName(name);
+    setLocalError(null);
   };
 
   console.log(
@@ -108,7 +127,7 @@ export default function TemplateFormView({ machineTemplate, onSubmit }: Props) {
       <TemplateFormUi
         //fuer template name bearbeitung
         templateName={templateName}
-        setTemplateName={setTemplateName}
+        setTemplateName={handleSetTempalteName}
         isEditing={isEditing}
         setIsEditing={setIsEditing}
         //um templateAttribute anzuzeigen und zu bearbeiten
@@ -116,6 +135,7 @@ export default function TemplateFormView({ machineTemplate, onSubmit }: Props) {
         isEditMode={isEditMode}
         handleSubmit={handleSubmit}
         error={localError}
+        successMessage={successMessage}
       />
     </div>
   );

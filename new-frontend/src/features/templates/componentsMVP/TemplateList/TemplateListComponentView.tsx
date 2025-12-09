@@ -7,7 +7,7 @@ import TemplateListComponentUI from "./TemplateListComponentUI";
 import { QueryStateWrapper } from "@/shared/abstracts/QueryStateWrapper";
 import { useState } from "react";
 
-import messageStyle from "@/shared/styles/messages/messages.module.css"
+import messageStyle from "@/shared/styles/messages/messages.module.css";
 export default function TemplateListComponentView() {
   //queries
   const queryClient = useQueryClient();
@@ -15,7 +15,8 @@ export default function TemplateListComponentView() {
   //templates (lazy) laden
   const findAllTemplatesQuery = templateQuery.useFindAll(false);
   //delete
-  const deleteMutation = templateQuery.useDelete();
+  const deleteTemplateMutation = templateQuery.useDelete();
+  const duplicateTemplateMutation = templateQuery.useDuplicate();
 
   //State
   //error
@@ -30,7 +31,7 @@ export default function TemplateListComponentView() {
     if (!confirm) return;
     setErrorMsg(null);
 
-    deleteMutation.mutate(templateId, {
+    deleteTemplateMutation.mutate(templateId, {
       onSuccess: () => {
         console.log("Template gelöscht:", templateId);
       },
@@ -46,20 +47,23 @@ export default function TemplateListComponentView() {
     });
   };
 
+  const handleCopy = (templateId: number) => {
+    duplicateTemplateMutation.mutate(templateId);
+    setErrorMsg(null);
+    console.log("copied template:", templateId);
+  };
+
   //list ui rendern
   return (
     <div className="scroll-container">
-      {errorMsg && (
-        <div className={messageStyle.error}>
-          {errorMsg}
-        </div>
-      )}
+      {errorMsg && <div className={messageStyle.error}>{errorMsg}</div>}
 
       <QueryStateWrapper {...findAllTemplatesQuery} resourceName="Templates">
         {(templates) => (
           <TemplateListComponentUI
             templates={templates}
             onDelete={handleDelete}
+            onDuplicate={handleCopy}
           />
         )}
       </QueryStateWrapper>

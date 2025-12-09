@@ -17,18 +17,32 @@
  */
 
 import { Template } from "@/shared/types/template.types";
+import { useQueryClient } from "@tanstack/react-query";
+import { TemplateQuery } from "@/queries/template/TemplateQuery";
 
 interface Props {
-  templates: Template[];
   selectedTemplateId: number | null;
   onChange: (id: number | null) => void;
 }
 
 export default function TemplateSelect({
-  templates,
   selectedTemplateId,
   onChange,
 }: Props) {
+  const queryClient = useQueryClient();
+  const templateQuery = new TemplateQuery(queryClient);
+  const {
+    data: templates = [],
+    isLoading: isLoadingTemplates,
+    error,
+  } = templateQuery.useFindAll();
+
+  if (error) {
+    return <p>Fehler beim laden der Templates...</p>;
+  }
+  if (isLoadingTemplates) {
+    return <p>lade Templates...</p>;
+  }
   return (
     <select
       value={selectedTemplateId ?? ""}

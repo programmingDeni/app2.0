@@ -1,10 +1,7 @@
 // List View
 // wird von query versorgt
-import {
-  useMachines,
-  useAddMachine,
-  useRemoveMachine,
-} from "../../query/useMachineQueries";
+import { useQueryClient } from "@tanstack/react-query";
+import { MachineQuery } from "@/queries/machine/MachineQuery";
 // UI der Listenelemente ist in MachineCard
 import MachineCard from "../../components-ui/MachineLazyCard";
 
@@ -12,8 +9,16 @@ import MachineCard from "../../components-ui/MachineLazyCard";
 import react, { useState } from "react";
 
 export default function MachineListView() {
-  const { data: machines = [], refetch, isLoading, error } = useMachines();
-  const deleteMachineMutation = useRemoveMachine();
+  const queryClient = useQueryClient();
+  const machineQuery = new MachineQuery(queryClient);
+
+  const {
+    data: machines = [],
+    refetch,
+    isLoading,
+    error,
+  } = machineQuery.useFindAll();
+  const deleteMachineMutation = machineQuery.useDelete();
 
   const handleDeleteMachine = async (machineId: number) => {
     const isConfirmed = window.confirm(

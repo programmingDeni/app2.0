@@ -44,15 +44,23 @@ public class TemplateController extends AbstractCrudController<MachineTemplate, 
         return this.machineTemplateMapper;
     }
 
-    @PostMapping("/with-attribtues")
-    public ResponseEntity<MachineTemplateDto> createWithAttributes(@RequestBody CreateMachineTemplateWithAttributesDto dto){
-        if(dto == null)
+    @PostMapping("/with-attributes")
+    public ResponseEntity<MachineTemplateDto> createWithAttributes(
+            @RequestBody CreateMachineTemplateWithAttributesDto dto) {
+        if (dto == null)
             throw new IllegalArgumentException();
-        //TODO: dto validation im dto file 
-        //TODO: die service methode erstellen
+        // TODO: dto validation im dto file
+        // TODO: die service methode erstellen
         MachineTemplate template = this.machineTemplateService.createTemplateWithAttribtues(dto);
         return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(getMapper().toDto(template));
+                .body(getMapper().toDto(template));
     }
-    
+
+    @PostMapping("/{id}/duplicate")
+    public ResponseEntity<MachineTemplateDto> duplicate(@PathVariable("id") Integer id) {
+        MachineTemplate duplicate = this.machineTemplateService.duplicate(id);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(getMapper().toDto(duplicate));
+    }
+
 }

@@ -31,17 +31,17 @@ export default function MachineAttributeCard(props: Props) {
 
   if (!editable) {
     return (
-      <tr>
-        <td style={{ textAlign: "left", width: 220 }}>
+      <div className="card">
+        <div className="card__title">
           <strong>Name:</strong> {attribute.attributeName}
-        </td>
-        <td style={{ textAlign: "left", width: 120 }}>
+        </div>
+        <div className="card__item">
           <strong>Typ:</strong> {attribute.attributeType}
-        </td>
-        <td>
+        </div>
+        <div className="card__actions">
           {onEditClick && <Button onClick={onEditClick}>Bearbeiten</Button>}
-        </td>
-      </tr>
+        </div>
+      </div>
     );
   }
 

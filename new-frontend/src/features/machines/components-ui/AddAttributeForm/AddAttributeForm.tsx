@@ -31,14 +31,7 @@ export default function AddAttributeForm({
   };
 
   return (
-    <div
-      style={{
-        marginTop: "1rem",
-        padding: "1rem",
-        border: "1px solid #ccc",
-        borderRadius: "6px",
-      }}
-    >
+    <div className="form-group">
       <h4>Neues Attribut</h4>
       <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
         <input
@@ -46,11 +39,13 @@ export default function AddAttributeForm({
           placeholder="Attributname"
           value={attributeName}
           onChange={(e) => setAttributeName(e.target.value)}
+          className="form-input"
         />
 
         <select
           value={attributeType}
           onChange={(e) => setAttributeType(e.target.value as AttributeType)}
+          className="form-select"
         >
           {attributeTypeOptions.map((type) => (
             <option key={type} value={type}>
@@ -59,7 +54,7 @@ export default function AddAttributeForm({
           ))}
         </select>
 
-        <div style={{ display: "flex", gap: "0.5rem" }}>
+        <div className="form-actions">
           <button
             onClick={handleSubmit}
             disabled={!attributeName || !attributeType}

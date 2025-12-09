@@ -24,4 +24,7 @@ public interface MachineTemplateRepository extends JpaRepository<MachineTemplate
     // AttributeTemplateRepository oder MachineTemplateRepository
     @Query("SELECT t FROM MachineTemplate t LEFT JOIN FETCH t.templateAttributes WHERE t.id = :id AND t.userId = :userId")
     Optional<MachineTemplate> findByIdWithAttributesAndUserId(@Param("id") Integer id, @Param("userId") Integer userId);
+
+    @Query("SELECT t.templateName FROM MachineTemplate t WHERE t.userId = :userId")
+    List<String> findAllTemplateNamesByUserId(@Param("userId") Integer userId);
 }

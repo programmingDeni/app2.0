@@ -8,20 +8,15 @@ import axios from "axios";
 
 //import types: einmal lazy und einmal struktur, zum senden ans backend
 import {
-  CreateMachineFromTemplateDto,
-  CreateMachineByNameDto,
-} from "@/types/machine";
+  CreateMachineFromTemplate,
+  CreateMachineByName,
+} from "@/shared/types/machine.types";
 
-//machine template from backend laden
-import { MachineTemplateDto } from "@/types/machineTemplate";
+//query
+import { useQueryClient } from "@tanstack/react-query";
+import { MachineQuery } from "@/queries/machine/MachineQuery";
+import { MachineTemplateOperationsQuery } from "@/queries/machine/MachineTemplateOperationsQuery";
 
-//import services
-import {
-  createMachineByName,
-  createMachineFromTemplate,
-} from "@/services/machine.service";
-
-import { useMachineTemplates } from "@/presenters/useMachineTemplates";
 import TemplateSelect from "../TemplateSelect/TemplateSelect";
 
 interface Props {
@@ -29,7 +24,14 @@ interface Props {
 }
 
 export default function AddMachineForm({ onMachineAdded }: Props) {
-  const { templates, loadingTemplates, errorTemplates } = useMachineTemplates();
+  const queryClient = useQueryClient();
+
+  const machineQuery = new MachineQuery(queryClient);
+  const machineTemplateOperationsQuery = new MachineTemplateOperationsQuery();
+
+  const createMachineByName = machineQuery.useCreate();
+  const createMachineFromTemplate =
+    machineTemplateOperationsQuery.useCreateFromTemplate();
 
   const [newMachineName, setNewMachineName] = useState("");
   const [selectedTemplateId, setSelectedTemplateId] = useState<number | null>(
@@ -41,26 +43,25 @@ export default function AddMachineForm({ onMachineAdded }: Props) {
       let res;
       // wenn template ausgewählt, dann anlegen aus Template, sonst normales create
       if (selectedTemplateId) {
-        const payload: CreateMachineFromTemplateDto = {
+        const payload: CreateMachineFromTemplate = {
           machineName: newMachineName,
           machineTemplateId: selectedTemplateId,
+          type: "fromTemplate",
         };
-        res = await createMachineFromTemplate(payload);
+        res = createMachineFromTemplate.mutate(payload);
       } else {
-        res = await createMachineByName({
+        res = createMachineByName.mutate({
           name: newMachineName,
+          type: "byName",
         });
       }
-      console.log("machine created", res.data);
+      console.log("machine created", res);
       onMachineAdded(); // an übergeordnetes Element zurückgeben
       setNewMachineName("");
     } catch (error) {
       console.error("Fehler beim Hinzufügen:", error);
     }
   };
-
-  if (loadingTemplates) return <p>lade Templates...</p>;
-  if (errorTemplates) return <p>Fehler beim Laden</p>;
 
   return (
     <div style={{ marginTop: "10px" }}>
@@ -71,7 +72,6 @@ export default function AddMachineForm({ onMachineAdded }: Props) {
         onChange={(e) => setNewMachineName(e.target.value)}
       />
       <TemplateSelect
-        templates={templates}
         selectedTemplateId={selectedTemplateId}
         onChange={setSelectedTemplateId}
       />

@@ -1,6 +1,18 @@
 /**
  * Message/Alert Styles
  */
+/* Message Container - verhindert Layout Shift */
+.message-container {
+  min-height: 2.5rem; /* Höhe einer Alert-Zeile */
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.message-container .alert {
+  margin-bottom: 0; /* Margin wird vom Container gehandhabt */
+  width: 100%;
+}
 
 .alert {
   padding: var(--spacing-sm) var(--spacing-md);
@@ -51,7 +63,7 @@
 }
 
 .loading::after {
-  content: '';
+  content: "";
   width: 1.5rem;
   height: 1.5rem;
   margin-left: var(--spacing-sm);
@@ -62,5 +74,7 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }

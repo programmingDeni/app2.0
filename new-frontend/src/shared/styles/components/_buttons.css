@@ -17,7 +17,8 @@
   border: var(--border-width-thin) solid transparent;
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: var(--transition-bg), var(--transition-border), var(--transition-color);
+  transition: var(--transition-bg), var(--transition-border),
+    var(--transition-color);
 }
 
 .btn:focus-visible {
@@ -149,4 +150,17 @@
 
 .btn--icon.btn--lg {
   padding: var(--spacing-md);
+}
+
+/* Standard Width für Text-Buttons */
+.btn--fixed {
+  min-width: 180px; /* oder dein gewünschter Wert */
+}
+
+.btn--fixed-sm {
+  min-width: 120px;
+}
+
+.btn--fixed-lg {
+  min-width: 240px;
 }

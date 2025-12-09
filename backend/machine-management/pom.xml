@@ -106,7 +106,7 @@
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
-			<version>9.22.3</version>
+			<version>9.22.0</version>
 		</dependency>
 		<!-- Flyway Database Support -->
 		<!-- bei v9.22. in core enthalten

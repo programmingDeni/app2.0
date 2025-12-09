@@ -1,0 +1,40 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal, 100);
+}
+
+.modal {
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  min-width: 400px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.modal__title {
+  margin: 0;
+  font-size: var(--heading-4);
+}
+
+.modal__close {
+  padding: var(--spacing-xs);
+}
+
+.modal__body {
+  /* Inhalt */
+}

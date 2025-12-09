@@ -8,16 +8,19 @@ import { EditButton } from "@/shared/components/Buttons/EditButton";
 import { useNavigate } from "react-router-dom";
 
 import "@/shared/styles/main.css";
+import Button from "@/shared/components/Buttons/GenericButton";
+import { CopyIcon } from "@/shared/components/Icons/CopyButton";
 
 interface Props {
   machineTemplate: Template;
   onEdit?: boolean;
   onDelete?: (id: number) => void;
+  onDuplicate?: (id: number) => void;
 }
 
 export function TemplateCardUi(props: Props) {
   const navigate = useNavigate();
-  const { machineTemplate, onEdit, onDelete } = props;
+  const { machineTemplate, onEdit, onDelete, onDuplicate } = props;
 
   return (
     <div className="card">
@@ -32,6 +35,11 @@ export function TemplateCardUi(props: Props) {
                 navigate(`/machine-templates/${machineTemplate.id}`)
               }
             />
+          )}
+          {onDuplicate && (
+            <Button onClick={() => onDuplicate(machineTemplate.id!)}>
+              <CopyIcon />
+            </Button>
           )}
           {onDelete && (
             <DeleteButton onDelete={onDelete} id={machineTemplate.id!} />

@@ -14,6 +14,7 @@ type Props = {
   isEditMode?: boolean;
   handleSubmit: () => void;
   error?: string | null;
+  successMessage?: string | null;
 };
 
 export default function TemplateFormUi({
@@ -25,7 +26,12 @@ export default function TemplateFormUi({
   isEditMode,
   handleSubmit,
   error,
+  successMessage,
 }: Props) {
+  {
+    console.log("error", error);
+  }
+
   return (
     <div className="form-group">
       {/* Messages direkt unter der Überschrift */}
@@ -55,7 +61,12 @@ export default function TemplateFormUi({
           )}
         </div>
       </div>
-      <div className="error">{error && <>error</>}</div>
+      <div className="message-container">
+        {error && <div className="alert alert--error">{error}</div>}
+        {successMessage && (
+          <div className="alert alert--success">{successMessage}</div>
+        )}
+      </div>
       <AddAttributeFormUi
         attributePresenter={attributePresenter}
         onSubmit={handleSubmit}
